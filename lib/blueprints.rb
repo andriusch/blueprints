@@ -36,6 +36,7 @@ module Blueprints
   end
 
   def self.load(options = {})
+    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root)
     return unless Plan.plans.empty?
 
     @@delete_sql = DELETE_POLICIES[options[:delete_policy]] || DELETE_POLICIES[:delete]                              
