@@ -1,8 +1,3 @@
-class Object
-  # Needed since AR::Base.clone doesn't clone id field
-  alias :dclone_pure :dclone
-end
-
 module Blueprints
   class Plan
     cattr_reader :plans
