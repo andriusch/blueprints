@@ -1,0 +1,1 @@
+require 'blueprints' if RAILS_ENV == 'test'

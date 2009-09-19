@@ -1,0 +1,4 @@
+.idea
+*.gem
+spec/db/database.yml
+debug.log

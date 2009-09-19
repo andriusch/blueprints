@@ -1,0 +1,150 @@
+= Blueprints
+
+Another replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.
+
+== Usage
+
+Plans look like:
+
+    plan :apple do
+      Fruit.create! :species => 'apple'
+    end
+
+    plan :orange do
+      Fruit.create! :species => 'orange'
+    end
+
+    plan :fruitbowl => [:apple, :orange] do
+      FruitBowl.create! :fruit => [@apple,@orange]
+    end
+
+    plan :kitchen => :fruitbowl do
+      Kitchen.create! :fruitbowl => @fruitbowl
+    end
+
+...and you use them in specs like:
+
+    describe Fruit, "@apple" do
+      before do
+        build :apple
+      end
+  
+      it "should be an apple" do
+        @apple.species.should == 'apple'
+      end
+    end
+
+    describe FruitBowl, "with and apple and an orange" do
+      before do
+        build :fruitbowl
+      end
+
+      it "should have 2 fruits" do
+        @fruitbowl.should have(2).fruit
+      end
+    end
+
+Result of 'plan' block is evaluated and assigned to instance variable with the same name. You can also assign your own instance variables
+inside 'plan' block and they will be accessible in tests that build this plan.
+
+All scenarios are run only once, no matter how many times they were called, meaning that you don't need to worry about
+duplicating data.
+
+There's also a possibility to delete preloaded data with demolish. When called without arguments it will drop all data.
+You can also pass it table names, that will be cleared of any data. Beware that any scenarios already executed will still be
+marked as executed, so you won't be able to execute them again. If you want to execute those scenarios later in test, you
+can pass :undo option with list of scenarios to mark as not executed or :all if you want to mark that no scenario has been executed.
+
+    demolish :fruits, :trees # Deletes trees and fruits tables
+    demolish # Deletes all data except tables that are defined by Hornsby.skip_tables
+    demolish :fruits, :undo => :apples # Deletes fruits table and marks :apples scenario as not executed
+    demolish :undo => :all # Deletes all tables and marks all scenario as not executed (fresh start)
+
+Blueprints searches for scenario files in this particular order in Rails (Merb) root:
+* blueprints.rb
+* blueprints/*.rb
+* blueprint.rb
+* blueprint/*.rb
+* spec/blueprints.rb
+* spec/blueprints/*.rb
+* spec/blueprint.rb
+* spec/blueprint/*.rb
+* test/blueprints.rb
+* test/blueprints/*.rb
+* test/blueprint.rb
+* test/blueprint/*.rb
+You can pass :root option to override framework root and :filename option to pass custom filename pattern 
+
+== Setup
+
+The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
+
+    config.gem 'sinsiliux-blueprints', :lib => 'blueprints', :source => 'http://gems.github.com'
+
+If you’re not using rails, then you can install it through command line
+
+    gem sources -a http://gems.github.com
+    sudo gem install sinsiliux-blueprints
+
+Lastly you could use it as plugin:
+
+    ruby script/plugin install git://github.com/sinsiliux/blueprints.git
+
+Hornsby scenarios is activated by calling enable_blueprints. For specifics on how to call that in your testing framework see a little lower.
+enable_blueprintssupports these parameters:
+* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
+* filename - custom files pattern with blueprints plans
+* prebuild - list of blueprints plans that should be preloaded (available in all tests, never reloaded so they're much faster)
+
+=== RSpec
+
+Add the following to spec_helper.rb
+
+    Spec::Runner.configure do |config|
+      ...
+  
+      config.enable_blueprints :filename => 'scenarios.rb', :prebuild => :preloaded_scenario
+    end
+
+=== Test::Unit
+
+Add the following lines to test_helper.rb
+
+    class ActiveSupport::TestCase
+      ...
+
+      enable_blueprints
+    end
+
+== Advanced Usage
+
+Its just ruby, right? So go nuts:
+
+    1.upto(9) do |i|
+      plan("user_#{i}") do
+        user = User.create! :name => "user#{i}"
+        instance_variable_set("@user_#{i}",user)
+      end
+    end
+
+== Transactions
+
+Blueprints is transactional, meaning that after every test transaction is dropped and database is reset to
+starting point. Starting point is empty database + any scenarios that you specify in enable_blueprints.
+
+== TODO
+
+* Add plan namespaces for better organisation.
+* Add ability to revert one plan.
+* Add preloading plans for whole block of tests.
+* Fix rake tasks
+
+== Credits
+
+Andrius Chamentauskas <sinsiliux@gmail.com>
+
+The code is based on hornsby scenario plugin by Lachie Cox, which is based on Err's code found in this post: http://errtheblog.com/post/7708
+
+== License
+
+MIT, see LICENCE

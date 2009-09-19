@@ -1,0 +1,8 @@
+test:
+  adapter: mysql
+  socket: /var/run/mysqld/mysqld.sock
+  encoding: utf8
+  database: hornsby_test
+  username: root
+  password:
+  host: localhost
