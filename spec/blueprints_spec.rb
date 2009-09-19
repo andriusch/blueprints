@@ -121,12 +121,28 @@ describe Blueprints do
         demolish :undo => :orange
       }.should raise_error(ArgumentError)
     end
+  end
 
-    #it "should allow using custom delete policy" do
-    #  ActiveRecord::Base.connection.should_receive(:delete).with("TRUNCATE fruits")
-    #  ActiveRecord::Base.connection.should_receive(:delete).with("TRUNCATE trees")
-    #  demolish :delete_policy => :truncate
-    #end
+  describe 'delete policies' do
+    before do
+      Blueprints::Plan.plans.should_receive(:empty?).and_return(true)
+      Blueprints.should_receive(:load_scenarios_files).with(Blueprints::PLAN_FILES)
+      Blueprints::Plan.should_receive(:prebuild).with(nil)
+    end
+
+    it "should allow using custom delete policy" do
+      ActiveRecord::Base.connection.should_receive(:delete).with("TRUNCATE fruits")
+      ActiveRecord::Base.connection.should_receive(:delete).with("TRUNCATE trees")
+
+      Blueprints.load(:delete_policy => :truncate)
+    end
+
+    it "should default to :delete policy if unexisting policy given" do
+      ActiveRecord::Base.connection.should_receive(:delete).with("DELETE FROM fruits")
+      ActiveRecord::Base.connection.should_receive(:delete).with("DELETE FROM trees")
+
+      Blueprints.load(:delete_policy => :ukndown)
+    end
   end
 
   describe 'with many apples scenario' do
