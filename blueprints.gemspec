@@ -1,5 +1,5 @@
 GEM_NAME = "blueprints"
-GEM_VERSION = "0.1.0"
+GEM_VERSION = "0.1.1"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
     lib/blueprints/plan.rb
     lib/blueprints/rspec_extensions.rb
     lib/blueprints/test_unit_extensions.rb
-    lib/tasks/blueprints_tasks.rake
     README.rdoc
     LICENSE
   }
