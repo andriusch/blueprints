@@ -10,15 +10,13 @@ module Blueprints
     @@context = nil
 
     def self.setup
-      @@context = @@global_context.clone
+      @@context = YAML.load(@@global_context)
       @@executed_plans = @@global_executed_plans.clone
     end
 
-    def self.copy_ivars(to, reload = false)
+    def self.copy_ivars(to)
       @@context.instance_variables.each do |iv|
-        v = @@context.instance_variable_get(iv)
-        v.reload if reload and v.respond_to?(:reload)
-        to.instance_variable_set(iv, v)
+        to.instance_variable_set(iv, @@context.instance_variable_get(iv))
       end
     end
 
@@ -26,6 +24,7 @@ module Blueprints
       @@context = @@global_context
       @@global_scenarios = Plan.build(plans) if plans
       @@global_executed_plans = @@executed_plans
+      @@global_context = YAML.dump(@@global_context)
     end
 
     def self.build(*names)

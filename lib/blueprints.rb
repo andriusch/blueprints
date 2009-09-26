@@ -24,7 +24,7 @@ module Blueprints
 
   def self.setup(current_context)
     Plan.setup
-    Plan.copy_ivars(current_context, true)
+    Plan.copy_ivars(current_context)
     ActiveRecord::Base.connection.increment_open_transactions
     ActiveRecord::Base.connection.transaction_joinable = false
     ActiveRecord::Base.connection.begin_db_transaction
