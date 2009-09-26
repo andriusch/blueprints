@@ -1,6 +1,6 @@
 module Blueprints
   module FileContext
-    def self.plan(plan, &block)
+    def self.blueprint(plan, &block)
       Plan.new(plan, &block)
     end
   end
