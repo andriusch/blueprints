@@ -3,6 +3,7 @@ require 'activerecord'
 require 'test/unit'
 require 'active_record/test_case'
 require 'shoulda'
+require 'mocha'
 begin
   require 'mysqlplus'
 rescue LoadError

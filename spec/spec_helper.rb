@@ -19,5 +19,6 @@ require 'spec/db/fruit'
 require 'spec/db/tree'
 
 Spec::Runner.configure do |config|
+  config.mock_with :mocha
   config.enable_blueprints :root => File.expand_path(File.join(File.dirname(__FILE__), '..')), :prebuild => :big_cherry
 end
