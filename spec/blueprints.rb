@@ -39,3 +39,5 @@ Tree.blueprint :oak, :name => 'Oak', :size => 'large'
 blueprint :pine do
   @the_pine = Tree.blueprint :name => 'Pine', :size => 'medium'
 end
+
+Fruit.blueprint(:acorn, :species => 'Acorn', :tree => :@oak).depends_on(:oak)

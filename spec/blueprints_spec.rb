@@ -217,6 +217,13 @@ describe Blueprints do
       @the_pine.name.should == 'Pine'
       @the_pine.size.should == 'medium'
     end
+
+    it "should associate acorn with oak correctly" do
+      build :acorn
+      @oak.should_not be_nil
+      @acorn.should_not be_nil
+      @acorn.tree.should == @oak
+    end
   end
 
 #describe "with pitted namespace" do

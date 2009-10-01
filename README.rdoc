@@ -50,7 +50,12 @@ inside 'blueprint' block and they will be accessible in tests that build this bl
 Instead of SomeModel.create! you can also use SomeModel.blueprint, which does the same thing but also bypasses attr_protected
 and attr_accessible restrictions (which is what you usually want in tests).
 
-There's also a shorthand for these type of scenarios:
+All blueprints are run only once, no matter how many times they were called, meaning that you don't need to worry about
+duplicating data.
+
+=== Shorthands ===
+
+There's a shorthand for these type of scenarios:
 
     blueprint :something do
       @something = SomeModel.blueprint :field => 'value'
@@ -60,8 +65,19 @@ You can just type:
 
     SomeModel.blueprint :something, :field => 'value'
 
-All blueprints are run only once, no matter how many times they were called, meaning that you don't need to worry about
-duplicating data.
+If you need to make associations then:
+
+    SomeModel.blueprint :something, :associated_column => :@association_instance_variable
+
+And if you also need it to depend on other blueprints:
+
+    SomeModel.blueprint({:something => :some_blueprint}, :associated_column => :@some_iv)
+
+...or...
+
+    SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint) # I prefer this one
+
+=== Blueprints file ===
 
 Blueprints searches for blueprints files in this particular order in Rails (Merb) root:
 * blueprints.rb

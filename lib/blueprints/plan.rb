@@ -1,6 +1,6 @@
 module Blueprints
   class Plan
-    cattr_reader :plans
+    cattr_reader :plans, :context
     cattr_accessor :executed_plans
     @@plans = {}
     @@executed_plans = Set.new
@@ -35,8 +35,9 @@ module Blueprints
 
     attr_reader :name
 
-    def initialize(scenario, &block)
-      @name, @parents = parse_name(scenario)
+    def initialize(*scenario, &block)
+      @name, parents = parse_name(*scenario)
+      depends_on(*parents)
       @block = block
 
       @@plans[@name] = self
@@ -45,6 +46,10 @@ module Blueprints
     def build
       build_parent_plans(@@context)
       build_plan(@@context)   
+    end
+
+    def depends_on(*scenarios)
+      @parents = (@parents || []) + scenarios.map{|s| s.to_sym} 
     end
 
     protected

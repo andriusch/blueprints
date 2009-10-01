@@ -11,7 +11,10 @@ module ActiveRecord
         end
       else
         returning(self.new) do |object|
-          options.each {|attr, value| object.send("#{attr}=", value)}
+          options.each do |attr, value|
+            value = Blueprints::Plan.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
+            object.send("#{attr}=", value)
+          end
           object.save!
         end
       end
