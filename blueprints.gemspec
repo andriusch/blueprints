@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
     lib/blueprints/file_context.rb
     lib/blueprints/helper.rb
     lib/blueprints/plan.rb
+    lib/blueprints/ar_extensions.rb
     lib/blueprints/rspec_extensions.rb
     lib/blueprints/test_unit_extensions.rb
     README.rdoc
