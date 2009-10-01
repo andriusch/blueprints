@@ -47,6 +47,19 @@ Blueprints look like this:
 Result of 'blueprint' block is assigned to an instance variable with the same name. You can also assign your own instance variables
 inside 'blueprint' block and they will be accessible in tests that build this blueprint.
 
+Instead of SomeModel.create! you can also use SomeModel.blueprint, which does the same thing but also bypasses attr_protected
+and attr_accessible restrictions (which is what you usually want in tests).
+
+There's also a shorthand for these type of scenarios:
+
+    blueprint :something do
+      @something = SomeModel.blueprint :field => 'value'
+    end
+
+You can just type:
+
+    SomeModel.blueprint :something, :field => 'value'
+
 All blueprints are run only once, no matter how many times they were called, meaning that you don't need to worry about
 duplicating data.
 

@@ -2,6 +2,7 @@ require File.join(File.dirname(__FILE__), 'blueprints/plan')
 require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
 require File.join(File.dirname(__FILE__), 'blueprints/errors')
+require File.join(File.dirname(__FILE__), 'blueprints/ar_extensions')
 if defined? Spec
   require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
 else

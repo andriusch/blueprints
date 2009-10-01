@@ -6,5 +6,6 @@ ActiveRecord::Schema.define(:version => 0) do
 
   create_table :trees, :force => true do |t|
     t.string :name
+    t.string :size
   end
 end

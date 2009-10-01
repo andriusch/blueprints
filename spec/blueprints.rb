@@ -33,3 +33,9 @@ blueprint :cherry_basket => [:big_cherry, :cherry] do
 end
 
 blueprint :parent_not_existing => :not_existing
+
+Tree.blueprint :oak, :name => 'Oak', :size => 'large'
+
+blueprint :pine do
+  @the_pine = Tree.blueprint :name => 'Pine', :size => 'medium'
+end

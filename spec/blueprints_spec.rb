@@ -203,6 +203,22 @@ describe Blueprints do
     end
   end
 
+  describe 'with active record blueprints extensions' do
+    it "should build oak correctly" do
+      build :oak
+      @oak.should_not be_nil
+      @oak.name.should == 'Oak'
+      @oak.size.should == 'large'
+    end
+
+    it "should build pine correctly" do
+      build :pine
+      @the_pine.should_not be_nil
+      @the_pine.name.should == 'Pine'
+      @the_pine.size.should == 'medium'
+    end
+  end
+
 #describe "with pitted namespace" do
 #  before do
 #    Hornsby.build('pitted:peach').copy_ivars(self)
