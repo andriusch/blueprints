@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
 require File.join(File.dirname(__FILE__), 'blueprints/errors')
 require File.join(File.dirname(__FILE__), 'blueprints/ar_extensions')
-if defined? Spec
+if defined? Spec or $0 =~ /script.spec$/
   require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
 else
   require File.join(File.dirname(__FILE__), 'blueprints/test_unit_extensions')
