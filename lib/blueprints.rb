@@ -1,8 +1,9 @@
+require 'activesupport'
 require File.join(File.dirname(__FILE__), 'blueprints/plan')
 require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
 require File.join(File.dirname(__FILE__), 'blueprints/errors')
-require File.join(File.dirname(__FILE__), 'blueprints/ar_extensions')
+require File.join(File.dirname(__FILE__), 'blueprints/ar_extensions') if defined?(ActiveRecord)
 if defined? Spec or $0 =~ /script.spec$/
   require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
 else
@@ -26,14 +27,18 @@ module Blueprints
   def self.setup(current_context)
     Plan.setup
     Plan.copy_ivars(current_context)
-    ActiveRecord::Base.connection.increment_open_transactions
-    ActiveRecord::Base.connection.transaction_joinable = false
-    ActiveRecord::Base.connection.begin_db_transaction
+    if defined?(ActiveRecord)
+      ActiveRecord::Base.connection.increment_open_transactions
+      ActiveRecord::Base.connection.transaction_joinable = false
+      ActiveRecord::Base.connection.begin_db_transaction
+    end
   end
 
   def self.teardown
-    ActiveRecord::Base.connection.rollback_db_transaction
-    ActiveRecord::Base.connection.decrement_open_transactions
+    if defined?(ActiveRecord)
+      ActiveRecord::Base.connection.rollback_db_transaction
+      ActiveRecord::Base.connection.decrement_open_transactions
+    end
   end
 
   def self.load(options = {})
@@ -63,8 +68,10 @@ module Blueprints
   end
   
   def self.delete_tables(*args)
-    args = tables if args.blank?
-    args.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
+    if defined?(ActiveRecord)
+      args = tables if args.blank?
+      args.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
+    end
   end
 
   def self.tables
