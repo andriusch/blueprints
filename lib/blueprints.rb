@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), 'blueprints/plan')
 require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
 require File.join(File.dirname(__FILE__), 'blueprints/errors')
-require File.join(File.dirname(__FILE__), 'blueprints/ar_extensions') if defined?(ActiveRecord)
 if defined? Spec or $0 =~ /script.spec$/
   require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
 else
@@ -17,6 +16,7 @@ module Blueprints
       ["#{path}.rb", File.join(path, "*.rb")]
     end
   end.flatten
+  SUPPORTED_ORMS = [:none, :active_record]
 
   DELETE_POLICIES = {:delete => "DELETE FROM %s", :truncate => "TRUNCATE %s"}
 
@@ -27,7 +27,7 @@ module Blueprints
   def self.setup(current_context)
     Plan.setup
     Plan.copy_ivars(current_context)
-    if defined?(ActiveRecord)
+    unless @@orm == :none
       ActiveRecord::Base.connection.increment_open_transactions
       ActiveRecord::Base.connection.transaction_joinable = false
       ActiveRecord::Base.connection.begin_db_transaction
@@ -35,15 +35,21 @@ module Blueprints
   end
 
   def self.teardown
-    if defined?(ActiveRecord)
+    unless @@orm == :none
       ActiveRecord::Base.connection.rollback_db_transaction
       ActiveRecord::Base.connection.decrement_open_transactions
     end
   end
 
   def self.load(options = {})
-    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root)
+    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm)
+    options.symbolize_keys!
     return unless Plan.plans.empty?
+
+    @@orm = (options.delete(:orm) || :active_record).to_sym
+    raise ArgumentError, "Unsupported ORM #{@@orm}. Blueprints supports only #{SUPPORTED_ORMS.join(', ')}" unless SUPPORTED_ORMS.include?(@@orm)
+
+    require File.join(File.dirname(__FILE__), 'blueprints', 'ar_extensions') unless @@orm == :none
 
     @@delete_sql = DELETE_POLICIES[options[:delete_policy]] || DELETE_POLICIES[:delete]                              
     delete_tables
@@ -68,7 +74,7 @@ module Blueprints
   end
   
   def self.delete_tables(*args)
-    if defined?(ActiveRecord)
+    unless @@orm == :none
       args = tables if args.blank?
       args.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
     end

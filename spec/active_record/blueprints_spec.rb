@@ -1,9 +1,13 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe Blueprints do
-  describe "scenario files" do
+  describe "constants" do
     it "should be loaded from specified dirs" do
-      Blueprints::PLAN_FILES.should == ["blueprint.rb", "blueprint/*.rb", "blueprints.rb", "blueprints/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "spec/blueprints.rb", "spec/blueprints/*.rb", "test/blueprint.rb", "test/blueprint/*.rb", "test/blueprints.rb", "test/blueprints/*.rb"]   
+      Blueprints::PLAN_FILES.should == ["blueprint.rb", "blueprint/*.rb", "blueprints.rb", "blueprints/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "spec/blueprints.rb", "spec/blueprints/*.rb", "test/blueprint.rb", "test/blueprint/*.rb", "test/blueprints.rb", "test/blueprints/*.rb"]
+    end
+
+    it "should support required ORMS" do
+      Blueprints::SUPPORTED_ORMS.should == [:none, :active_record]
     end
   end
 
@@ -189,7 +193,7 @@ describe Blueprints do
         build :not_existing
       }.should raise_error(Blueprints::PlanNotFoundError, "Plan(s) not found 'not_existing'")
     end
-    
+
     it 'should raise ScenarioNotFoundError when scenario parent could not be found' do
       lambda {
         build :parent_not_existing
@@ -200,6 +204,13 @@ describe Blueprints do
       lambda {
         Blueprints::Plan.new(1)
       }.should raise_error(TypeError, "Pass plan names as strings or symbols only, cannot build plan 1")
+    end
+
+    it "should raise ArgumentError when unknown ORM specified" do
+      Blueprints::Plan.plans.expects(:empty?).returns(true)
+      lambda {
+        Blueprints.load(:orm => :unknown)
+      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only none, active_record")
     end
   end
 

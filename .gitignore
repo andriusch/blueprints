@@ -1,4 +1,4 @@
 .idea
 *.gem
-spec/db/database.yml
+spec/active_record/fixtures/database.yml
 debug.log
