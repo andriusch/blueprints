@@ -23,12 +23,17 @@ Gem::Specification.new do |s|
   }
   s.require_path = "lib"
   s.test_files = %w{
-    spec/spec_helper.rb
-    spec/blueprints_spec.rb
-    spec/blueprints.rb
-    spec/db/fruit.rb
-    spec/db/database.yml.example
-    spec/db/schema.rb
+    spec/no_db/spec_helper.rb
+    spec/no_db/blueprints_spec.rb
+    spec/no_db/blueprints.rb
+    spec/no_db/fixtures/fruit.rb
+    spec/active_record/spec_helper.rb
+    spec/active_record/blueprints_spec.rb
+    spec/active_record/blueprints.rb
+    spec/active_record/fixtures/fruit.rb
+    spec/active_record/fixtures/tree.rb
+    spec/active_record/fixtures/database.yml.example
+    spec/active_record/fixtures/schema.rb
     test/test_helper.rb
     test/blueprints_test.rb
   }
