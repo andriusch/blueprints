@@ -18,11 +18,11 @@ Gem::Specification.new do |s|
   s.test_files = %w{
     spec/no_db/spec_helper.rb
     spec/no_db/blueprints_spec.rb
-    spec/no_db/blueprints.rb
+    spec/no_db/blueprint.rb
     spec/no_db/fixtures/fruit.rb
     spec/active_record/spec_helper.rb
     spec/active_record/blueprints_spec.rb
-    spec/active_record/blueprints.rb
+    spec/active_record/blueprint.rb
     spec/active_record/fixtures/fruit.rb
     spec/active_record/fixtures/tree.rb
     spec/active_record/fixtures/database.yml.example
