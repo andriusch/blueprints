@@ -254,6 +254,13 @@ describe Blueprints do
       @acorn.species.should == 'pitted acorn'
       @oak.should_not be_nil
     end
+
+    describe "with red namespace" do
+      it "should allow building nested namespaces scenarios" do
+        build 'pitted.red.apple'
+        @apple.species.should == 'pitted red apple'
+      end
+    end
   end
 end
 
