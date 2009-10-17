@@ -4,20 +4,13 @@ GEM_VERSION = "0.2.4"
 Gem::Specification.new do |s|
   s.name = GEM_NAME
   s.version = GEM_VERSION
-  s.authors = ["Andrius Chamentauskas"]
+  s.author = "Andrius Chamentauskas"
   s.email = "sinsiliux@gmail.com"
   s.homepage = "http://github.com/sinsiliux/blueprints"
   s.platform = Gem::Platform::RUBY
   s.summary = "Another replacement for factories and fixtures"
-  s.files = %w{
-    lib/blueprints.rb
-    lib/blueprints/errors.rb
-    lib/blueprints/file_context.rb
-    lib/blueprints/helper.rb
-    lib/blueprints/plan.rb
-    lib/blueprints/ar_extensions.rb
-    lib/blueprints/rspec_extensions.rb
-    lib/blueprints/test_unit_extensions.rb
+  s.description = "Another replacement for factories and fixtures. The library that lazy typists will love"
+  s.files = Dir['lib/**/*.rb'] + %w{
     README.rdoc
     LICENSE
   }
@@ -38,5 +31,5 @@ Gem::Specification.new do |s|
     test/blueprints_test.rb
   }
   s.has_rdoc = false
-  s.add_dependency("activerecord", ">= 2.0.0")
+  s.add_dependency("activesupport", ">= 2.0.0")
 end
