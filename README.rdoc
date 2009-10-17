@@ -80,16 +80,10 @@ And if you also need it to depend on other blueprints:
 === Blueprints file ===
 
 Blueprints searches for blueprints files in this particular order in Rails (Merb) root:
-* blueprints.rb
-* blueprints/*.rb
 * blueprint.rb
 * blueprint/*.rb
-* spec/blueprints.rb
-* spec/blueprints/*.rb
 * spec/blueprint.rb
 * spec/blueprint/*.rb
-* test/blueprints.rb
-* test/blueprints/*.rb
 * test/blueprint.rb
 * test/blueprint/*.rb
 You can pass :root option to override framework root and :filename option to pass custom filename pattern 

@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe Blueprints do
   describe "constants" do
     it "should be loaded from specified dirs" do
-      Blueprints::PLAN_FILES.should == ["blueprint.rb", "blueprint/*.rb", "blueprints.rb", "blueprints/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "spec/blueprints.rb", "spec/blueprints/*.rb", "test/blueprint.rb", "test/blueprint/*.rb", "test/blueprints.rb", "test/blueprints/*.rb"]
+      Blueprints::PLAN_FILES.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"]
     end
 
     it "should support required ORMS" do

@@ -14,7 +14,7 @@ end
 
 module Blueprints
   PLAN_FILES = [nil, "spec", "test"].map do |dir|
-    ["blueprint", "blueprints"].map do |file|
+    ["blueprint"].map do |file|
       path = File.join([dir, file].compact)
       ["#{path}.rb", File.join(path, "*.rb")]
     end
