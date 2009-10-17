@@ -238,9 +238,21 @@ describe Blueprints do
   end
 
   describe "with pitted namespace" do
-    it "should have @peach" do
+    it "should allow building namespaced scenarios" do
+      build 'pitted.peach_tree'
+      @peach_tree.name.should == 'pitted peach tree'
+    end
+    
+    it "should allow adding dependencies from same namespace" do
       build 'pitted.peach'
       @peach.species.should == 'pitted peach'
+      @peach_tree.should_not be_nil
+    end
+
+    it "should allow adding dependencies from root namespace" do
+      build 'pitted.acorn'
+      @acorn.species.should == 'pitted acorn'
+      @oak.should_not be_nil
     end
   end
 end

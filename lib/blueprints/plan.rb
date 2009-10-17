@@ -1,6 +1,7 @@
 module Blueprints
   class Plan
     attr_reader :name
+    attr_accessor :namespace
 
     def initialize(*scenario, &block)
       @name, parents = parse_name(*scenario)
@@ -12,11 +13,11 @@ module Blueprints
 
     def build
       build_parent_plans(Namespace.root.context)
-      build_plan(Namespace.root.context)   
+      build_plan(Namespace.root.context)
     end
 
     def depends_on(*scenarios)
-      @parents = (@parents || []) + scenarios.map{|s| s.to_sym} 
+      @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
     end
 
     protected
@@ -49,7 +50,11 @@ module Blueprints
 
     def build_parent_plans(context)
       @parents.each do |p|
-        parent = Namespace.root[p]
+        parent = begin
+          namespace[p]
+        rescue PlanNotFoundError
+          Namespace.root[p]
+        end
 
         parent.build_parent_plans(context)
         parent.build_plan(context)

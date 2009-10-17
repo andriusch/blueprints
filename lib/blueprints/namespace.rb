@@ -1,8 +1,8 @@
 module Blueprints
   class Namespace
-    #include Enumerable
     cattr_accessor :root
     attr_reader :name
+    attr_accessor :namespace
     delegate :empty?, :size, :to => :@children
 
     def initialize(name = '')
@@ -13,6 +13,7 @@ module Blueprints
     def add_child(child)
       #TODO: Raise error for duplicate children!
       @children[child.name] = child
+      child.namespace = self
     end
 
     def [](path)
