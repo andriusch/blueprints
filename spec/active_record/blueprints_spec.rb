@@ -255,6 +255,15 @@ describe Blueprints do
       @oak.should_not be_nil
     end
 
+    it "should allow building whole namespace" do
+      build :pitted
+      @peach_tree.should_not be_nil
+      @peach.should_not be_nil
+      @acorn.should_not be_nil
+      @apple.should_not be_nil
+      @pitted.should =~ [@peach_tree, @peach, @acorn, [@apple]]
+    end
+
     describe "with red namespace" do
       it "should allow building nested namespaces scenarios" do
         build 'pitted.red.apple'

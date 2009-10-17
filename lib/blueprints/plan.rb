@@ -12,8 +12,8 @@ module Blueprints
     end
 
     def build
-      build_parent_plans(Namespace.root.context)
-      build_plan(Namespace.root.context)
+      build_parent_plans
+      build_plan
     end
 
     def depends_on(*scenarios)
@@ -37,18 +37,19 @@ module Blueprints
       puts messages.map { |message| "=> #{message}" }
     end
 
-    def build_plan(context)
+    def build_plan
+      result = nil
       surface_errors do
         if @block
-          result = context.module_eval(&@block)
-          iv_name = :"@#{@name}"
-          context.instance_variable_set(iv_name, result) unless context.instance_variable_get(iv_name)
+          result = Namespace.root.context.module_eval(&@block)
+          Namespace.root.add_variable(@name, result)
         end
       end unless Namespace.root.executed_plans.include?(@name)
       Namespace.root.executed_plans << @name
+      result
     end
 
-    def build_parent_plans(context)
+    def build_parent_plans
       @parents.each do |p|
         parent = begin
           namespace[p]
@@ -56,8 +57,8 @@ module Blueprints
           Namespace.root[p]
         end
 
-        parent.build_parent_plans(context)
-        parent.build_plan(context)
+        parent.build_parent_plans
+        parent.build_plan
       end
     end
 

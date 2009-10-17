@@ -25,5 +25,9 @@ module Blueprints
         child
       end
     end
+
+    def build
+      Namespace.root.add_variable(name, @children.collect {|p| p.last.build }.uniq)
+    end
   end
 end

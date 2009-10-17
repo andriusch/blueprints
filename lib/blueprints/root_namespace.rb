@@ -33,6 +33,11 @@ module Blueprints
       names.map {|name| self[name].build}
     end
 
+    def add_variable(name, value, no_overwrite = false)
+      name = "@#{name}" unless name.to_s[0, 1] == "@" 
+      @context.instance_variable_set(name, value) unless no_overwrite and @context.instance_variable_get(name)
+    end
+
     @@root = RootNamespace.new
   end
 end
