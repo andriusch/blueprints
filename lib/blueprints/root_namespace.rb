@@ -8,7 +8,7 @@ module Blueprints
       @global_executed_plans = Set.new
       @global_context = Module.new
 
-      super
+      super ''
     end
 
     def setup
@@ -33,9 +33,9 @@ module Blueprints
       names.map {|name| self[name].build}
     end
 
-    def add_variable(name, value, no_overwrite = false)
+    def add_variable(name, value)
       name = "@#{name}" unless name.to_s[0, 1] == "@" 
-      @context.instance_variable_set(name, value) unless no_overwrite and @context.instance_variable_get(name)
+      @context.instance_variable_set(name, value) unless @context.instance_variable_get(name)
     end
 
     @@root = RootNamespace.new

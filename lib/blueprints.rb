@@ -1,4 +1,5 @@
 require 'activesupport'
+require File.join(File.dirname(__FILE__), 'blueprints/buildable')
 require File.join(File.dirname(__FILE__), 'blueprints/namespace')
 require File.join(File.dirname(__FILE__), 'blueprints/root_namespace')
 require File.join(File.dirname(__FILE__), 'blueprints/plan')

@@ -1,12 +1,10 @@
 module Blueprints
-  class Namespace
+  class Namespace < Buildable
     cattr_accessor :root
-    attr_reader :name
-    attr_accessor :namespace
     delegate :empty?, :size, :to => :@children
 
-    def initialize(name = '')
-      @name = name
+    def initialize(name)
+      super(name)
       @children = {}
     end
 
