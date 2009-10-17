@@ -129,9 +129,9 @@ describe Blueprints do
 
   describe 'delete policies' do
     before do
-      Blueprints::Plan.plans.expects(:empty?).returns(true)
+      Blueprints::Namespace.root.expects(:empty?).returns(true)
       Blueprints.expects(:load_scenarios_files).with(Blueprints::PLAN_FILES)
-      Blueprints::Plan.expects(:prebuild).with(nil)
+      Blueprints::Namespace.root.expects(:prebuild).with(nil)
     end
 
     it "should allow using custom delete policy" do
@@ -191,13 +191,13 @@ describe Blueprints do
     it 'should raise ScenarioNotFoundError when scenario could not be found' do
       lambda {
         build :not_existing
-      }.should raise_error(Blueprints::PlanNotFoundError, "Plan(s) not found 'not_existing'")
+      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'")
     end
 
     it 'should raise ScenarioNotFoundError when scenario parent could not be found' do
       lambda {
         build :parent_not_existing
-      }.should raise_error(Blueprints::PlanNotFoundError, "Plan(s) not found 'not_existing'")
+      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'")
     end
 
     it 'should raise TypeError when scenario name is not symbol or string' do
@@ -207,7 +207,7 @@ describe Blueprints do
     end
 
     it "should raise ArgumentError when unknown ORM specified" do
-      Blueprints::Plan.plans.expects(:empty?).returns(true)
+      Blueprints::Namespace.root.expects(:empty?).returns(true)
       lambda {
         Blueprints.load(:orm => :unknown)
       }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only none, active_record")
@@ -237,14 +237,11 @@ describe Blueprints do
     end
   end
 
-#describe "with pitted namespace" do
-#  before do
-#    Hornsby.build('pitted:peach').copy_ivars(self)
-#  end
-
-#  it "should have @peach" do
-#    @peach.species.should == 'peach'
-#  end
-#end
+  describe "with pitted namespace" do
+    it "should have @peach" do
+      build 'pitted.peach'
+      @peach.species.should == 'pitted peach'
+    end
+  end
 end
 

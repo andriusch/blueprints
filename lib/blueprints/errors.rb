@@ -5,7 +5,7 @@ module Blueprints
     end
 
     def to_s
-      "Plan(s) not found '#{@plans.join(',')}'"
+      "Plan/namespace not found '#{@plans.join(',')}'"
     end
   end
 end

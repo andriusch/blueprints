@@ -1,38 +1,5 @@
 module Blueprints
   class Plan
-    cattr_reader :plans, :context
-    cattr_accessor :executed_plans
-    @@plans = {}
-    @@executed_plans = Set.new
-    @@global_executed_plans = Set.new
-
-    @@global_context = Module.new
-    @@context = nil
-
-    def self.setup
-      @@context = YAML.load(@@global_context)
-      @@executed_plans = @@global_executed_plans.clone
-    end
-
-    def self.copy_ivars(to)
-      @@context.instance_variables.each do |iv|
-        to.instance_variable_set(iv, @@context.instance_variable_get(iv))
-      end
-    end
-
-    def self.prebuild(plans)
-      @@context = @@global_context
-      @@global_scenarios = Plan.build(plans) if plans
-      @@global_executed_plans = @@executed_plans
-      @@global_context = YAML.dump(@@global_context)
-    end
-
-    def self.build(*names)
-      names.map {|name| @@plans[name.to_sym] or raise PlanNotFoundError, name}.each {|p| p.build}
-    end
-
-    # Instance
-
     attr_reader :name
 
     def initialize(*scenario, &block)
@@ -40,12 +7,12 @@ module Blueprints
       depends_on(*parents)
       @block = block
 
-      @@plans[@name] = self
+      Namespace.root.add_child(self)
     end
 
     def build
-      build_parent_plans(@@context)
-      build_plan(@@context)   
+      build_parent_plans(Namespace.root.context)
+      build_plan(Namespace.root.context)   
     end
 
     def depends_on(*scenarios)
@@ -76,13 +43,13 @@ module Blueprints
           iv_name = :"@#{@name}"
           context.instance_variable_set(iv_name, result) unless context.instance_variable_get(iv_name)
         end
-      end unless @@executed_plans.include?(@name)
-      @@executed_plans << @name
+      end unless Namespace.root.executed_plans.include?(@name)
+      Namespace.root.executed_plans << @name
     end
 
     def build_parent_plans(context)
       @parents.each do |p|
-        parent = @@plans[p] or raise PlanNotFoundError, p
+        parent = Namespace.root[p]
 
         parent.build_parent_plans(context)
         parent.build_plan(context)

@@ -41,3 +41,7 @@ blueprint :pine do
 end
 
 Fruit.blueprint(:acorn, :species => 'Acorn', :tree => :@oak).depends_on(:oak)
+
+namespace :pitted do
+  Fruit.blueprint :peach, :species => 'pitted peach'
+end

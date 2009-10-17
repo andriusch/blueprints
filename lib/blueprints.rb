@@ -1,4 +1,6 @@
 require 'activesupport'
+require File.join(File.dirname(__FILE__), 'blueprints/namespace')
+require File.join(File.dirname(__FILE__), 'blueprints/root_namespace')
 require File.join(File.dirname(__FILE__), 'blueprints/plan')
 require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
@@ -25,8 +27,8 @@ module Blueprints
   end
 
   def self.setup(current_context)
-    Plan.setup
-    Plan.copy_ivars(current_context)
+    Namespace.root.setup
+    Namespace.root.copy_ivars(current_context)
     unless @@orm == :none
       ActiveRecord::Base.connection.increment_open_transactions
       ActiveRecord::Base.connection.transaction_joinable = false
@@ -44,7 +46,7 @@ module Blueprints
   def self.load(options = {})
     options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm)
     options.symbolize_keys!
-    return unless Plan.plans.empty?
+    return unless Namespace.root.empty?
 
     @@orm = (options.delete(:orm) || :active_record).to_sym
     raise ArgumentError, "Unsupported ORM #{@@orm}. Blueprints supports only #{SUPPORTED_ORMS.join(', ')}" unless SUPPORTED_ORMS.include?(@@orm)
@@ -56,7 +58,7 @@ module Blueprints
     @@framework_root = options[:root] if options[:root]
     load_scenarios_files(options[:filename] || PLAN_FILES)
 
-    Plan.prebuild(options[:prebuild])
+    Namespace.root.prebuild(options[:prebuild])
   end
 
   def self.load_scenarios_files(*patterns)

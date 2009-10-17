@@ -1,4 +1,4 @@
-require 'active_record'
+require 'activerecord'
 
 module ActiveRecord
   class Base
@@ -12,7 +12,7 @@ module ActiveRecord
       else
         returning(self.new) do |object|
           options.each do |attr, value|
-            value = Blueprints::Plan.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
+            value = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
             object.send("#{attr}=", value)
           end
           object.save!
