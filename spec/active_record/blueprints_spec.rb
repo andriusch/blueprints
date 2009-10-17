@@ -264,6 +264,11 @@ describe Blueprints do
       @pitted.should =~ [@peach_tree, @peach, @acorn, [@apple]]
     end
 
+    it "should load dependencies when building namespaced blueprint if namespace has any" do
+      build 'pitted.peach'
+      @the_pine.should_not be_nil
+    end
+
     describe "with red namespace" do
       it "should allow building nested namespaces scenarios" do
         build 'pitted.red.apple'

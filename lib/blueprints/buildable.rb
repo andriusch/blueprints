@@ -14,7 +14,26 @@ module Blueprints
       @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
     end
 
+    def build
+      namespace.build_parent_plans
+      build_parent_plans
+      build_plan
+    end
+
     protected
+
+    def build_parent_plans
+      @parents.each do |p|
+        parent = begin
+          namespace[p]
+        rescue PlanNotFoundError
+          Namespace.root[p]
+        end
+
+        parent.build_parent_plans
+        parent.build_plan
+      end
+    end
 
     def parse_name(name)
       case name

@@ -5,13 +5,6 @@ module Blueprints
       @block = block
     end
 
-    def build
-      build_parent_plans
-      build_plan
-    end
-
-    protected
-    
     def build_plan
       surface_errors do
         if @block
@@ -23,18 +16,7 @@ module Blueprints
       @result
     end
 
-    def build_parent_plans
-      @parents.each do |p|
-        parent = begin
-          namespace[p]
-        rescue PlanNotFoundError
-          Namespace.root[p]
-        end
-
-        parent.build_parent_plans
-        parent.build_plan
-      end
-    end
+    private
 
     def surface_errors
       yield
