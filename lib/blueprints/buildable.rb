@@ -22,6 +22,10 @@ module Blueprints
 
     protected
 
+    def path
+      @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+    end
+
     def build_parent_plans
       @parents.each do |p|
         parent = begin

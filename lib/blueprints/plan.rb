@@ -9,7 +9,7 @@ module Blueprints
       surface_errors do
         if @block
           @result = Namespace.root.context.module_eval(&@block)
-          Namespace.root.add_variable(@name, @result)
+          Namespace.root.add_variable(path, @result)
         end
       end unless Namespace.root.executed_plans.include?(@name)
       Namespace.root.executed_plans << @name
