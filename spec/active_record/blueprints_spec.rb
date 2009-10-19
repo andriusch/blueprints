@@ -242,7 +242,7 @@ describe Blueprints do
       build 'pitted.peach_tree'
       @pitted_peach_tree.name.should == 'pitted peach tree'
     end
-    
+
     it "should allow adding dependencies from same namespace" do
       build 'pitted.peach'
       @pitted_peach.species.should == 'pitted peach'
@@ -257,7 +257,6 @@ describe Blueprints do
 
     it "should allow building whole namespace" do
       build :pitted
-      p instance_variables
       @pitted_peach_tree.should_not be_nil
       @pitted_peach.should_not be_nil
       @pitted_acorn.should_not be_nil
@@ -265,12 +264,13 @@ describe Blueprints do
       @pitted.should =~ [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]]
     end
 
-    it "should load dependencies when building namespaced blueprint if namespace has any" do
-      build 'pitted.peach'
-      @the_pine.should_not be_nil
-    end
-
     describe "with red namespace" do
+      it "should load dependencies when building namespaced blueprint if parent namespaces have any" do
+        build 'pitted.red.apple'
+        @the_pine.should_not be_nil
+        @orange.should_not be_nil
+      end
+
       it "should allow building nested namespaces scenarios" do
         build 'pitted.red.apple'
         @pitted_red_apple.species.should == 'pitted red apple'

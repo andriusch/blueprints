@@ -7,7 +7,7 @@ module Blueprints
       @name, parents = parse_name(name)
       depends_on(*parents)
 
-      Namespace.root.add_child(self) if Namespace.root 
+      Namespace.root.add_child(self) if Namespace.root
     end
 
     def depends_on(*scenarios)
@@ -15,7 +15,8 @@ module Blueprints
     end
 
     def build
-      namespace.build_parent_plans
+      namespace = self
+      namespace.build_parent_plans while namespace = namespace.namespace
       build_parent_plans
       build_plan
     end
@@ -34,8 +35,7 @@ module Blueprints
           Namespace.root[p]
         end
 
-        parent.build_parent_plans
-        parent.build_plan
+        parent.build
       end
     end
 
