@@ -11,8 +11,8 @@ module Blueprints
           @result = Namespace.root.context.module_eval(&@block)
           Namespace.root.add_variable(path, @result)
         end
-      end unless Namespace.root.executed_plans.include?(@name)
-      Namespace.root.executed_plans << @name
+      end unless Namespace.root.executed_plans.include?(path)
+      Namespace.root.executed_plans << path
       @result
     end
 

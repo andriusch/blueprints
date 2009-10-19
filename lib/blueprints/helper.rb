@@ -14,7 +14,7 @@ module Blueprints
       if options[:undo] == :all
         Namespace.root.executed_plans.clear
       else
-        undo = [options[:undo]].flatten.compact
+        undo = [options[:undo]].flatten.compact.collect {|bp| bp.to_s }
         unless (not_found = undo - Namespace.root.executed_plans.to_a).blank?
           raise(PlanNotFoundError, not_found)
         end

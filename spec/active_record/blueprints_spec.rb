@@ -265,6 +265,12 @@ describe Blueprints do
     end
 
     describe "with red namespace" do
+      it "should allow building blueprint with same name in different namespaces" do
+        build :apple, 'pitted.red.apple'
+        @apple.species.should == 'apple'
+        @pitted_red_apple.species.should == 'pitted red apple'
+      end
+
       it "should load dependencies when building namespaced blueprint if parent namespaces have any" do
         build 'pitted.red.apple'
         @the_pine.should_not be_nil
