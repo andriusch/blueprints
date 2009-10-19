@@ -24,7 +24,7 @@ module Blueprints
 
     def prebuild(plans)
       @context = @global_context
-      @global_scenarios = build(plans) if plans
+      @global_scenarios = build(*plans) if plans
       @global_executed_plans = @executed_plans
       @global_context = YAML.dump(@global_context)
     end
