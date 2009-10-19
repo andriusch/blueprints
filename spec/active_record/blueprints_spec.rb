@@ -123,7 +123,7 @@ describe Blueprints do
     it "should raise error when not executed scenarios passed to :undo option" do
       lambda {
         demolish :undo => :orange
-      }.should raise_error(ArgumentError)
+      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'orange'")
     end
   end
 

@@ -16,7 +16,7 @@ module Blueprints
       else
         undo = [options[:undo]].flatten.compact
         unless (not_found = undo - Namespace.root.executed_plans.to_a).blank?
-          raise(ArgumentError, "Scenario(s) #{not_found} not found")
+          raise(PlanNotFoundError, not_found)
         end
         Namespace.root.executed_plans -= undo
       end
