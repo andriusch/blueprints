@@ -1,5 +1,5 @@
 GEM_NAME = "blueprints"
-GEM_VERSION = "0.3.1"
+GEM_VERSION = "0.3.3"
 
 Gem::Specification.new do |s|
   s.name = GEM_NAME
