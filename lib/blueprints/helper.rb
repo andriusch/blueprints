@@ -1,8 +1,9 @@
 module Blueprints
   module Helper
     def build_plan(*names)
-      Namespace.root.build(*names)
+      result = Namespace.root.build(*names).last
       Namespace.root.copy_ivars(self)
+      result
     end
 
     alias :build :build_plan

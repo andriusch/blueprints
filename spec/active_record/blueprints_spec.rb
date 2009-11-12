@@ -11,6 +11,14 @@ describe Blueprints do
     end
   end
 
+  it "should return result of built scenario when calling build" do
+    fruit = build :fruit
+    fruit.should == @fruit
+
+    apple = build :apple
+    apple.should == @apple
+  end
+
   describe "with apple scenario" do
     before do
       build :apple
