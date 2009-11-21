@@ -53,7 +53,7 @@ and attr_accessible restrictions (which is what you usually want in tests).
 All blueprints are run only once, no matter how many times they were called, meaning that you don't need to worry about
 duplicating data.
 
-=== Shorthands ===
+=== Shorthands
 
 There's a shorthand for these type of scenarios:
 
@@ -77,7 +77,7 @@ And if you also need it to depend on other blueprints:
 
     SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint) # I prefer this one
 
-=== Blueprints file ===
+=== Blueprints file
 
 Blueprints searches for blueprints files in this particular order in Rails (Merb) root:
 * blueprint.rb
@@ -135,9 +135,8 @@ Add the following lines to test_helper.rb
 Its just ruby, right? So go nuts:
 
     1.upto(9) do |i|
-      plan("user_#{i}") do
-        user = User.create! :name => "user#{i}"
-        instance_variable_set("@user_#{i}",user)
+      blueprint("user_#{i}") do
+        User.create! :name => "user#{i}"
       end
     end
 
@@ -148,7 +147,6 @@ starting point. Starting point is empty database + any scenarios that you specif
 
 == TODO
 
-* Add plan namespaces for better organisation.
 * Add ability to revert one plan.
 * Add preloading plans for whole block of tests.
 * Fix rake tasks
