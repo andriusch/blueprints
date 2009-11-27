@@ -7,7 +7,7 @@ describe Blueprints do
     end
 
     it "should support required ORMS" do
-      Blueprints::SUPPORTED_ORMS.should == [:none, :active_record]
+      Blueprints.supported_orms.should == [:active_record, :none]
     end
   end
 
@@ -221,7 +221,7 @@ describe Blueprints do
       Blueprints::Namespace.root.expects(:empty?).returns(true)
       lambda {
         Blueprints.load(:orm => :unknown)
-      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only none, active_record")
+      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only active_record, none")
     end
   end
 

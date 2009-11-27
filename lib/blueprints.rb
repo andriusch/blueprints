@@ -17,7 +17,10 @@ module Blueprints
       ["#{path}.rb", File.join(path, "*.rb")]
     end
   end.flatten
-  SUPPORTED_ORMS = [:none, :active_record]
+
+  def self.supported_orms
+    (DatabaseBackends.constants - ['Abstract']).collect {|class_name| class_name.underscore.to_sym }
+  end
 
   def self.framework_root
     @@framework_root ||= RAILS_ROOT rescue Rails.root rescue Merb.root rescue nil
@@ -39,7 +42,7 @@ module Blueprints
     return unless Namespace.root.empty?
 
     orm = (options.delete(:orm) || :active_record).to_sym
-    raise ArgumentError, "Unsupported ORM #{orm}. Blueprints supports only #{SUPPORTED_ORMS.join(', ')}" unless SUPPORTED_ORMS.include?(orm)
+    raise ArgumentError, "Unsupported ORM #{orm}. Blueprints supports only #{supported_orms.join(', ')}" unless supported_orms.include?(orm)
     @@orm = DatabaseBackends.const_get(orm.to_s.classify).new
     @@orm.delete_tables(@@delete_policy = options[:delete_policy])
 
