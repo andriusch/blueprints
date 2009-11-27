@@ -142,6 +142,10 @@ describe Blueprints do
       Blueprints::Namespace.root.stubs(:prebuild).with(nil)
     end
 
+    after do
+      Blueprints.send(:class_variable_set, :@@delete_policy, nil)
+    end
+
     it "should allow using custom delete policy" do
       ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE fruits")
       ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE trees")
@@ -150,7 +154,9 @@ describe Blueprints do
     end
 
     it "should raise an error if unexisting delete policy given" do
-      lambda { Blueprints.load(:delete_policy => :unknown) }.should raise_error(ArgumentError, 'Unknown delete policy unknown')
+      lambda {
+        Blueprints.load(:delete_policy => :unknown)
+      }.should raise_error(ArgumentError, 'Unknown delete policy unknown')
     end
   end
 
@@ -266,7 +272,7 @@ describe Blueprints do
       @pitted_peach.should_not be_nil
       @pitted_acorn.should_not be_nil
       @pitted_red_apple.should_not be_nil
-      @pitted.should =~ [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]]
+      @pitted.sort_by(&:id).should == [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]].sort_by(&:id)
     end
 
     describe "with red namespace" do

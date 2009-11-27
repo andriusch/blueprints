@@ -1,10 +1,22 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 class BlueprintsTest < ActiveSupport::TestCase
-  context "scenario files" do
+  context "constants" do
     should "be loaded from specified dirs" do
-      assert(Blueprints::PLAN_FILES == ["blueprint.rb", "blueprint/*.rb", "blueprints.rb", "blueprints/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "spec/blueprints.rb", "spec/blueprints/*.rb", "test/blueprint.rb", "test/blueprint/*.rb", "test/blueprints.rb", "test/blueprints/*.rb"]   )
+      assert(Blueprints::PLAN_FILES == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"])
     end
+
+    should "support required ORMS" do
+      assert(Blueprints::SUPPORTED_ORMS == [:none, :active_record])
+    end
+  end
+
+  should "return result of built scenario when calling build" do
+    fruit = build :fruit
+    assert(fruit == @fruit)
+
+    apple = build :apple
+    assert(apple == @apple)
   end
 
   context "with apple scenario" do
@@ -117,7 +129,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "raise error when not executed scenarios passed to :undo option" do
-      assert_raise(ArgumentError) do
+      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'orange'") do
         demolish :undo => :orange
       end
     end
@@ -125,9 +137,13 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   context 'delete policies' do
     setup do
-      Blueprints::Plan.plans.expects(:empty?).returns(true)
-      Blueprints.expects(:load_scenarios_files).with(Blueprints::PLAN_FILES)
-      Blueprints::Plan.expects(:prebuild).with(nil)
+      Blueprints::Namespace.root.stubs(:empty?).returns(true)
+      Blueprints.stubs(:load_scenarios_files).with(Blueprints::PLAN_FILES)
+      Blueprints::Namespace.root.stubs(:prebuild).with(nil)
+    end
+
+    teardown do
+      Blueprints.send(:class_variable_set, :@@delete_policy, nil)
     end
 
     should "allow using custom delete policy" do
@@ -137,11 +153,10 @@ class BlueprintsTest < ActiveSupport::TestCase
       Blueprints.load(:delete_policy => :truncate)
     end
 
-    should "default to :delete policy if unexisting policy given" do
-      ActiveRecord::Base.connection.expects(:delete).with("DELETE FROM fruits")
-      ActiveRecord::Base.connection.expects(:delete).with("DELETE FROM trees")
-
-      Blueprints.load(:delete_policy => :ukndown)
+    should "raise an error if unexisting delete policy given" do
+      assert_raise(ArgumentError, 'Unknown delete policy unknown') do
+        Blueprints.load(:delete_policy => :unknown)
+      end
     end
   end
 
@@ -185,13 +200,13 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   context 'errors' do
     should 'raise ScenarioNotFoundError when scenario could not be found' do
-      assert_raise(Blueprints::PlanNotFoundError, "Plan(s) not found 'not_existing'") do
+      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'") do
         build :not_existing
       end
     end
-    
+
     should 'raise ScenarioNotFoundError when scenario parent could not be found' do
-      assert_raise(Blueprints::PlanNotFoundError, "Plan(s) not found 'not_existing'") do
+      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'") do
         build :parent_not_existing
       end
     end
@@ -201,16 +216,83 @@ class BlueprintsTest < ActiveSupport::TestCase
         Blueprints::Plan.new(1)
       end
     end
+
+    should "raise ArgumentError when unknown ORM specified" do
+      Blueprints::Namespace.root.expects(:empty?).returns(true)
+      assert_raise(ArgumentError, "Unsupported ORM unknown. Blueprints supports only none, active_record") do
+        Blueprints.load(:orm => :unknown)
+      end
+    end
   end
 
-#describe "with pitted namespace" do
-#  before do
-#    Hornsby.build('pitted:peach').copy_ivars(self)
-#  end
+  context 'with active record blueprints extensions' do
+    should "build oak correctly" do
+      build :oak
+      assert(!(@oak.nil?))
+      assert(@oak.name == 'Oak')
+      assert(@oak.size == 'large')
+    end
 
-#  it "should have @peach" do
-#    @peach.species.should == 'peach'
-#  end
-#end
+    should "build pine correctly" do
+      build :pine
+      assert(!(@the_pine.nil?))
+      assert(@the_pine.name == 'Pine')
+      assert(@the_pine.size == 'medium')
+    end
+
+    should "associate acorn with oak correctly" do
+      build :acorn
+      assert(!(@oak.nil?))
+      assert(!(@acorn.nil?))
+      assert(@acorn.tree == @oak)
+    end
+  end
+
+  context "with pitted namespace" do
+    should "allow building namespaced scenarios" do
+      build 'pitted.peach_tree'
+      assert(@pitted_peach_tree.name == 'pitted peach tree')
+    end
+
+    should "allow adding dependencies from same namespace" do
+      build 'pitted.peach'
+      assert(@pitted_peach.species == 'pitted peach')
+      assert(!(@pitted_peach_tree.nil?))
+    end
+
+    should "allow adding dependencies from root namespace" do
+      build 'pitted.acorn'
+      assert(@pitted_acorn.species == 'pitted acorn')
+      assert(!(@oak.nil?))
+    end
+
+    should "allow building whole namespace" do
+      build :pitted
+      assert(!(@pitted_peach_tree.nil?))
+      assert(!(@pitted_peach.nil?))
+      assert(!(@pitted_acorn.nil?))
+      assert(!(@pitted_red_apple.nil?))
+      assert(@pitted.sort_by(&:id) == [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]].sort_by(&:id))
+    end
+
+    context "with red namespace" do
+      should "allow building blueprint with same name in different namespaces" do
+        build :apple, 'pitted.red.apple'
+        assert(@apple.species == 'apple')
+        assert(@pitted_red_apple.species == 'pitted red apple')
+      end
+
+      should "load dependencies when building namespaced blueprint if parent namespaces have any" do
+        build 'pitted.red.apple'
+        assert(!(@the_pine.nil?))
+        assert(!(@orange.nil?))
+      end
+
+      should "allow building nested namespaces scenarios" do
+        build 'pitted.red.apple'
+        assert(@pitted_red_apple.species == 'pitted red apple')
+      end
+    end
+  end
 end
 
