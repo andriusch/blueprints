@@ -137,9 +137,9 @@ describe Blueprints do
 
   describe 'delete policies' do
     before do
-      Blueprints::Namespace.root.expects(:empty?).returns(true)
-      Blueprints.expects(:load_scenarios_files).with(Blueprints::PLAN_FILES)
-      Blueprints::Namespace.root.expects(:prebuild).with(nil)
+      Blueprints::Namespace.root.stubs(:empty?).returns(true)
+      Blueprints.stubs(:load_scenarios_files).with(Blueprints::PLAN_FILES)
+      Blueprints::Namespace.root.stubs(:prebuild).with(nil)
     end
 
     it "should allow using custom delete policy" do
@@ -149,11 +149,8 @@ describe Blueprints do
       Blueprints.load(:delete_policy => :truncate)
     end
 
-    it "should default to :delete policy if unexisting policy given" do
-      ActiveRecord::Base.connection.expects(:delete).with("DELETE FROM fruits")
-      ActiveRecord::Base.connection.expects(:delete).with("DELETE FROM trees")
-
-      Blueprints.load(:delete_policy => :ukndown)
+    it "should raise an error if unexisting delete policy given" do
+      lambda { Blueprints.load(:delete_policy => :unknown) }.should raise_error(ArgumentError, 'Unknown delete policy unknown')
     end
   end
 

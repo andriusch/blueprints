@@ -6,6 +6,9 @@ require File.join(File.dirname(__FILE__), 'blueprints/plan')
 require File.join(File.dirname(__FILE__), 'blueprints/file_context')
 require File.join(File.dirname(__FILE__), 'blueprints/helper')
 require File.join(File.dirname(__FILE__), 'blueprints/errors')
+require File.join(File.dirname(__FILE__), 'blueprints/database_backends/abstract')
+require File.join(File.dirname(__FILE__), 'blueprints/database_backends/active_record')
+require File.join(File.dirname(__FILE__), 'blueprints/database_backends/none')
 if defined? Spec or $0 =~ /script.spec$/
   require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
 else
@@ -21,8 +24,6 @@ module Blueprints
   end.flatten
   SUPPORTED_ORMS = [:none, :active_record]
 
-  DELETE_POLICIES = {:delete => "DELETE FROM %s", :truncate => "TRUNCATE %s"}
-
   def self.framework_root
     @@framework_root ||= RAILS_ROOT rescue Rails.root rescue Merb.root rescue nil
   end
@@ -30,18 +31,11 @@ module Blueprints
   def self.setup(current_context)
     Namespace.root.setup
     Namespace.root.copy_ivars(current_context)
-    unless @@orm == :none
-      ActiveRecord::Base.connection.increment_open_transactions
-      ActiveRecord::Base.connection.transaction_joinable = false
-      ActiveRecord::Base.connection.begin_db_transaction
-    end
+    @@orm.start_transaction
   end
 
   def self.teardown
-    unless @@orm == :none
-      ActiveRecord::Base.connection.rollback_db_transaction
-      ActiveRecord::Base.connection.decrement_open_transactions
-    end
+    @@orm.rollback_transaction
   end
 
   def self.load(options = {})
@@ -49,13 +43,11 @@ module Blueprints
     options.symbolize_keys!
     return unless Namespace.root.empty?
 
-    @@orm = (options.delete(:orm) || :active_record).to_sym
-    raise ArgumentError, "Unsupported ORM #{@@orm}. Blueprints supports only #{SUPPORTED_ORMS.join(', ')}" unless SUPPORTED_ORMS.include?(@@orm)
+    orm = (options.delete(:orm) || :active_record).to_sym
+    raise ArgumentError, "Unsupported ORM #{orm}. Blueprints supports only #{SUPPORTED_ORMS.join(', ')}" unless SUPPORTED_ORMS.include?(orm)
+    @@orm = DatabaseBackends.const_get(orm.to_s.classify).new
+    @@orm.delete_tables(@@delete_policy = options[:delete_policy])
 
-    require File.join(File.dirname(__FILE__), 'blueprints', 'ar_extensions') unless @@orm == :none
-
-    @@delete_sql = DELETE_POLICIES[options[:delete_policy]] || DELETE_POLICIES[:delete]                              
-    delete_tables
     @@framework_root = options[:root] if options[:root]
     load_scenarios_files(options[:filename] || PLAN_FILES)
 
@@ -65,29 +57,18 @@ module Blueprints
   def self.load_scenarios_files(*patterns)
     patterns.flatten!
     patterns.collect! {|pattern| File.join(framework_root, pattern)} if framework_root
-    
+
     patterns.each do |pattern|
       unless (files = Dir.glob(pattern)).empty?
         files.each{|f| FileContext.module_eval File.read(f)}
         return
       end
     end
-    
+
     raise "Plans file not found! Put plans in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
   end
-  
-  def self.delete_tables(*args)
-    unless @@orm == :none
-      args = tables if args.blank?
-      args.each { |t| ActiveRecord::Base.connection.delete(@@delete_sql % t)  }
-    end
-  end
 
-  def self.tables
-    ActiveRecord::Base.connection.tables - skip_tables
-  end
-
-  def self.skip_tables
-    %w( schema_info schema_migrations )
+  def self.delete_tables(*tables)
+    @@orm.delete_tables(@@delete_policy, *tables)
   end
 end
