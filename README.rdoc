@@ -6,43 +6,43 @@ Another replacement for factories and fixtures that focuses on being DRY and mak
 
 Blueprints look like this:
 
-    blueprint :apple do
-      Fruit.create! :species => 'apple'
-    end
+  blueprint :apple do
+    Fruit.create! :species => 'apple'
+  end
 
-    blueprint :orange do
-      Fruit.create! :species => 'orange'
-    end
+  blueprint :orange do
+    Fruit.create! :species => 'orange'
+  end
 
-    blueprint :fruitbowl => [:apple, :orange] do
-      FruitBowl.create! :fruit => [@apple,@orange]
-    end
+  blueprint :fruitbowl => [:apple, :orange] do
+    FruitBowl.create! :fruit => [@apple,@orange]
+  end
 
-    blueprint :kitchen => :fruitbowl do
-      Kitchen.create! :fruitbowl => @fruitbowl
-    end
+  blueprint :kitchen => :fruitbowl do
+    Kitchen.create! :fruitbowl => @fruitbowl
+  end
 
 ...and you use them in specs like:
 
-    describe Fruit, "apple" do
-      before do
-        build :apple
-      end
-  
-      it "should be an apple" do
-        @apple.species.should == 'apple'
-      end
+  describe Fruit, "apple" do
+    before do
+      build :apple
     end
 
-    describe FruitBowl, "with and apple and an orange" do
-      before do
-        build :fruitbowl
-      end
-
-      it "should have 2 fruits" do
-        @fruitbowl.should have(2).fruit
-      end
+    it "should be an apple" do
+      @apple.species.should == 'apple'
     end
+  end
+
+  describe FruitBowl, "with and apple and an orange" do
+    before do
+      build :fruitbowl
+    end
+
+    it "should have 2 fruits" do
+      @fruitbowl.should have(2).fruit
+    end
+  end
 
 Result of 'blueprint' block is assigned to an instance variable with the same name. You can also assign your own instance variables
 inside 'blueprint' block and they will be accessible in tests that build this blueprint.
@@ -57,25 +57,25 @@ duplicating data.
 
 There's a shorthand for these type of scenarios:
 
-    blueprint :something do
-      @something = SomeModel.blueprint :field => 'value'
-    end
+  blueprint :something do
+    @something = SomeModel.blueprint :field => 'value'
+  end
 
 You can just type:
 
-    SomeModel.blueprint :something, :field => 'value'
+  SomeModel.blueprint :something, :field => 'value'
 
 If you need to make associations then:
 
-    SomeModel.blueprint :something, :associated_column => :@association_instance_variable
+  SomeModel.blueprint :something, :associated_column => :@association_instance_variable
 
 And if you also need it to depend on other blueprints:
 
-    SomeModel.blueprint({:something => :some_blueprint}, :associated_column => :@some_iv)
+  SomeModel.blueprint({:something => :some_blueprint}, :associated_column => :@some_iv)
 
 ...or...
 
-    SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint) # I prefer this one
+  SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint) # I prefer this one
 
 === Blueprints file
 
@@ -86,22 +86,22 @@ Blueprints searches for blueprints files in this particular order in Rails (Merb
 * spec/blueprint/*.rb
 * test/blueprint.rb
 * test/blueprint/*.rb
-You can pass :root option to override framework root and :filename option to pass custom filename pattern 
+You can pass :root option to override framework root and :filename option to pass custom filename pattern
 
 == Setup
 
 The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
 
-    config.gem 'blueprints', :source => 'http://gemcutter.org'
+  config.gem 'blueprints', :source => 'http://gemcutter.org'
 
 If you’re not using rails, then you can install it through command line
 
-    gem sources -a http://gemcutter.org
-    sudo gem install blueprints
+  gem sources -a http://gemcutter.org
+  sudo gem install blueprints
 
 Lastly you could use it as plugin:
 
-    ruby script/plugin install git://github.com/sinsiliux/blueprints.git
+  ruby script/plugin install git://github.com/sinsiliux/blueprints.git
 
 Blueprints is activated by calling enable_blueprints. For specifics on how to call that in your testing framework see a little lower.
 enable_blueprints supports these parameters:
@@ -114,31 +114,29 @@ enable_blueprints supports these parameters:
 
 Add the following to spec_helper.rb
 
-    Spec::Runner.configure do |config|
-      ...
-  
-      config.enable_blueprints :filename => 'scenarios.rb', :prebuild => :preloaded_scenario
-    end
+  Spec::Runner.configure do |config|
+    ...
+    config.enable_blueprints :filename => 'scenarios.rb', :prebuild => :preloaded_scenario
+  end
 
 === Test::Unit
 
 Add the following lines to test_helper.rb
 
-    class ActiveSupport::TestCase
-      ...
-
-      enable_blueprints
-    end
+  class ActiveSupport::TestCase
+    ...
+    enable_blueprints
+  end
 
 == Advanced Usage
 
 Its just ruby, right? So go nuts:
 
-    1.upto(9) do |i|
-      blueprint("user_#{i}") do
-        User.create! :name => "user#{i}"
-      end
+  1.upto(9) do |i|
+    blueprint("user_#{i}") do
+      User.create! :name => "user#{i}"
     end
+  end
 
 == Transactions
 
@@ -150,6 +148,8 @@ starting point. Starting point is empty database + any scenarios that you specif
 * Add ability to revert one plan.
 * Add preloading plans for whole block of tests.
 * Fix rake tasks
+* Add merb support
+* Add support for other test frameworks (check support of cucumber)
 
 == Credits
 
