@@ -1,19 +1,14 @@
 require 'activesupport'
-require File.join(File.dirname(__FILE__), 'blueprints/buildable')
-require File.join(File.dirname(__FILE__), 'blueprints/namespace')
-require File.join(File.dirname(__FILE__), 'blueprints/root_namespace')
-require File.join(File.dirname(__FILE__), 'blueprints/plan')
-require File.join(File.dirname(__FILE__), 'blueprints/file_context')
-require File.join(File.dirname(__FILE__), 'blueprints/helper')
-require File.join(File.dirname(__FILE__), 'blueprints/errors')
-require File.join(File.dirname(__FILE__), 'blueprints/database_backends/abstract')
-require File.join(File.dirname(__FILE__), 'blueprints/database_backends/active_record')
-require File.join(File.dirname(__FILE__), 'blueprints/database_backends/none')
-if defined? Spec or $0 =~ /script.spec$/
-  require File.join(File.dirname(__FILE__), 'blueprints/rspec_extensions')
+files = %w{
+buildable namespace root_namespace plan file_context helper errors
+database_backends/abstract database_backends/active_record database_backends/none
+}
+files << if defined? Spec or $0 =~ /script.spec$/
+  'rspec_extensions'
 else
-  require File.join(File.dirname(__FILE__), 'blueprints/test_unit_extensions')
+  'test_unit_extensions'
 end
+files.each {|f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
 module Blueprints
   PLAN_FILES = [nil, "spec", "test"].map do |dir|
