@@ -4,9 +4,9 @@ buildable namespace root_namespace plan file_context helper errors
 database_backends/abstract database_backends/active_record database_backends/none
 }
 files << if defined? Spec or $0 =~ /script.spec$/
-  'rspec_extensions'
+  'extensions/rspec'
 else
-  'test_unit_extensions'
+  'extensions/test_unit'
 end
 files.each {|f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
