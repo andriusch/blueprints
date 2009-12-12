@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.3.3"
+  s.version = "0.3.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2009-11-27}
+  s.date = %q{2009-12-10}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
   s.extra_rdoc_files = [
@@ -20,20 +20,24 @@ Gem::Specification.new do |s|
     ".gitignore",
      "LICENSE",
      "README.rdoc",
+     "Rakefile",
+     "VERSION",
      "blueprints.gemspec",
      "init.rb",
      "install.rb",
      "lib/blueprints.rb",
-     "lib/blueprints/ar_extensions.rb",
      "lib/blueprints/buildable.rb",
+     "lib/blueprints/database_backends/abstract.rb",
+     "lib/blueprints/database_backends/active_record.rb",
+     "lib/blueprints/database_backends/none.rb",
      "lib/blueprints/errors.rb",
+     "lib/blueprints/extensions/rspec.rb",
+     "lib/blueprints/extensions/test_unit.rb",
      "lib/blueprints/file_context.rb",
      "lib/blueprints/helper.rb",
      "lib/blueprints/namespace.rb",
      "lib/blueprints/plan.rb",
      "lib/blueprints/root_namespace.rb",
-     "lib/blueprints/rspec_extensions.rb",
-     "lib/blueprints/test_unit_extensions.rb",
      "script/load_schema",
      "script/rspec_to_test",
      "spec/active_record/blueprint.rb",
