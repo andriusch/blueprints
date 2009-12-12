@@ -8,7 +8,7 @@ module Blueprints
     def build_plan
       surface_errors do
         if @block
-          @result = Namespace.root.context.module_eval(&@block)
+          @result = Namespace.root.context.instance_eval(&@block)
           Namespace.root.add_variable(path, @result)
         end
       end unless Namespace.root.executed_plans.include?(path)

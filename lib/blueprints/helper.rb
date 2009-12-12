@@ -1,6 +1,7 @@
 module Blueprints
   module Helper
     def build_plan(*names)
+      Namespace.root.context.options = names.extract_options!
       result = Namespace.root.build(*names).last
       Namespace.root.copy_ivars(self)
       result

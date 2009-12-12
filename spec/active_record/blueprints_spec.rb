@@ -7,7 +7,7 @@ describe Blueprints do
     end
 
     it "should support required ORMS" do
-      Blueprints.supported_orms.should == [:active_record, :none]
+      Blueprints.supported_orms.should =~ [:active_record, :none]
     end
   end
 
@@ -221,7 +221,7 @@ describe Blueprints do
       Blueprints::Namespace.root.expects(:empty?).returns(true)
       lambda {
         Blueprints.load(:orm => :unknown)
-      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only active_record, none")
+      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only #{Blueprints.supported_orms.join(', ')}")
     end
   end
 
@@ -292,6 +292,20 @@ describe Blueprints do
         build 'pitted.red.apple'
         @pitted_red_apple.species.should == 'pitted red apple'
       end
+    end
+  end
+
+  describe 'extra parameters' do
+    it "should allow passing extra parameters when building" do
+      build :apple_with_params, :average_diameter => 14
+      @apple_with_params.average_diameter.should == 14
+      @apple_with_params.species.should == 'apple'
+    end
+
+    it "should allow set options to empty hash if no parameters are passed" do
+      build :apple_with_params
+      @apple_with_params.average_diameter.should == nil
+      @apple_with_params.species.should == 'apple'
     end
   end
 end

@@ -51,3 +51,7 @@ namespace :pitted => :pine do
     Fruit.blueprint(:apple, :species => 'pitted red apple')
   end
 end
+
+blueprint :apple_with_params do
+  Fruit.create! options.merge(:species => 'apple')
+end

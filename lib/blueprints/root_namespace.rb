@@ -2,17 +2,17 @@ module Blueprints
   class RootNamespace < Namespace
     attr_reader :context, :plans
     attr_accessor :executed_plans
-    
+
     def initialize
       @executed_plans = Set.new
       @global_executed_plans = Set.new
-      @global_context = Module.new
 
       super ''
     end
 
     def setup
-      @context = YAML.load(@global_context)
+      @context = Blueprints::Context.new
+      YAML.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
       @executed_plans = @global_executed_plans.clone
     end
 
@@ -23,10 +23,11 @@ module Blueprints
     end
 
     def prebuild(plans)
-      @context = @global_context
+      @context = Blueprints::Context.new
       @global_scenarios = build(*plans) if plans
       @global_executed_plans = @executed_plans
-      @global_context = YAML.dump(@global_context)
+
+      @global_variables = YAML.dump(@context.instance_variables.each_with_object({}) {|iv, hash| hash[iv] = @context.instance_variable_get(iv) })
     end
 
     def build(*names)
@@ -34,7 +35,7 @@ module Blueprints
     end
 
     def add_variable(name, value)
-      name = "@#{name}" unless name.to_s[0, 1] == "@" 
+      name = "@#{name}" unless name.to_s[0, 1] == "@"
       @context.instance_variable_set(name, value) unless @context.instance_variable_get(name)
     end
 
