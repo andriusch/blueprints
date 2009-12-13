@@ -1,9 +1,12 @@
 module Blueprints
+  # Module that blueprints file is executed against. Defined <tt>blueprint</tt> and <tt>namespace</tt> methods.
   module FileContext
+    # Creates a new plan by name and block passed
     def self.blueprint(plan, &block)
       Plan.new(plan, &block)
     end
 
+    # Creates new namespace by name, and evaluates block against it.
     def self.namespace(name)
       old_namespace = Namespace.root
       namespace = Namespace.new(name)

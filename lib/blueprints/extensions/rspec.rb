@@ -1,6 +1,9 @@
-module Spec
-  module Runner
+module Spec #:nodoc:
+  module Runner #:nodoc:
     class Configuration
+      # Enables blueprints in rspec. Is automatically added if <tt>Spec</tt> is defined at loading time or <tt>script/spec</tt>
+      # is used. You might need to require it manually in certain case (eg. running specs from metrics).
+      # Accepts options hash. For supported options please check Blueprints.load.
       def enable_blueprints(options = {})
         Blueprints.load(options)
 

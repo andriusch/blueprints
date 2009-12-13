@@ -1,4 +1,5 @@
 .idea
 *.gem
+html
 spec/active_record/fixtures/database.yml
 debug.log

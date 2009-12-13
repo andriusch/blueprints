@@ -10,10 +10,12 @@ module Blueprints
       Namespace.root.add_child(self) if Namespace.root
     end
 
+    # Defines blueprint dependencies. Used internally, but can be used externally too.
     def depends_on(*scenarios)
       @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
     end
 
+    # Builds dependencies of blueprint and then blueprint itself. 
     def build
       namespace = self
       namespace.build_parent_plans while namespace = namespace.namespace

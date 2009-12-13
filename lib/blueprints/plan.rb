@@ -1,10 +1,13 @@
 module Blueprints
+  # Class for actual blueprints. Allows building itself by executing block passed against current context.
   class Plan < Buildable
+    # Initializes blueprint by name and block
     def initialize(name, &block)
       super(name)
       @block = block
     end
 
+    # Builds plan and adds it to executed plan hash. Setups instance variable with same name as plan if it is not defined yet.
     def build_plan
       surface_errors do
         if @block

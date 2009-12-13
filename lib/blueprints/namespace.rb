@@ -1,4 +1,6 @@
 module Blueprints
+  # Namespace class, inherits from <tt>Buildable</tt>. Allows adding and finding child blueprints/namespaces and building
+  # all it's children.
   class Namespace < Buildable
     cattr_accessor :root
     delegate :empty?, :size, :to => :@children

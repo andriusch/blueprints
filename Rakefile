@@ -9,7 +9,13 @@ begin
     gemspec.homepage = "http://github.com/sinsiliux/blueprints"
     gemspec.authors = ["Andrius Chamentauskas"]
   end
-  Jeweler::GemcutterTasks.new  
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install jeweler"
+end
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rd|
+  rd.main = "README.rdoc"
+  rd.rdoc_files.include("README.rdoc", "lib/**/*.rb")
 end
