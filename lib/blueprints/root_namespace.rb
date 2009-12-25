@@ -38,6 +38,7 @@ module Blueprints
 
     # Builds blueprints that are passed against current context.
     def build(*names)
+      @context.options = names.extract_options!
       names.map {|name| self[name].build}
     end
 

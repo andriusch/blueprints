@@ -9,7 +9,6 @@ module Blueprints
     #   # build :apple scenario with additional options
     #   build :apple, :color => 'red'
     def build_plan(*names)
-      Namespace.root.context.options = names.extract_options!
       result = Namespace.root.build(*names).last
       Namespace.root.copy_ivars(self)
       result
