@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.3.4"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2009-12-12}
+  s.date = %q{2009-12-25}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
   s.extra_rdoc_files = [
@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
      "install.rb",
      "lib/blueprints.rb",
      "lib/blueprints/buildable.rb",
+     "lib/blueprints/context.rb",
      "lib/blueprints/database_backends/abstract.rb",
      "lib/blueprints/database_backends/active_record.rb",
      "lib/blueprints/database_backends/none.rb",
