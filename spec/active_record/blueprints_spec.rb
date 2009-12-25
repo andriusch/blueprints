@@ -246,6 +246,12 @@ describe Blueprints do
       @acorn.should_not be_nil
       @acorn.tree.should == @oak
     end
+
+    it "should allow updating object using blueprint method" do
+      build :oak
+      @oak.blueprint(:size => 'updated')
+      @oak.reload.size.should == 'updated'
+    end
   end
 
   describe "with pitted namespace" do

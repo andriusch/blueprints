@@ -5,7 +5,8 @@ module Blueprints
 
       # Extends active record with blueprint method
       def initialize
-        ::ActiveRecord::Base.extend(ActiveRecordExtensions)
+        ::ActiveRecord::Base.send(:include, ActiveRecordExtensions::Instance)
+        ::ActiveRecord::Base.extend(ActiveRecordExtensions::Class)
       end
 
       # Starts new transaction and marks it as unjoinable so that test case could use transactions too.
@@ -41,33 +42,40 @@ module Blueprints
 
       # Extensions for active record class
       module ActiveRecordExtensions
-        # Two forms of this method can be used. First one is typically used inside blueprint block. Essentially it does
-        # same as <tt>create!</tt>, except it does bypass attr_protected and attr_accessible. It accepts only a hash or attributes,
-        # same as <tt>create!</tt> does.
-        #   blueprint :post => :user do
-        #     @user.posts.blueprint(:title => 'first post', :text => 'My first post')
-        #   end
-        # The second form is used when you want to define new blueprint. It takes first argument as name of blueprint
-        # and second one as hash of attributes. As you cannot use instance variables outside of blueprint block, you need
-        # to prefix them with colon. So the example above could be rewritten like this:
-        #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => :@user).depends_on(:user)
-        # or like this:
-        #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
-        def blueprint(*args)
-          options = args.extract_options!
-          if args.present?
-            klass = self
-            Blueprints::Plan.new(*args) do
-              klass.blueprint options
-            end
-          else
-            returning(self.new) do |object|
-              options.each do |attr, value|
-                value = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
-                object.send("#{attr}=", value)
+        module Class
+          # Two forms of this method can be used. First one is typically used inside blueprint block. Essentially it does
+          # same as <tt>create!</tt>, except it does bypass attr_protected and attr_accessible. It accepts only a hash or attributes,
+          # same as <tt>create!</tt> does.
+          #   blueprint :post => :user do
+          #     @user.posts.blueprint(:title => 'first post', :text => 'My first post')
+          #   end
+          # The second form is used when you want to define new blueprint. It takes first argument as name of blueprint
+          # and second one as hash of attributes. As you cannot use instance variables outside of blueprint block, you need
+          # to prefix them with colon. So the example above could be rewritten like this:
+          #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => :@user).depends_on(:user)
+          # or like this:
+          #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
+          def blueprint(*args)
+            options = args.extract_options!
+            if args.present?
+              klass = self
+              Blueprints::Plan.new(*args) do
+                klass.blueprint options
               end
-              object.save!
+            else
+              returning(self.new) { |object| object.blueprint(options) }
             end
+          end
+        end
+
+        module Instance
+          # Updates attributes of object and calls save!. Bypasses attr_protected ant attr_accessible.
+          def blueprint(attributes)
+            attributes.each do |attr, value|
+              value = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
+              send("#{attr}=", value)
+            end
+            save!
           end
         end
       end
