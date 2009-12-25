@@ -252,6 +252,12 @@ describe Blueprints do
       @oak.blueprint(:size => 'updated')
       @oak.reload.size.should == 'updated'
     end
+
+    it "should automatically merge passed options" do
+      build :oak, :size => 'optional'
+      @oak.name.should == 'Oak'
+      @oak.size.should == 'optional'
+    end
   end
 
   describe "with pitted namespace" do
