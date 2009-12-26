@@ -15,12 +15,13 @@ module Blueprints
       @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
     end
 
-    # Builds dependencies of blueprint and then blueprint itself. 
-    def build
+    # Builds dependencies of blueprint and then blueprint itself.
+    def build(options = {})
       namespace = self
       namespace.build_parent_plans while namespace = namespace.namespace
       build_parent_plans
-      build_plan
+      Namespace.root.context.options = options
+      build_plan.tap { Namespace.root.context.options = {} }
     end
 
     protected

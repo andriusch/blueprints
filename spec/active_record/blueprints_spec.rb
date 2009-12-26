@@ -319,6 +319,11 @@ describe Blueprints do
       @apple_with_params.average_diameter.should == nil
       @apple_with_params.species.should == 'apple'
     end
+
+    it "should use extra params only on blueprints specified" do
+      build :acorn, :average_diameter => 5
+      @acorn.average_diameter.should == 5
+    end
   end
 end
 
