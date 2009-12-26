@@ -1,5 +1,6 @@
+require 'rubygems'
 require 'fileutils'
-require 'activerecord'
+require 'active_record'
 begin
   require 'mysqlplus'
 rescue LoadError
