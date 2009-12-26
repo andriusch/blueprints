@@ -284,7 +284,7 @@ describe Blueprints do
       @pitted_peach.should_not be_nil
       @pitted_acorn.should_not be_nil
       @pitted_red_apple.should_not be_nil
-      @pitted.sort_by(&:id).should == [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]].sort_by(&:id)
+      @pitted.should =~ [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]]
     end
 
     describe "with red namespace" do

@@ -20,7 +20,7 @@ module Blueprints
 
   # Returns a list of supported ORMs. For now it supports ActiveRecord and None.
   def self.supported_orms
-    (DatabaseBackends.constants - ['Abstract']).collect {|class_name| class_name.underscore.to_sym }
+    DatabaseBackends.constants.collect {|class_name| class_name.to_s.underscore.to_sym } - [:abstract]
   end
 
   # Returns root of project blueprints is used in. Automatically detected for rails and merb. Can be overwritten by using
