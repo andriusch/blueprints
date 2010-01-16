@@ -324,6 +324,12 @@ describe Blueprints do
       build :acorn, :average_diameter => 5
       @acorn.average_diameter.should == 5
     end
+
+    it "should allow passing extra params for each blueprint individually" do
+      build :acorn => {:average_diameter => 3}, :apple_with_params => {:average_diameter => 2}
+      @acorn.average_diameter.should == 3
+      @apple_with_params.average_diameter.should == 2
+    end
   end
 end
 

@@ -53,5 +53,5 @@ namespace :pitted => :pine do
 end
 
 blueprint :apple_with_params do
-  Fruit.create! options.merge(:species => 'apple')
+  Fruit.create! options.reverse_merge(:species => 'apple')
 end

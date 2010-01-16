@@ -38,8 +38,11 @@ module Blueprints
 
     # Builds blueprints that are passed against current context.
     def build(*names)
-      options = names.extract_options!
-      names.map {|name| self[name].build(options) }
+      options = names.size == 1 ? {} : names.extract_options!
+      names = names.first if names.first.is_a?(Hash)
+      names.map do |name, local_options|
+        self[name].build(options.merge(local_options || {}))
+      end
     end
 
     # Sets instance variable in current context to passed value.

@@ -8,6 +8,9 @@ module Blueprints
     #
     #   # build :apple scenario with additional options
     #   build :apple, :color => 'red'
+    #
+    #   # options can also be passed per blueprint
+    #   build :apple => {:color => 'red'}, :orange => {:color => 'orange'}
     def build_plan(*names)
       result = Namespace.root.build(*names).last
       Namespace.root.copy_ivars(self)
