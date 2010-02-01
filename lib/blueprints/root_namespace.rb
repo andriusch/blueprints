@@ -38,10 +38,12 @@ module Blueprints
 
     # Builds blueprints that are passed against current context.
     def build(*names)
-      options = names.size == 1 ? {} : names.extract_options!
-      names = names.first if names.first.is_a?(Hash)
-      names.map do |name, local_options|
-        self[name].build(options.merge(local_options || {}))
+      names.inject(nil) do |result, member|
+        if member.is_a?(Hash)
+          member.map {|name, options| self[name].build(options) }.last
+        else
+          self[member].build
+        end
       end
     end
 

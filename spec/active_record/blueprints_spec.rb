@@ -254,7 +254,7 @@ describe Blueprints do
     end
 
     it "should automatically merge passed options" do
-      build :oak, :size => 'optional'
+      build :oak => {:size => 'optional'}
       @oak.name.should == 'Oak'
       @oak.size.should == 'optional'
     end
@@ -309,7 +309,7 @@ describe Blueprints do
 
   describe 'extra parameters' do
     it "should allow passing extra parameters when building" do
-      build :apple_with_params, :average_diameter => 14
+      build :apple_with_params => {:average_diameter => 14}
       @apple_with_params.average_diameter.should == 14
       @apple_with_params.species.should == 'apple'
     end
@@ -321,13 +321,19 @@ describe Blueprints do
     end
 
     it "should use extra params only on blueprints specified" do
-      build :acorn, :average_diameter => 5
+      build :acorn => {:average_diameter => 5}
       @acorn.average_diameter.should == 5
     end
 
     it "should allow passing extra params for each blueprint individually" do
       build :acorn => {:average_diameter => 3}, :apple_with_params => {:average_diameter => 2}
       @acorn.average_diameter.should == 3
+      @apple_with_params.average_diameter.should == 2
+    end
+
+    it "should allow passing options for some blueprints only" do
+      build(:acorn, :apple_with_params => {:average_diameter => 2}).should == @apple_with_params
+      @acorn.average_diameter.should == nil
       @apple_with_params.average_diameter.should == 2
     end
   end
