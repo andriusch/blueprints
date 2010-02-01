@@ -337,5 +337,14 @@ describe Blueprints do
       @apple_with_params.average_diameter.should == 2
     end
   end
+
+  it "should overwrite auto created instance variable with another auto created one" do
+    build :acorn => {:average_diameter => 3}
+    demolish :fruits, :undo => :acorn
+    @acorn.average_diameter.should == 3
+
+    build :acorn => {:average_diameter => 5}
+    @acorn.average_diameter.should == 5
+  end
 end
 

@@ -9,6 +9,7 @@ module Blueprints
     def initialize
       @executed_plans = Set.new
       @global_executed_plans = Set.new
+      @auto_iv_list = Set.new
 
       super ''
     end
@@ -47,10 +48,14 @@ module Blueprints
       end
     end
 
-    # Sets instance variable in current context to passed value.
+    # Sets instance variable in current context to passed value. If instance variable with same name already exists, it
+    # is set only if it was set using this same method
     def add_variable(name, value)
       name = "@#{name}" unless name.to_s[0, 1] == "@"
-      @context.instance_variable_set(name, value) unless @context.instance_variable_get(name)
+      if !@context.instance_variable_get(name) or @auto_iv_list.include?(name)
+        @auto_iv_list << name
+        @context.instance_variable_set(name, value)
+      end
     end
 
     @@root = RootNamespace.new
