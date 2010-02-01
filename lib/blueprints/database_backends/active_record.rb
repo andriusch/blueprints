@@ -69,12 +69,10 @@ module Blueprints
         end
 
         module Instance
-          # Updates attributes of object and calls save!. Bypasses attr_protected ant attr_accessible.
+          # Updates attributes of object and calls save!. Bypasses attr_protected and attr_accessible.
           def blueprint(attributes)
-            attributes.each do |attr, value|
-              value = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/
-              send("#{attr}=", value)
-            end
+            attributes.each {|attr, value| attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/ }
+            send(:attributes=, attributes, false)
             save!
           end
         end
