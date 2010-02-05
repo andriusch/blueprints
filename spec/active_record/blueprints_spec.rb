@@ -346,5 +346,23 @@ describe Blueprints do
     build :acorn => {:average_diameter => 5}
     @acorn.average_diameter.should == 5
   end
+
+  describe "extending blueprints" do
+    it "should allow to call build method inside blueprint body" do
+      build :small_acorn
+      @small_acorn.average_diameter.should == 1
+      @small_acorn.should == @acorn
+    end
+
+    it "should allow to use shortcut to extend blueprint" do
+      build :huge_acorn
+      @huge_acorn.average_diameter.should == 100
+    end
+
+    it "should allow extended blueprint be dependency and associated object" do
+      build :huge_acorn
+      @huge_acorn.tree.size.should == 'huge'
+    end
+  end
 end
 

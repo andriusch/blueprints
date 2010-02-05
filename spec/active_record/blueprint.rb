@@ -35,12 +35,17 @@ end
 blueprint :parent_not_existing => :not_existing
 
 Tree.blueprint :oak, :name => 'Oak', :size => 'large'
+blueprint(:huge_oak).extends(:oak, :size => 'huge')
 
 blueprint :pine do
   @the_pine = Tree.blueprint :name => 'Pine', :size => 'medium'
 end
 
 Fruit.blueprint(:acorn, :species => 'Acorn', :tree => :@oak).depends_on(:oak)
+blueprint :small_acorn do
+  build :acorn => {:average_diameter => 1}
+end
+blueprint(:huge_acorn => :huge_oak).extends(:acorn, :average_diameter => 100)
 
 namespace :pitted => :pine do
   Tree.blueprint :peach_tree, :name => 'pitted peach tree'
