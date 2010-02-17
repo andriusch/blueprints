@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.4.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-01-02}
+  s.date = %q{2010-02-17}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
   s.extra_rdoc_files = [
@@ -63,15 +63,15 @@ Gem::Specification.new do |s|
   s.summary = %q{Another replacement for factories and fixtures}
   s.test_files = [
     "spec/no_db/fixtures/fruit.rb",
-     "spec/no_db/blueprint.rb",
-     "spec/no_db/blueprints_spec.rb",
      "spec/no_db/spec_helper.rb",
-     "spec/active_record/fixtures/tree.rb",
+     "spec/no_db/blueprints_spec.rb",
+     "spec/no_db/blueprint.rb",
      "spec/active_record/fixtures/fruit.rb",
+     "spec/active_record/fixtures/tree.rb",
      "spec/active_record/fixtures/schema.rb",
-     "spec/active_record/blueprint.rb",
-     "spec/active_record/blueprints_spec.rb",
      "spec/active_record/spec_helper.rb",
+     "spec/active_record/blueprints_spec.rb",
+     "spec/active_record/blueprint.rb",
      "test/test_helper.rb",
      "test/blueprints_test.rb"
   ]
