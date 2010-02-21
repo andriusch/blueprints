@@ -7,7 +7,7 @@ module Blueprints
       end
 
       # Dummy method
-      def revert_transaction
+      def rollback_transaction
       end
 
       # Dummy method
