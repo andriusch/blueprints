@@ -7,7 +7,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "support required ORMS" do
-      assert(Blueprints::SUPPORTED_ORMS == [:none, :active_record])
+      assert_similar(Blueprints.supported_orms, [:none, :active_record])
     end
   end
 
@@ -272,7 +272,7 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(!(@pitted_peach.nil?))
       assert(!(@pitted_acorn.nil?))
       assert(!(@pitted_red_apple.nil?))
-      assert(@pitted.sort_by(&:id) == [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]].sort_by(&:id))
+      assert_similar(@pitted, [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]])
     end
 
     context "with red namespace" do

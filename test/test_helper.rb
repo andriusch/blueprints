@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'activerecord'
+require 'active_record'
 require 'test/unit'
 require 'active_record/test_case'
 require 'shoulda'
@@ -23,4 +23,9 @@ require 'spec/active_record/fixtures/tree'
 
 class ActiveSupport::TestCase
   enable_blueprints :root => File.join(File.dirname(__FILE__), '..'), :prebuild => :big_cherry, :filename => 'spec/active_record/blueprint.rb'
+
+  def assert_similar(array1, array2)
+    assert (array1 - array2).empty?, "Extra elements #{array1 - array2}"
+    assert (array2 - array1).empty?, "Missing elements #{array2 - array1}"
+  end
 end
