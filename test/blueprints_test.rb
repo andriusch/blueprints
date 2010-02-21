@@ -7,7 +7,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "support required ORMS" do
-      assert_similar(Blueprints.supported_orms, [:none, :active_record])
+      assert_similar(Blueprints.supported_orms, [:active_record, :none])
     end
   end
 
@@ -219,7 +219,7 @@ class BlueprintsTest < ActiveSupport::TestCase
 
     should "raise ArgumentError when unknown ORM specified" do
       Blueprints::Namespace.root.expects(:empty?).returns(true)
-      assert_raise(ArgumentError, "Unsupported ORM unknown. Blueprints supports only none, active_record") do
+      assert_raise(ArgumentError, "Unsupported ORM unknown. Blueprints supports only #{Blueprints.supported_orms.join(', ')}") do
         Blueprints.load(:orm => :unknown)
       end
     end
@@ -245,6 +245,18 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(!(@oak.nil?))
       assert(!(@acorn.nil?))
       assert(@acorn.tree == @oak)
+    end
+
+    should "allow updating object using blueprint method" do
+      build :oak
+      @oak.blueprint(:size => 'updated')
+      assert(@oak.reload.size == 'updated')
+    end
+
+    should "automatically merge passed options" do
+      build :oak => {:size => 'optional'}
+      assert(@oak.name == 'Oak')
+      assert(@oak.size == 'optional')
     end
   end
 
@@ -292,6 +304,64 @@ class BlueprintsTest < ActiveSupport::TestCase
         build 'pitted.red.apple'
         assert(@pitted_red_apple.species == 'pitted red apple')
       end
+    end
+  end
+
+  context 'extra parameters' do
+    should "allow passing extra parameters when building" do
+      build :apple_with_params => {:average_diameter => 14}
+      assert(@apple_with_params.average_diameter == 14)
+      assert(@apple_with_params.species == 'apple')
+    end
+
+    should "allow set options to empty hash if no parameters are passed" do
+      build :apple_with_params
+      assert(@apple_with_params.average_diameter == nil)
+      assert(@apple_with_params.species == 'apple')
+    end
+
+    should "use extra params only on blueprints specified" do
+      build :acorn => {:average_diameter => 5}
+      assert(@acorn.average_diameter == 5)
+    end
+
+    should "allow passing extra params for each blueprint individually" do
+      build :acorn => {:average_diameter => 3}, :apple_with_params => {:average_diameter => 2}
+      assert(@acorn.average_diameter == 3)
+      assert(@apple_with_params.average_diameter == 2)
+    end
+
+    should "allow passing options for some blueprints only" do
+      assert(build(:acorn, :apple_with_params => {:average_diameter => 2}) == @apple_with_params)
+      assert(@acorn.average_diameter == nil)
+      assert(@apple_with_params.average_diameter == 2)
+    end
+  end
+
+  should "overwrite auto created instance variable with another auto created one" do
+    build :acorn => {:average_diameter => 3}
+    demolish :fruits, :undo => :acorn
+    assert(@acorn.average_diameter == 3)
+
+    build :acorn => {:average_diameter => 5}
+    assert(@acorn.average_diameter == 5)
+  end
+
+  context "extending blueprints" do
+    should "allow to call build method inside blueprint body" do
+      build :small_acorn
+      assert(@small_acorn.average_diameter == 1)
+      assert(@small_acorn == @acorn)
+    end
+
+    should "allow to use shortcut to extend blueprint" do
+      build :huge_acorn
+      assert(@huge_acorn.average_diameter == 100)
+    end
+
+    should "allow extended blueprint be dependency and associated object" do
+      build :huge_acorn
+      assert(@huge_acorn.tree.size == 'huge')
     end
   end
 end

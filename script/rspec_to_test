@@ -9,6 +9,9 @@ data.gsub!("describe Blueprints do", 'class BlueprintsTest < ActiveSupport::Test
 #   hornsby_clear :undo => :just_orange
 # }.should raise_error(ArgumentError)
 data.gsub!(/(\s+)lambda \{\n(.*)\n(\s+)\}.should raise_error\((.*)\)/, "\\1assert_raise(\\4) do\n\\2\n\\3end")
+# should =~ => assert_similar
+data.gsub!(/^(\s+)(.*)\.should\s*=~\s*(.*)/, '\1assert_similar(\2, \3)')
+
 # .should_not => assert(!())
 data.gsub!(/^(\s+)(.*)\.should_not(.*)/, '\1assert(!(\2\3))')
 # .should => assert()
