@@ -258,6 +258,12 @@ describe Blueprints do
       @oak.name.should == 'Oak'
       @oak.size.should == 'optional'
     end
+
+    it "should allow to pass array of hashes to blueprint method" do
+      Fruit.create
+      fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
+      fruits.collect(&:species).should == %w{fruit1 fruit2}
+    end
   end
 
   describe "with pitted namespace" do

@@ -56,14 +56,18 @@ module Blueprints
           # or like this:
           #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
           def blueprint(*args)
-            attributes = args.extract_options!
+            attributes = args.pop
             if args.present?
               klass = self
               Blueprints::Plan.new(*args) do
                 klass.blueprint attributes.merge(options)
               end
             else
-              returning(self.new) { |object| object.blueprint(attributes) }
+              if attributes.is_a?(Array)
+                attributes.collect { |attr| blueprint(attr) }
+              else
+                returning(self.new) { |object| object.blueprint(attributes) }
+              end
             end
           end
         end
