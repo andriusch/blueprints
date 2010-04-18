@@ -75,7 +75,11 @@ And if you also need it to depend on other blueprints:
 
 ...or...
 
-  SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint) # I prefer this one
+  SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint)
+
+...or if name of associated blueprint and instance variable are same...
+
+  SomeModel.blueprint(:something, :associated_column => d(:some_blueprint)) # I prefer this one
 
 === Blueprints file
 

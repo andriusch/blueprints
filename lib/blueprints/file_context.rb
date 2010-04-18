@@ -16,6 +16,8 @@ module Blueprints
       Namespace.root = old_namespace
     end
 
+    # Creates dependency for current blueprint on some other blueprint and marks that instance variable with same name
+    # should be used for value of column. Only works on "Class.blueprint :name" type of blueprints
     def self.d(name)
       Buildable::Dependency.new(name)
     end

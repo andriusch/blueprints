@@ -3,12 +3,8 @@ module Blueprints
     class Dependency < Struct.new(:name)
       alias :to_sym :name
 
-      def is_a?(mod)
-        mod == Symbol || super
-      end
-
-      def to_s
-        "@#{name}"
+      def iv_name
+        :"@#{name}"
       end
     end
 
