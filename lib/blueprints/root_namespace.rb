@@ -17,7 +17,7 @@ module Blueprints
     # Loads all instance variables from global context to current one.
     def setup
       @context = Blueprints::Context.new
-      YAML.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
+      Marshal.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
       @executed_plans = @global_executed_plans.clone
     end
 
@@ -34,7 +34,7 @@ module Blueprints
       @global_scenarios = build(*plans) if plans
       @global_executed_plans = @executed_plans
 
-      @global_variables = YAML.dump(@context.instance_variables.each_with_object({}) {|iv, hash| hash[iv] = @context.instance_variable_get(iv) })
+      @global_variables = Marshal.dump(@context.instance_variables.each_with_object({}) {|iv, hash| hash[iv] = @context.instance_variable_get(iv) })
     end
 
     # Builds blueprints that are passed against current context.
