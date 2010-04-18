@@ -15,5 +15,9 @@ module Blueprints
       old_namespace.add_child(namespace)
       Namespace.root = old_namespace
     end
+
+    def self.d(name)
+      Buildable::Dependency.new(name)
+    end
   end
 end

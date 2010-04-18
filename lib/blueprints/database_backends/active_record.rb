@@ -52,6 +52,8 @@ module Blueprints
           # The second form is used when you want to define new blueprint. It takes first argument as name of blueprint
           # and second one as hash of attributes. As you cannot use instance variables outside of blueprint block, you need
           # to prefix them with colon. So the example above could be rewritten like this:
+          #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => d(:user))
+          # or like this:
           #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => :@user).depends_on(:user)
           # or like this:
           #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
@@ -59,9 +61,9 @@ module Blueprints
             attributes = args.pop
             if args.present?
               klass = self
-              Blueprints::Plan.new(*args) do
-                klass.blueprint attributes.merge(options)
-              end
+              blueprint = Blueprints::Plan.new(*args) {  klass.blueprint attributes.merge(options) }
+              blueprint.depends_on(*attributes.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) })
+              blueprint
             else
               if attributes.is_a?(Array)
                 attributes.collect { |attr| blueprint(attr) }
@@ -75,7 +77,7 @@ module Blueprints
         module Instance
           # Updates attributes of object and calls save!. Bypasses attr_protected anduep attr_accessible.
           def blueprint(attributes)
-            attributes.each {|attr, value| attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value) if value.is_a? Symbol and value.to_s =~ /^@.+$/ }
+            attributes.each {|attr, value| attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value.to_s) if value.is_a? Symbol and value.to_s =~ /^@.+$/ }
             send(:attributes=, attributes, false)
             save!
           end
