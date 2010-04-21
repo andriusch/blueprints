@@ -3,6 +3,7 @@ module Blueprints
   # all it's children.
   class Namespace < Buildable
     cattr_accessor :root
+    attr_reader :children
     delegate :empty?, :size, :to => :@children
 
     def initialize(name)

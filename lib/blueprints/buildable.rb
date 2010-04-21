@@ -15,6 +15,7 @@ module Blueprints
       @name, parents = parse_name(name)
       depends_on(*parents)
 
+      $stderr.puts("**WARNING** Overwriting existing blueprint '#{@name}'") if Namespace.root and Namespace.root.children[@name]
       Namespace.root.add_child(self) if Namespace.root
     end
 

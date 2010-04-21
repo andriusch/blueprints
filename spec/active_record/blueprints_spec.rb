@@ -370,5 +370,11 @@ describe Blueprints do
       @huge_acorn.tree.size.should == 'huge'
     end
   end
+
+  it "should warn when blueprint with same name exists" do
+    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint 'overwritten'")
+    Blueprints::Plan.new(:overwritten)
+    Blueprints::Plan.new(:overwritten)
+  end
 end
 
