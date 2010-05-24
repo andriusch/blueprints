@@ -70,6 +70,10 @@ module Blueprints
     @@orm.delete_tables(@@delete_policy, *tables)
   end
 
+  def self.warn(message, blueprint)
+    $stderr.puts("**WARNING** #{message}: '#{blueprint}'")
+  end
+
   protected
 
   # Loads blueprints file and creates blueprints from data it contains. Is run by setup method

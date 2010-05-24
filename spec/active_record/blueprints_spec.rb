@@ -378,9 +378,14 @@ describe Blueprints do
   end
 
   it "should warn when blueprint with same name exists" do
-    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint 'overwritten'")
+    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
     Blueprints::Plan.new(:overwritten)
     Blueprints::Plan.new(:overwritten)
+  end
+
+  it "should warn when building with options and blueprint is already built" do
+    STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
+    build :big_cherry => {:species => 'some species'}
   end
 end
 
