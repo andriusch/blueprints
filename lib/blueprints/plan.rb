@@ -8,13 +8,13 @@ module Blueprints
     end
 
     # Builds plan and adds it to executed plan hash. Setups instance variable with same name as plan if it is not defined yet.
-    def build_plan
+    def build_self(build_once = true)
       surface_errors do
         if @block
           @result = Namespace.root.context.instance_eval(&@block)
           Namespace.root.add_variable(path, @result)
         end
-      end unless Namespace.root.executed_plans.include?(path)
+      end unless build_once and Namespace.root.executed_plans.include?(path)
       Namespace.root.executed_plans << path
       @result
     end

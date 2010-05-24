@@ -371,6 +371,12 @@ describe Blueprints do
     end
   end
 
+  it "should allow to build! without checking if it was already built" do
+    build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
+    Fruit.count.should == 4
+    Fruit.find_by_species('not so big cherry').should_not be_nil
+  end
+
   it "should warn when blueprint with same name exists" do
     $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint 'overwritten'")
     Blueprints::Plan.new(:overwritten)

@@ -25,12 +25,12 @@ module Blueprints
     end
 
     # Builds dependencies of blueprint and then blueprint itself.
-    def build(options = {})
+    def build(build_once = true, options = {})
       namespace = self
-      namespace.build_parent_plans while namespace = namespace.namespace
-      build_parent_plans
+      namespace.build_parents while namespace = namespace.namespace
+      build_parents
       Namespace.root.context.options = options
-      build_plan.tap { Namespace.root.context.options = {} }
+      build_self(build_once).tap { Namespace.root.context.options = {} }
     end
 
     protected
@@ -39,7 +39,7 @@ module Blueprints
       @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
     end
 
-    def build_parent_plans
+    def build_parents
       @parents.each do |p|
         parent = begin
           namespace[p]

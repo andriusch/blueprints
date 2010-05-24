@@ -11,11 +11,17 @@ module Blueprints
     #
     #   # options can also be passed for several blueprints
     #   build :pear, :apple => {:color => 'red'}, :orange => {:color => 'orange'}
-    def build_plan(*names)
-      returning(Namespace.root.build(*names)) { Namespace.root.copy_ivars(self) }
+    def build_blueprint(*names)
+      Namespace.root.build(names, self, true)
     end
 
-    alias :build :build_plan
+    # Same as #build_blueprint except that you can use it to build same blueprint several times.
+    def build_blueprint!(*names)
+      Namespace.root.build(names, self, false)
+    end
+
+    alias :build :build_blueprint
+    alias :build! :build_blueprint!
 
     # Clears all tables in database. You can pass table names to clear only those tables. You can also pass <tt>:undo</tt> option
     # to remove scenarios from built scenarios cache.
