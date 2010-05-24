@@ -58,17 +58,17 @@ module Blueprints
           # or like this:
           #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
           def blueprint(*args)
-            attributes = args.pop
+            attrs = args.pop
             if args.present?
               klass = self
-              blueprint = Blueprints::Plan.new(*args) {  klass.blueprint attributes.merge(options) }
-              blueprint.depends_on(*attributes.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) })
+              blueprint = Blueprints::Plan.new(*args) { klass.blueprint attributes }
+              blueprint.depends_on(*attrs.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) }).attributes(attrs)
               blueprint
             else
-              if attributes.is_a?(Array)
-                attributes.collect { |attr| blueprint(attr) }
+              if attrs.is_a?(Array)
+                attrs.collect { |attr| blueprint(attr) }
               else
-                returning(self.new) { |object| object.blueprint(attributes) }
+                returning(self.new) { |object| object.blueprint(attrs) }
               end
             end
           end

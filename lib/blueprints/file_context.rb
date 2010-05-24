@@ -14,6 +14,7 @@ module Blueprints
       yield
       old_namespace.add_child(namespace)
       Namespace.root = old_namespace
+      namespace
     end
 
     # Creates dependency for current blueprint on some other blueprint and marks that instance variable with same name

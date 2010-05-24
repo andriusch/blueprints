@@ -22,18 +22,40 @@ module Blueprints
     # Defines blueprint dependencies. Used internally, but can be used externally too.
     def depends_on(*scenarios)
       @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
+      self
     end
 
     # Builds dependencies of blueprint and then blueprint itself.
     def build(build_once = true, options = {})
-      namespace = self
-      namespace.build_parents while namespace = namespace.namespace
+      each_namespace {|namespace| namespace.build_parents }
       build_parents
+
       Namespace.root.context.options = options
-      build_self(build_once).tap { Namespace.root.context.options = {} }
+      Namespace.root.context.attributes = attributes.merge(options)
+      each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.attributes }
+
+      build_self(build_once).tap do
+        Namespace.root.context.options = {}
+        Namespace.root.context.attributes = {}
+      end
+    end
+
+    def attributes(value = nil)
+      if value
+        raise value.inspect + @name if @name == ''
+        @attributes = value
+        self
+      else
+        @attributes ||= {}
+      end
     end
 
     protected
+
+    def each_namespace
+      namespace = self
+      yield(namespace) while namespace = namespace.namespace
+    end
 
     def path
       @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s

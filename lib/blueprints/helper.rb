@@ -20,6 +20,10 @@ module Blueprints
       Namespace.root.build(names, self, false)
     end
 
+    def build_attributes(name)
+      Namespace.root[name].attributes
+    end
+
     alias :build :build_blueprint
     alias :build! :build_blueprint!
 

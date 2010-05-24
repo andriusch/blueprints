@@ -12,7 +12,6 @@ module Blueprints
     end
 
     def add_child(child)
-      #TODO: Raise error for duplicate children!
       @children[child.name] = child
       child.namespace = self
     end
