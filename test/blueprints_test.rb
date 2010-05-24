@@ -258,6 +258,12 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(@oak.name == 'Oak')
       assert(@oak.size == 'optional')
     end
+
+    should "allow to pass array of hashes to blueprint method" do
+      Fruit.create
+      fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
+      assert(fruits.collect(&:species) == %w{fruit1 fruit2})
+    end
   end
 
   context "with pitted namespace" do
@@ -362,6 +368,46 @@ class BlueprintsTest < ActiveSupport::TestCase
     should "allow extended blueprint be dependency and associated object" do
       build :huge_acorn
       assert(@huge_acorn.tree.size == 'huge')
+    end
+  end
+
+  should "allow to build! without checking if it was already built" do
+    build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
+    assert(Fruit.count == 4)
+    assert(!(Fruit.find_by_species('not so big cherry').nil?))
+  end
+
+  should "warn when blueprint with same name exists" do
+    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    Blueprints::Plan.new(:overwritten)
+    Blueprints::Plan.new(:overwritten)
+  end
+
+  should "warn when building with options and blueprint is already built" do
+    STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
+    build :big_cherry => {:species => 'some species'}
+  end
+
+  context 'attributes' do
+    should "allow to extract attributes from blueprint" do
+      assert(build_attributes('attributes.cherry') == {:species => 'cherry'})
+      assert(build_attributes('attributes.shortened_cherry') == {:species => 'cherry'})
+      assert(build_attributes(:big_cherry) == {})
+    end
+
+    should "use attributes when building" do
+      build 'attributes.cherry'
+      assert(@attributes_cherry.species == 'cherry')
+    end
+
+    should "automatically merge options to attributes" do
+      build 'attributes.cherry' => {:species => 'a cherry'}
+      assert(@attributes_cherry.species == 'a cherry')
+    end
+
+    should "reverse merge attributes from namespaces" do
+      build 'attributes.cherry'
+      assert(@attributes_cherry.average_diameter == 10)
     end
   end
 end
