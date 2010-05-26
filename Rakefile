@@ -8,6 +8,8 @@ begin
     gemspec.email = "sinsiliux@gmail.com"
     gemspec.homepage = "http://github.com/sinsiliux/blueprints"
     gemspec.authors = ["Andrius Chamentauskas"]
+    gemspec.bindir = 'bin'
+    gemspec.executables = ['blueprintify']
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

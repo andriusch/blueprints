@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'blueprints'
+require 'blueprints/convertable'
+
+format = ARGV.shift
+
+converter = Blueprints::Converter.new(format)
+
+converter.process!
+
+#require "blueprints/convertable/#{format}"
+
+
+
+# fixture_files = Dir.glob('{spec,test}/fixtures/**/*.yml')
+# 
+# def parameterize(object)
+#   if object.is_a?(String)
+#     %Q(#{object}).inspect
+#   elsif object.nil?
+#     'nil'
+#   else
+#     object.to_s
+#   end
+# end
+# 
+# fixture_files.each do |fixture_file|
+#   puts "Processing #{fixture_files}..."
+#   
+#   klass = File.basename(fixture_file, '.yml').singularize.capitalize
+#   
+#   loaded_yaml = YAML.load(File.read(fixture_file))
+#   
+#   blueprints = loaded_yaml.collect do |title,yaml_obj|
+#     params = yaml_obj.collect do |k,v|
+#       ":#{k} => #{parameterize(v)}"
+#     end.join(', ')
+#     
+#     "#{klass}.blueprint(:#{title}, {#{params}})"
+#   end
+#   
+#   puts "Created #{blueprints.size} blueprints: #{loaded_yaml.keys.join(', ')}."
+# end
