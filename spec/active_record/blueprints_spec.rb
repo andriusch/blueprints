@@ -370,5 +370,45 @@ describe Blueprints do
       @huge_acorn.tree.size.should == 'huge'
     end
   end
+
+  it "should allow to build! without checking if it was already built" do
+    build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
+    Fruit.count.should == 4
+    Fruit.find_by_species('not so big cherry').should_not be_nil
+  end
+
+  it "should warn when blueprint with same name exists" do
+    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    Blueprints::Plan.new(:overwritten)
+    Blueprints::Plan.new(:overwritten)
+  end
+
+  it "should warn when building with options and blueprint is already built" do
+    STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
+    build :big_cherry => {:species => 'some species'}
+  end
+
+  describe 'attributes' do
+    it "should allow to extract attributes from blueprint" do
+      build_attributes('attributes.cherry').should == {:species => 'cherry'}
+      build_attributes('attributes.shortened_cherry').should == {:species => 'cherry'}
+      build_attributes(:big_cherry).should == {}
+    end
+
+    it "should use attributes when building" do
+      build 'attributes.cherry'
+      @attributes_cherry.species.should == 'cherry'
+    end
+
+    it "should automatically merge options to attributes" do
+      build 'attributes.cherry' => {:species => 'a cherry'}
+      @attributes_cherry.species.should == 'a cherry'
+    end
+
+    it "should reverse merge attributes from namespaces" do
+      build 'attributes.cherry'
+      @attributes_cherry.average_diameter.should == 10
+    end
+  end
 end
 

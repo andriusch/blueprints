@@ -25,7 +25,7 @@ blueprint :cherry do
 end
 
 blueprint :big_cherry => :cherry do
-  Fruit.create! :species => @cherry.species, :average_diameter => 7
+  Fruit.create! options.reverse_merge(:species => @cherry.species, :average_diameter => 7)
 end
 
 blueprint :cherry_basket => [:big_cherry, :cherry] do
@@ -60,3 +60,11 @@ end
 blueprint :apple_with_params do
   Fruit.create! options.reverse_merge(:species => 'apple')
 end
+
+namespace :attributes do
+  blueprint :cherry do
+    Fruit.blueprint attributes
+  end.attributes(:species => 'cherry')
+
+  Fruit.blueprint :shortened_cherry, :species => 'cherry'
+end.attributes(:average_diameter => 10, :species => 'fruit with attributes')

@@ -3,6 +3,7 @@ module Blueprints
   # all it's children.
   class Namespace < Buildable
     cattr_accessor :root
+    attr_reader :children
     delegate :empty?, :size, :to => :@children
 
     def initialize(name)
@@ -11,7 +12,6 @@ module Blueprints
     end
 
     def add_child(child)
-      #TODO: Raise error for duplicate children!
       @children[child.name] = child
       child.namespace = self
     end
@@ -26,7 +26,7 @@ module Blueprints
       end
     end
 
-    def build_plan
+    def build_self(build_once = true)
       Namespace.root.add_variable(path, @children.collect {|p| p.last.build }.uniq)
     end
   end

@@ -1,19 +1,54 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
+require 'optparse'
 require 'blueprints'
 require 'blueprints/convertable'
 
+options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.on('-s','--source-files=PATTERN', 'Define pattern for source files (used by Dir.glob)') do |files|
+    options[:source_files] = files
+  end
+  
+  opts.on('-o', '--output-file=FILE', 'Define output file for converted data (used by Dir.glob)') do |file|
+    options[:output_file] = file
+  end
+  
+  opts.on('-h', '--help', 'Show help (this screen)') do
+    puts opts
+    exit
+  end
+  
+  opts.banner = "Usage: #{File.basename($0)} format --source-files=PATTERN --output-file=blueprints.rb\n"
+end
+
+begin 
+  optparse.parse!
+rescue OptionParser::ParseError => error
+  puts error
+  puts optparse.banner
+  exit
+end
+
 format = ARGV.shift
+unless [:fixtures, :factory_girl].include?(format.to_sym)
+  puts "Invalid format: #{format}" 
+  puts "Supported formats are: fixtures, factory_girl"
+  puts optparse.banner
+  exit
+end
 
-converter = Blueprints::Converter.new(format)
+if format
+  converter = Blueprints::Converter.for(format).new(options)
 
-converter.process!
-
-#require "blueprints/convertable/#{format}"
-
-
-
+  converter.process!
+else
+  # require 'pp'
+  # pp optparse
+  puts optparse.banner
+end
 # fixture_files = Dir.glob('{spec,test}/fixtures/**/*.yml')
 # 
 # def parameterize(object)

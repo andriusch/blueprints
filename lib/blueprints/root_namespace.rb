@@ -31,21 +31,25 @@ module Blueprints
     # Sets up global context and executes prebuilt blueprints against it.
     def prebuild(plans)
       @context = Blueprints::Context.new
-      @global_scenarios = build(*plans) if plans
+      @global_scenarios = build(plans) if plans
       @global_executed_plans = @executed_plans
 
       @global_variables = Marshal.dump(@context.instance_variables.each_with_object({}) {|iv, hash| hash[iv] = @context.instance_variable_get(iv) })
     end
 
-    # Builds blueprints that are passed against current context.
-    def build(*names)
-      names.inject(nil) do |result, member|
+    # Builds blueprints that are passed against current context. Copies instance variables to context given if one is given.
+    def build(names, context = nil, build_once = true)
+      names = [names] unless names.is_a?(Array)
+      result = names.inject(nil) do |result, member|
         if member.is_a?(Hash)
-          member.map {|name, options| self[name].build(options) }.last
+          member.map {|name, options| self[name].build(build_once, options) }.last
         else
-          self[member].build
+          self[member].build(build_once)
         end
       end
+
+      copy_ivars(context) if context
+      result
     end
 
     # Sets instance variable in current context to passed value. If instance variable with same name already exists, it
