@@ -79,16 +79,20 @@ module Blueprints
 
   # Loads blueprints file and creates blueprints from data it contains. Is run by setup method
   def self.load_scenarios_files(*patterns)
+    FileContext.evaluating = true
+
     patterns.flatten!
     patterns.collect! {|pattern| File.join(framework_root, pattern)} if framework_root
 
     patterns.each do |pattern|
       unless (files = Dir.glob(pattern)).empty?
         files.each{|f| FileContext.module_eval File.read(f)}
+        FileContext.evaluating = false
         return
       end
     end
 
+    FileContext.evaluating = false
     raise "Plans file not found! Put plans in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
   end
 end

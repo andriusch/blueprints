@@ -1,6 +1,8 @@
 module Blueprints
   # Module that blueprints file is executed against. Defined <tt>blueprint</tt> and <tt>namespace</tt> methods.
   module FileContext
+    mattr_accessor :evaluating
+
     # Creates a new plan by name and block passed
     def self.blueprint(plan, &block)
       Plan.new(plan, &block)

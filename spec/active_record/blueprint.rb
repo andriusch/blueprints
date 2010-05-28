@@ -36,6 +36,7 @@ blueprint :parent_not_existing => :not_existing
 
 Tree.blueprint :oak, :name => 'Oak', :size => 'large'
 blueprint(:huge_oak).extends(:oak, :size => 'huge')
+Tree.blueprint(:oak_without_attributes)
 
 blueprint :pine do
   @the_pine = Tree.blueprint :name => 'Pine', :size => 'medium'

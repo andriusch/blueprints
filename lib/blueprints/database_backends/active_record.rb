@@ -57,18 +57,17 @@ module Blueprints
           #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => :@user).depends_on(:user)
           # or like this:
           #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
-          def blueprint(*args)
-            attrs = args.pop
-            if args.present?
+          def blueprint(name_or_attrs, attrs = {})
+            if Blueprints::FileContext.evaluating
               klass = self
-              blueprint = Blueprints::Plan.new(*args) { klass.blueprint attributes }
+              blueprint = Blueprints::Plan.new(name_or_attrs) { klass.blueprint attributes }
               blueprint.depends_on(*attrs.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) }).attributes(attrs)
               blueprint
             else
-              if attrs.is_a?(Array)
-                attrs.collect { |attr| blueprint(attr) }
+              if name_or_attrs.is_a?(Array)
+                name_or_attrs.collect { |attrs| blueprint(attrs) }
               else
-                returning(self.new) { |object| object.blueprint(attrs) }
+                returning(self.new) { |object| object.blueprint(name_or_attrs) }
               end
             end
           end
