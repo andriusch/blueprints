@@ -264,6 +264,11 @@ describe Blueprints do
       fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
       fruits.collect(&:species).should == %w{fruit1 fruit2}
     end
+
+    it "should allow to build oak without attributes" do
+      build :oak_without_attributes
+      @oak_without_attributes.should be_instance_of(Tree)
+    end
   end
 
   describe "with pitted namespace" do
