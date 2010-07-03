@@ -73,8 +73,22 @@ module Blueprints
     @@orm.delete_tables(@@delete_policy, *tables)
   end
 
+  def self.backtrace_cleaner
+    @backtrace_cleaner ||= ActiveSupport::BacktraceCleaner.new.tap do |bc|
+      root_sub = /^#{@@framework_root}[\\\/]/
+      blueprints_path = File.dirname(__FILE__).sub(root_sub, '')
+
+      bc.add_filter {|line| line.sub('(eval)', @@file) }
+      bc.add_filter {|line| line.sub(root_sub, '') }
+
+      bc.add_silencer {|line| File.dirname(line).starts_with?(blueprints_path) }
+      bc.add_silencer {|line| Gem.path.any? {|path| File.dirname(line).starts_with?(path) } }
+    end
+  end
+
   def self.warn(message, blueprint)
     $stderr.puts("**WARNING** #{message}: '#{blueprint}'")
+    $stderr.puts(backtrace_cleaner.clean(caller).first)
   end
 
   protected
@@ -88,7 +102,10 @@ module Blueprints
 
     patterns.each do |pattern|
       unless (files = Dir.glob(pattern)).empty?
-        files.each{|f| FileContext.module_eval File.read(f)}
+        files.each do |f|
+          @@file = f
+          FileContext.module_eval File.read(f)
+        end
         FileContext.evaluating = false
         return
       end
