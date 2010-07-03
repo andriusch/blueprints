@@ -1,4 +1,7 @@
 require 'active_support'
+require 'active_support/core_ext'
+require 'set'
+
 files = %w{
 context buildable namespace root_namespace plan file_context helper errors
 database_backends/abstract database_backends/active_record database_backends/none
