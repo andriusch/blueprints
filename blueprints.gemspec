@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.6.1"
+  s.version = "0.6.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-05-28}
+  s.date = %q{2010-07-03}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
   s.extra_rdoc_files = [
