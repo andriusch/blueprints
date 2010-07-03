@@ -264,6 +264,11 @@ class BlueprintsTest < ActiveSupport::TestCase
       fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
       assert(fruits.collect(&:species) == %w{fruit1 fruit2})
     end
+
+    should "allow to build oak without attributes" do
+      build :oak_without_attributes
+      assert(@oak_without_attributes.instance_of?(Tree))
+    end
   end
 
   context "with pitted namespace" do
@@ -360,6 +365,11 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(@small_acorn == @acorn)
     end
 
+    should "not reset options after call to build" do
+      build :small_acorn => {:option => 'value'}
+      assert(@small_acorn_options == {:option => 'value'})
+    end
+
     should "allow to use shortcut to extend blueprint" do
       build :huge_acorn
       assert(@huge_acorn.average_diameter == 100)
@@ -368,6 +378,11 @@ class BlueprintsTest < ActiveSupport::TestCase
     should "allow extended blueprint be dependency and associated object" do
       build :huge_acorn
       assert(@huge_acorn.tree.size == 'huge')
+    end
+
+    should "allow to pass options when building extended blueprint" do
+      build :huge_acorn => {:average_diameter => 200}
+      assert(@huge_acorn.average_diameter == 200)
     end
   end
 
@@ -378,13 +393,15 @@ class BlueprintsTest < ActiveSupport::TestCase
   end
 
   should "warn when blueprint with same name exists" do
-    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
     Blueprints::Plan.new(:overwritten)
     Blueprints::Plan.new(:overwritten)
   end
 
   should "warn when building with options and blueprint is already built" do
     STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
+    STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+/))
     build :big_cherry => {:species => 'some species'}
   end
 
