@@ -365,6 +365,11 @@ describe Blueprints do
       @small_acorn.should == @acorn
     end
 
+    it "should not reset options after call to build" do
+      build :small_acorn => {:option => 'value'}
+      @small_acorn_options.should == {:option => 'value'}
+    end
+
     it "should allow to use shortcut to extend blueprint" do
       build :huge_acorn
       @huge_acorn.average_diameter.should == 100

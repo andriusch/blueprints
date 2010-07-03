@@ -30,13 +30,12 @@ module Blueprints
       each_namespace {|namespace| namespace.build_parents }
       build_parents
 
-      Namespace.root.context.options = options
-      Namespace.root.context.attributes = attributes.merge(options)
+      old_options, old_attributes = Namespace.root.context.options, Namespace.root.context.attributes
+      Namespace.root.context.options, Namespace.root.context.attributes = options, attributes.merge(options)
       each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.attributes }
 
       build_self(build_once).tap do
-        Namespace.root.context.options = {}
-        Namespace.root.context.attributes = {}
+        Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
       end
     end
 
