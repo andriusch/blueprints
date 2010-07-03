@@ -26,7 +26,8 @@ module Blueprints
     # Changes blueprint block to build another blueprint by passing additional options to it. Usually used to dry up
     # blueprints that are often built with some options.
     def extends(parent, options)
-      @block = Proc.new { build parent => options }
+      attributes(options)
+      @block = Proc.new { build parent => attributes }
     end
 
     private
