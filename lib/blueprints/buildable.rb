@@ -1,6 +1,6 @@
 module Blueprints
   class Buildable
-    class Dependency < Struct.new(:name)
+    class Dependency < Struct.new(:name) # :nodoc:
       alias :to_sym :name
 
       def iv_name
@@ -11,6 +11,10 @@ module Blueprints
     attr_reader :name
     attr_accessor :namespace
 
+    # Initializes new Buildable object by name.
+    # Name can be Symbol, String or Hash. If Hash is passed, then first key is assumed name, and value(s) of that key
+    # are assumed as dependencies. Raises error class of name parameter is not what is expected.
+    # Warns if name has already been taken.
     def initialize(name)
       @name, parents = parse_name(name)
       depends_on(*parents)
@@ -26,6 +30,10 @@ module Blueprints
     end
 
     # Builds dependencies of blueprint and then blueprint itself.
+    #
+    # +build_once+ - pass false if you want to build despite the fact that it was already built.
+    #
+    # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
       each_namespace {|namespace| namespace.build_parents }
       build_parents
@@ -39,6 +47,8 @@ module Blueprints
       end
     end
 
+    # If value is passed then it sets attributes for this buildable object.
+    # Otherwise returns attributes (defaulting to empty Hash)
     def attributes(value = nil)
       if value
         raise value.inspect + @name if @name == ''
