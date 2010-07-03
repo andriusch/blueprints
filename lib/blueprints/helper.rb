@@ -20,6 +20,11 @@ module Blueprints
       Namespace.root.build(names, self, false)
     end
 
+    # Returns attributes that are used to build blueprint. To set what attributes are used you need to call attributes
+    # method when defining blueprint like this:
+    #   blueprint :apple do
+    #     Fruit.build attributes
+    #   end.attributes(:name => 'apple')
     def build_attributes(name)
       Namespace.root[name].attributes
     end

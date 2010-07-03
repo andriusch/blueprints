@@ -3,6 +3,7 @@ module Blueprints
   class Context
     attr_accessor :options, :attributes
 
+    # Method that allows building one blueprint inside of another. Simply delegates to root namespace.
     def build(*names)
       Namespace.root.build(*names)
     end
