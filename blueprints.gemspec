@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
@@ -39,8 +39,6 @@ Gem::Specification.new do |s|
      "lib/blueprints/namespace.rb",
      "lib/blueprints/plan.rb",
      "lib/blueprints/root_namespace.rb",
-     "script/load_schema",
-     "script/rspec_to_test",
      "spec/active_record/blueprint.rb",
      "spec/active_record/blueprints_spec.rb",
      "spec/active_record/fixtures/database.yml.example",
