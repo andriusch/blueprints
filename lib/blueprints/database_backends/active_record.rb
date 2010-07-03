@@ -67,7 +67,9 @@ module Blueprints
               if name_or_attrs.is_a?(Array)
                 name_or_attrs.collect { |attrs| blueprint(attrs) }
               else
-                returning(self.new) { |object| object.blueprint(name_or_attrs) }
+                object = new
+                object.blueprint(name_or_attrs)
+                object
               end
             end
           end
