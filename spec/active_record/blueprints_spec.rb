@@ -365,6 +365,11 @@ describe Blueprints do
       @small_acorn.should == @acorn
     end
 
+    it "should not reset options after call to build" do
+      build :small_acorn => {:option => 'value'}
+      @small_acorn_options.should == {:option => 'value'}
+    end
+
     it "should allow to use shortcut to extend blueprint" do
       build :huge_acorn
       @huge_acorn.average_diameter.should == 100
@@ -373,6 +378,11 @@ describe Blueprints do
     it "should allow extended blueprint be dependency and associated object" do
       build :huge_acorn
       @huge_acorn.tree.size.should == 'huge'
+    end
+
+    it "should allow to pass options when building extended blueprint" do
+      build :huge_acorn => {:average_diameter => 200}
+      @huge_acorn.average_diameter.should == 200
     end
   end
 
@@ -383,13 +393,15 @@ describe Blueprints do
   end
 
   it "should warn when blueprint with same name exists" do
-    $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
+    STDERR.expects(:puts).with(regexp_matches(/^blueprints_spec\.rb:\d+:in `new'$/))
     Blueprints::Plan.new(:overwritten)
     Blueprints::Plan.new(:overwritten)
   end
 
   it "should warn when building with options and blueprint is already built" do
     STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
+    STDERR.expects(:puts).with(regexp_matches(/^blueprints_spec\.rb:\d+$/))
     build :big_cherry => {:species => 'some species'}
   end
 

@@ -44,7 +44,8 @@ end
 
 Fruit.blueprint(:acorn, :species => 'Acorn', :tree => d(:oak))
 blueprint :small_acorn do
-  build :acorn => {:average_diameter => 1}
+  @small_acorn = build :acorn => {:average_diameter => 1}
+  @small_acorn_options = options
 end
 blueprint(:huge_acorn => :huge_oak).extends(:acorn, :average_diameter => 100)
 
