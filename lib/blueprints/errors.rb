@@ -1,12 +1,12 @@
 module Blueprints
   # Is raised when blueprint or namespace is not found.
-  class PlanNotFoundError < NameError
+  class BlueprintNotFoundError < NameError
     def initialize(*args)
-      @plans = args
+      @blueprints = args
     end
 
     def to_s
-      "Plan/namespace not found '#{@plans.join(',')}'"
+      "Blueprint/namespace not found '#{@blueprints.join(',')}'"
     end
   end
 end

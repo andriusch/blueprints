@@ -3,7 +3,7 @@ require 'active_support/core_ext'
 require 'set'
 
 files = %w{
-context buildable namespace root_namespace plan file_context helper errors
+context buildable namespace root_namespace blueprint file_context helper errors
 database_backends/abstract database_backends/active_record database_backends/none
 }
 files << if defined? Spec or $0 =~ /script.spec$/ or defined? RSpec
@@ -14,7 +14,7 @@ end
 files.each {|f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
 module Blueprints
-  PLAN_FILES = [nil, "spec", "test"].map do |dir|
+  BLUEPRINT_FILES = [nil, "spec", "test"].map do |dir|
     ["blueprint"].map do |file|
       path = File.join([dir, file].compact)
       ["#{path}.rb", File.join(path, "*.rb")]
@@ -63,7 +63,7 @@ module Blueprints
     @@orm.delete_tables(@@delete_policy = options[:delete_policy])
 
     @@framework_root = options[:root] if options[:root]
-    load_scenarios_files(options[:filename] || PLAN_FILES)
+    load_scenarios_files(options[:filename] || BLUEPRINT_FILES)
 
     Namespace.root.prebuild(options[:prebuild])
   end
@@ -112,6 +112,6 @@ module Blueprints
     end
 
     FileContext.evaluating = false
-    raise "Plans file not found! Put plans in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
+    raise "Blueprints file not found! Put blueprints in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
   end
 end

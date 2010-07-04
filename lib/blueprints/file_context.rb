@@ -3,9 +3,9 @@ module Blueprints
   module FileContext
     mattr_accessor :evaluating
 
-    # Creates a new plan by name and block passed
-    def self.blueprint(plan, &block)
-      Plan.new(plan, &block)
+    # Creates a new blueprint by name and block passed
+    def self.blueprint(name, &block)
+      Blueprint.new(name, &block)
     end
 
     # Creates new namespace by name, and evaluates block against it.

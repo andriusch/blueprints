@@ -110,7 +110,7 @@ Lastly you could use it as plugin:
 Blueprints is activated by calling enable_blueprints. For specifics on how to call that in your testing framework see a little lower.
 enable_blueprints supports these parameters:
 * :root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
-* :filename - custom files pattern with blueprints plans
+* :filename - custom files pattern with blueprints
 * :prebuild - list of blueprints that should be preloaded (available in all tests, never reloaded so they're much faster)
 * :delete_policy - set custom delete policy when deleting everything from tables (before test suite or when calling demolish). Can be :truncate or :delete, defaults to :delete
 
@@ -149,8 +149,8 @@ starting point. Starting point is empty database + any scenarios that you specif
 
 == TODO
 
-* Add ability to revert one plan.
-* Add preloading plans for whole block of tests.
+* Add ability to revert one blueprint.
+* Add preloading blueprints for whole block of tests.
 * Fix rake tasks
 * Add merb support
 * Add support for other test frameworks (check support of cucumber)

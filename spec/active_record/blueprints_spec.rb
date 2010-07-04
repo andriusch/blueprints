@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe Blueprints do
   describe "constants" do
     it "should be loaded from specified dirs" do
-      Blueprints::PLAN_FILES.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"]
+      Blueprints::BLUEPRINT_FILES.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"]
     end
 
     it "should support required ORMS" do
@@ -131,14 +131,14 @@ describe Blueprints do
     it "should raise error when not executed scenarios passed to :undo option" do
       lambda {
         demolish :undo => :orange
-      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'orange'")
+      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'orange'")
     end
   end
 
   describe 'delete policies' do
     before do
       Blueprints::Namespace.root.stubs(:empty?).returns(true)
-      Blueprints.stubs(:load_scenarios_files).with(Blueprints::PLAN_FILES)
+      Blueprints.stubs(:load_scenarios_files).with(Blueprints::BLUEPRINT_FILES)
       Blueprints::Namespace.root.stubs(:prebuild).with(nil)
     end
 
@@ -202,19 +202,19 @@ describe Blueprints do
     it 'should raise ScenarioNotFoundError when scenario could not be found' do
       lambda {
         build :not_existing
-      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'")
+      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'")
     end
 
     it 'should raise ScenarioNotFoundError when scenario parent could not be found' do
       lambda {
         build :parent_not_existing
-      }.should raise_error(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'")
+      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'")
     end
 
     it 'should raise TypeError when scenario name is not symbol or string' do
       lambda {
-        Blueprints::Plan.new(1)
-      }.should raise_error(TypeError, "Pass plan names as strings or symbols only, cannot build plan 1")
+        Blueprints::Blueprint.new(1)
+      }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
     end
 
     it "should raise ArgumentError when unknown ORM specified" do
@@ -395,8 +395,8 @@ describe Blueprints do
   it "should warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
     STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Plan.new(:overwritten)
-    Blueprints::Plan.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten)
   end
 
   it "should warn when building with options and blueprint is already built" do

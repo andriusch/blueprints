@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class BlueprintsTest < ActiveSupport::TestCase
   context "constants" do
     should "be loaded from specified dirs" do
-      assert(Blueprints::PLAN_FILES == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"])
+      assert(Blueprints::BLUEPRINT_FILES == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"])
     end
 
     should "support required ORMS" do
@@ -129,7 +129,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "raise error when not executed scenarios passed to :undo option" do
-      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'orange'") do
+      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'orange'") do
         demolish :undo => :orange
       end
     end
@@ -138,7 +138,7 @@ class BlueprintsTest < ActiveSupport::TestCase
   context 'delete policies' do
     setup do
       Blueprints::Namespace.root.stubs(:empty?).returns(true)
-      Blueprints.stubs(:load_scenarios_files).with(Blueprints::PLAN_FILES)
+      Blueprints.stubs(:load_scenarios_files).with(Blueprints::BLUEPRINT_FILES)
       Blueprints::Namespace.root.stubs(:prebuild).with(nil)
     end
 
@@ -200,20 +200,20 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   context 'errors' do
     should 'raise ScenarioNotFoundError when scenario could not be found' do
-      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'") do
+      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'") do
         build :not_existing
       end
     end
 
     should 'raise ScenarioNotFoundError when scenario parent could not be found' do
-      assert_raise(Blueprints::PlanNotFoundError, "Plan/namespace not found 'not_existing'") do
+      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'") do
         build :parent_not_existing
       end
     end
 
     should 'raise TypeError when scenario name is not symbol or string' do
-      assert_raise(TypeError, "Pass plan names as strings or symbols only, cannot build plan 1") do
-        Blueprints::Plan.new(1)
+      assert_raise(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1") do
+        Blueprints::Blueprint.new(1)
       end
     end
 
@@ -395,8 +395,8 @@ class BlueprintsTest < ActiveSupport::TestCase
   should "warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
     STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Plan.new(:overwritten)
-    Blueprints::Plan.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten)
   end
 
   should "warn when building with options and blueprint is already built" do

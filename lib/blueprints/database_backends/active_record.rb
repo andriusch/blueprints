@@ -60,7 +60,7 @@ module Blueprints
           def blueprint(name_or_attrs, attrs = {})
             if Blueprints::FileContext.evaluating
               klass = self
-              blueprint = Blueprints::Plan.new(name_or_attrs) { klass.blueprint attributes }
+              blueprint = Blueprints::Blueprint.new(name_or_attrs) { klass.blueprint attributes }
               blueprint.depends_on(*attrs.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) }).attributes(attrs)
               blueprint
             else

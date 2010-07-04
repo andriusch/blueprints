@@ -3,12 +3,12 @@ module Blueprints
   # building blueprints/namespaces by name. Is also used for copying instance variables between blueprints/contexts/global
   # context.
   class RootNamespace < Namespace
-    attr_reader :context, :plans
-    attr_accessor :executed_plans
+    attr_reader :context, :blueprints
+    attr_accessor :executed_blueprints
 
     def initialize
-      @executed_plans = Set.new
-      @global_executed_plans = Set.new
+      @executed_blueprints = Set.new
+      @global_executed_blueprints = Set.new
       @auto_iv_list = Set.new
 
       super ''
@@ -18,7 +18,7 @@ module Blueprints
     def setup
       @context = Blueprints::Context.new
       Marshal.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
-      @executed_plans = @global_executed_plans.clone
+      @executed_blueprints = @global_executed_blueprints.clone
     end
 
     # Copies all instance variables from current context to another one.
@@ -29,10 +29,10 @@ module Blueprints
     end
 
     # Sets up global context and executes prebuilt blueprints against it.
-    def prebuild(plans)
+    def prebuild(blueprints)
       @context = Blueprints::Context.new
-      @global_scenarios = build(plans) if plans
-      @global_executed_plans = @executed_plans
+      @global_scenarios = build(blueprints) if blueprints
+      @global_executed_blueprints = @executed_blueprints
 
       @global_variables = Marshal.dump(@context.instance_variables.each_with_object({}) {|iv, hash| hash[iv] = @context.instance_variable_get(iv) })
     end

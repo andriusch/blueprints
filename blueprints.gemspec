@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-07-03}
+  s.date = %q{2010-07-04}
   s.default_executable = %q{blueprintify}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "init.rb",
      "install.rb",
      "lib/blueprints.rb",
+     "lib/blueprints/blueprint.rb",
      "lib/blueprints/buildable.rb",
      "lib/blueprints/context.rb",
      "lib/blueprints/convertable.rb",
@@ -42,7 +43,6 @@ Gem::Specification.new do |s|
      "lib/blueprints/file_context.rb",
      "lib/blueprints/helper.rb",
      "lib/blueprints/namespace.rb",
-     "lib/blueprints/plan.rb",
      "lib/blueprints/root_namespace.rb",
      "spec/active_record/blueprint.rb",
      "spec/active_record/blueprints_spec.rb",
@@ -65,18 +65,18 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Another replacement for factories and fixtures}
   s.test_files = [
-    "spec/active_record/blueprint.rb",
-     "spec/active_record/blueprints_spec.rb",
-     "spec/active_record/fixtures/fruit.rb",
-     "spec/active_record/fixtures/schema.rb",
-     "spec/active_record/fixtures/tree.rb",
-     "spec/active_record/spec_helper.rb",
-     "spec/no_db/blueprint.rb",
-     "spec/no_db/blueprints_spec.rb",
-     "spec/no_db/fixtures/fruit.rb",
+    "spec/no_db/fixtures/fruit.rb",
      "spec/no_db/spec_helper.rb",
-     "test/blueprints_test.rb",
-     "test/test_helper.rb"
+     "spec/no_db/blueprints_spec.rb",
+     "spec/no_db/blueprint.rb",
+     "spec/active_record/fixtures/fruit.rb",
+     "spec/active_record/fixtures/tree.rb",
+     "spec/active_record/fixtures/schema.rb",
+     "spec/active_record/spec_helper.rb",
+     "spec/active_record/blueprints_spec.rb",
+     "spec/active_record/blueprint.rb",
+     "test/test_helper.rb",
+     "test/blueprints_test.rb"
   ]
 
   if s.respond_to? :specification_version then

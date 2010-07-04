@@ -1,15 +1,15 @@
 module Blueprints
   # Class for actual blueprints. Allows building itself by executing block passed against current context.
-  class Plan < Buildable
+  class Blueprint < Buildable
     # Initializes blueprint by name and block
     def initialize(name, &block)
       super(name)
       @block = block
     end
 
-    # Builds plan and adds it to executed plan hash. Setups instance variable with same name as plan if it is not defined yet.
+    # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
     def build_self(build_once = true)
-      if build_once and Namespace.root.executed_plans.include?(path)
+      if build_once and Namespace.root.executed_blueprints.include?(path)
         Blueprints.warn("Building with options, but blueprint was already built", @name) if Namespace.root.context.options.present?
       else
         surface_errors do
@@ -19,7 +19,7 @@ module Blueprints
           end
         end
       end
-      Namespace.root.executed_plans << path
+      Namespace.root.executed_blueprints << path
       @result
     end
 

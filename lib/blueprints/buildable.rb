@@ -74,7 +74,7 @@ module Blueprints
       @parents.each do |p|
         parent = begin
           namespace[p]
-        rescue PlanNotFoundError
+        rescue BlueprintNotFoundError
           Namespace.root[p]
         end
 
@@ -90,7 +90,7 @@ module Blueprints
           name = name.to_sym unless name == ''
           return name, []
         else
-          raise TypeError, "Pass plan names as strings or symbols only, cannot build plan #{name.inspect}"
+          raise TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint #{name.inspect}"
       end
     end
   end

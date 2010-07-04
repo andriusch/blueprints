@@ -18,10 +18,10 @@ module Blueprints
       child.namespace = self
     end
 
-    # Finds child by relative name. Raises PlanNotFoundError if child can't be found.
+    # Finds child by relative name. Raises BlueprintNotFoundError if child can't be found.
     def [](path)
       child_name, path = path.to_s.split('.', 2)
-      child = @children[child_name.to_sym] or raise PlanNotFoundError, child_name
+      child = @children[child_name.to_sym] or raise BlueprintNotFoundError, child_name
       if path
         child[path]
       else
