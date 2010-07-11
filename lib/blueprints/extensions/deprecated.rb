@@ -11,7 +11,7 @@ module ActiveSupport #:nodoc:all
   class TestCase
     include EnableBlueprints
   end
-end
+end if defined? ActiveSupport::TestCase
 
 module Spec #:nodoc:all
   module Runner
