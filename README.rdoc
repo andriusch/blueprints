@@ -114,6 +114,8 @@ These options can be set on blueprint configuration object:
 * orm - allows to set ORM (currently can be :active_record or nil). Defaults to :active_record.
 * transactions - set this to false if you don't want to use transactions. This will severely slow the tests but sometimes transactions can't be used.
 
+Sample usage:
+
   Blueprints.enable do |config|
     config.filename = 'my_blueprints.rb'
     config.prebuild = :preloaded_blueprint
