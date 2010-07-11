@@ -9,7 +9,10 @@ configuration context buildable namespace root_namespace blueprint file_context 
 files.each {|f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
 module Blueprints
-  mattr_reader :config
+  # Contains current configuration of blueprints
+  def self.config
+    @@config ||= Blueprints::Configuration.new
+  end
 
   # Setups variables from global context and starts transaction. Should be called before every test case.
   def self.setup(current_context)
@@ -23,21 +26,16 @@ module Blueprints
     DatabaseCleaner.clean if config.orm
   end
 
+  # Enables blueprints support for RSpec or Test::Unit depending on whether (R)Spec is defined or not. Yields
+  # Blueprints::Configuration object that you can use to configure blueprints.
   def self.enable
-    @@config ||= Blueprints::Configuration.new
-    yield @@config if block_given?
+    yield config if block_given?
     load
     extension = (defined? Spec or defined? RSpec) ? 'rspec' : 'test_unit'
     require File.join(File.dirname(__FILE__), 'blueprints', 'extensions', extension)
   end
 
-  # Sets up configuration, clears database, runs scenarios that have to be prebuilt. Should be run before all test cases and before <tt>setup</tt>.
-  # Accepts following options:
-  # * <tt>:filename</tt> - Allows passing custom filename pattern in case blueprints are held in place other than spec/blueprint, test/blueprint, blueprint.
-  # * <tt>:prebuild</tt> - Allows passing scenarios that should be prebuilt and available in all tests. Works similarly to fixtures.
-  # * <tt>:root</tt> - Allows passing custom root folder to use in case of non rails and non merb project.
-  # * <tt>:orm</tt> - Allows specifying what orm should be used. Default to <tt>:active_record</tt>, also allows <tt>:none</tt>
-  # * <tt>:transactions</tt> - Allows to specify not to use transactions when it's needed.
+  # Sets up configuration, clears database, runs scenarios that have to be prebuilt. Should be run before all test cases and before Blueprints#setup.
   def self.load
     return unless Namespace.root.empty?
 
