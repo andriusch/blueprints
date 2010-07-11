@@ -10,6 +10,7 @@ begin
     gemspec.authors = ["Andrius Chamentauskas"]
     gemspec.bindir = 'bin'
     gemspec.executables = ['blueprintify']
+    gemspec.add_dependency 'active_support', '>=2.3.0'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

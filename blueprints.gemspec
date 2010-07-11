@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-07-04}
+  s.date = %q{2010-07-11}
   s.default_executable = %q{blueprintify}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
@@ -84,9 +84,12 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<active_support>, [">= 2.3.0"])
     else
+      s.add_dependency(%q<active_support>, [">= 2.3.0"])
     end
   else
+    s.add_dependency(%q<active_support>, [">= 2.3.0"])
   end
 end
 
