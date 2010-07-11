@@ -7,7 +7,7 @@ Another replacement for factories and fixtures that focuses on being DRY and mak
 Blueprints look like this:
 
   blueprint :apple do
-    Fruit.create! :species => 'apple'
+    Fruit.blueprint :species => 'apple'
   end
 
   blueprint :orange do
@@ -15,11 +15,11 @@ Blueprints look like this:
   end
 
   blueprint :fruitbowl => [:apple, :orange] do
-    FruitBowl.create! :fruit => [@apple,@orange]
+    FruitBowl.blueprint :fruit => [@apple,@orange]
   end
 
   blueprint :kitchen => :fruitbowl do
-    Kitchen.create! :fruitbowl => @fruitbowl
+    Kitchen.blueprint :fruitbowl => @fruitbowl
   end
 
 ...and you use them in specs like:
@@ -90,46 +90,33 @@ Blueprints searches for blueprints files in this particular order in Rails (Merb
 * spec/blueprint/*.rb
 * test/blueprint.rb
 * test/blueprint/*.rb
-You can pass :root option to override framework root and :filename option to pass custom filename pattern
+You can set root option to override framework root and filename option to pass custom filename pattern
 
 == Setup
 
 The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
 
-  config.gem 'blueprints', :source => 'http://gemcutter.org'
+  config.gem 'blueprints'
 
 If you’re not using rails, then you can install it through command line
 
-  gem sources -a http://gemcutter.org
   sudo gem install blueprints
 
 Lastly you could use it as plugin:
 
   ruby script/plugin install git://github.com/sinsiliux/blueprints.git
 
-Blueprints is activated by calling enable_blueprints. For specifics on how to call that in your testing framework see a little lower.
-enable_blueprints supports these parameters:
-* :root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
-* :filename - custom files pattern with blueprints
-* :prebuild - list of blueprints that should be preloaded (available in all tests, never reloaded so they're much faster)
-* :delete_policy - set custom delete policy when deleting everything from tables (before test suite or when calling demolish). Can be :truncate or :delete, defaults to :delete
+Blueprints is activated by calling Blueprints.enable in your spec_helper/test_helper. This method accepts block and yields Blueprints::Configuration object.
+These options can be set on blueprint configuration object:
+* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
+* filename - custom files pattern with blueprints
+* prebuild - list of blueprints that should be preloaded (available in all tests, never reloaded so they're much faster)
+* orm - allows to set ORM (currently can be :active_record or nil). Defaults to :active_record.
+* transactions - set this to false if you don't want to use transactions. This will severely slow the tests but sometimes transactions can't be used.
 
-=== RSpec
-
-Add the following to spec_helper.rb
-
-  Spec::Runner.configure do |config|
-    ...
-    config.enable_blueprints :filename => 'scenarios.rb', :prebuild => :preloaded_scenario
-  end
-
-=== Test::Unit
-
-Add the following lines to test_helper.rb
-
-  class ActiveSupport::TestCase
-    ...
-    enable_blueprints
+  Blueprints.enable do |config|
+    config.filename = 'my_blueprints.rb'
+    config.prebuild = :preloaded_blueprint
   end
 
 == Advanced Usage
@@ -138,14 +125,14 @@ Its just ruby, right? So go nuts:
 
   1.upto(9) do |i|
     blueprint("user_#{i}") do
-      User.create! :name => "user#{i}"
+      User.blueprint :name => "user#{i}"
     end
   end
 
 == Transactions
 
-Blueprints is transactional, meaning that after every test transaction is dropped and database is reset to
-starting point. Starting point is empty database + any scenarios that you specify in enable_blueprints.
+Blueprints by default is transactional, meaning that before every test transaction is started and after every test that transaction is dropped
+which resets database to the state before the test. This state is empty database + any scenarios that you specify in enable_blueprints.
 
 == TODO
 
