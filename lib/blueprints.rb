@@ -70,7 +70,7 @@ module Blueprints
     load_scenarios_files(options[:filename])
 
     @@use_transactions = options[:transactions]
-    DatabaseCleaner.strategy = @@use_transactions ? :transaction : :truncation
+    DatabaseCleaner.strategy = (@@use_transactions ? :transaction : :truncation) unless @@orm == :none
     @@prebuild = options[:prebuild]
     Namespace.root.prebuild(@@prebuild) if @@use_transactions
   end
