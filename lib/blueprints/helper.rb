@@ -37,8 +37,10 @@ module Blueprints
     #
     # TODO: add sample usage
     def demolish(*args)
+      STDERR.puts "DEPRECATION WARNING: demolish is deprecated and will be changed to support per blueprint demolishing in blueprints 0.8.0"
       options = args.extract_options!
-      Blueprints.delete_tables(*args)
+      args = (ActiveRecord::Base.connection.tables - ['schema_migrations']) if args.blank?
+      args.each {|table| ActiveRecord::Base.connection.execute("DELETE FROM #{table}") }
 
       if options[:undo] == :all
         Namespace.root.executed_blueprints.clear

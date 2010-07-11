@@ -135,31 +135,6 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
   end
 
-  context 'delete policies' do
-    setup do
-      Blueprints::Namespace.root.stubs(:empty?).returns(true)
-      Blueprints.stubs(:load_scenarios_files).with(Blueprints::BLUEPRINT_FILES)
-      Blueprints::Namespace.root.stubs(:prebuild).with(nil)
-    end
-
-    teardown do
-      Blueprints.send(:class_variable_set, :@@delete_policy, nil)
-    end
-
-    should "allow using custom delete policy" do
-      ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE fruits")
-      ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE trees")
-
-      Blueprints.load(:delete_policy => :truncate)
-    end
-
-    should "raise an error if unexisting delete policy given" do
-      assert_raise(ArgumentError, 'Unknown delete policy unknown') do
-        Blueprints.load(:delete_policy => :unknown)
-      end
-    end
-  end
-
   context 'with many apples scenario' do
     setup do
       build :many_apples, :cherry, :cherry_basket

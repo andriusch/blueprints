@@ -135,31 +135,6 @@ describe Blueprints do
     end
   end
 
-  describe 'delete policies' do
-    before do
-      Blueprints::Namespace.root.stubs(:empty?).returns(true)
-      Blueprints.stubs(:load_scenarios_files).with(Blueprints::BLUEPRINT_FILES)
-      Blueprints::Namespace.root.stubs(:prebuild).with(nil)
-    end
-
-    after do
-      Blueprints.send(:class_variable_set, :@@delete_policy, nil)
-    end
-
-    it "should allow using custom delete policy" do
-      ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE fruits")
-      ActiveRecord::Base.connection.expects(:delete).with("TRUNCATE trees")
-
-      Blueprints.load(:delete_policy => :truncate)
-    end
-
-    it "should raise an error if unexisting delete policy given" do
-      lambda {
-        Blueprints.load(:delete_policy => :unknown)
-      }.should raise_error(ArgumentError, 'Unknown delete policy unknown')
-    end
-  end
-
   describe 'with many apples scenario' do
     before do
       build :many_apples, :cherry, :cherry_basket

@@ -1,5 +1,6 @@
 require 'active_support'
 require 'active_support/core_ext'
+require 'database_cleaner'
 require 'set'
 
 files = %w{
@@ -37,12 +38,15 @@ module Blueprints
   def self.setup(current_context)
     Namespace.root.setup
     Namespace.root.copy_ivars(current_context)
-    @@orm.start_transaction
+    unless @@orm == :none
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.start
+    end
   end
 
   # Rollbacks transaction returning everything to state before test. Should be called after every test case.
   def self.teardown
-    @@orm.rollback_transaction
+    DatabaseCleaner.clean unless @@orm == :none
   end
 
   # Sets up configuration, clears database, runs scenarios that have to be prebuilt. Should be run before all test cases and before <tt>setup</tt>.
@@ -53,24 +57,20 @@ module Blueprints
   # * <tt>:root</tt> - Allows passing custom root folder to use in case of non rails and non merb project.
   # * <tt>:orm</tt> - Allows specifying what orm should be used. Default to <tt>:active_record</tt>, also allows <tt>:none</tt>
   def self.load(options = {})
-    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm)
     options.symbolize_keys!
+    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm)
+    STDERR.puts "DEPRECATION WARNING: delete_policy is deprecated and truncation is now used by default" if options[:delete_policy]
     return unless Namespace.root.empty?
 
-    orm = (options.delete(:orm) || :active_record).to_sym
-    raise ArgumentError, "Unsupported ORM #{orm}. Blueprints supports only #{supported_orms.join(', ')}" unless supported_orms.include?(orm)
-    @@orm = DatabaseBackends.const_get(orm.to_s.classify).new
-    @@orm.delete_tables(@@delete_policy = options[:delete_policy])
+    @@orm = (options.delete(:orm) || :active_record).to_sym
+    raise ArgumentError, "Unsupported ORM #{@@orm}. Blueprints supports only #{supported_orms.join(', ')}" unless supported_orms.include?(@@orm)
+    DatabaseBackends.const_get(@@orm.to_s.classify).new
+    DatabaseCleaner.clean_with :truncation unless @@orm == :none
 
     @@framework_root = options[:root] if options[:root]
     load_scenarios_files(options[:filename] || BLUEPRINT_FILES)
 
     Namespace.root.prebuild(options[:prebuild])
-  end
-
-  # Clears all tables in database. Also accepts a list of tables in case not all tables should be cleared.
-  def self.delete_tables(*tables)
-    @@orm.delete_tables(@@delete_policy, *tables)
   end
 
   def self.backtrace_cleaner
