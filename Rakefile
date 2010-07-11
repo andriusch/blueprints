@@ -10,7 +10,7 @@ begin
     gemspec.authors = ["Andrius Chamentauskas"]
     gemspec.bindir = 'bin'
     gemspec.executables = ['blueprintify']
-    gemspec.add_dependency 'active_support', '>=2.3.0'
+    gemspec.add_dependency 'activesupport', '>=2.3.0'
     gemspec.add_dependency 'database_cleaner', '~>0.5.0'
   end
   Jeweler::GemcutterTasks.new
