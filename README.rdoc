@@ -1,10 +1,56 @@
 = Blueprints
 
-Another replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.
+Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.
+
+== Setup
+
+The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
+
+  config.gem 'blueprints'
+
+If you're not using rails, then you can install it through command line
+
+  sudo gem install blueprints
+
+Lastly you could use it as plugin:
+
+  ruby script/plugin install git://github.com/sinsiliux/blueprints.git
+
+Blueprints is activated by calling Blueprints.enable at the bottom of your spec_helper/test_helper. If you're using RSpec
+make sure you call Blueprints.enable after requiring RSpec, otherwise it will lead to strange behaviour. This method accepts
+block and yields Blueprints::Configuration object.
+
+These options can be set on blueprint configuration object:
+* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
+* filename - custom patterns of files that contain your blueprints (in case one of automatic ones doesn't fit your needs)
+* prebuild - list of blueprints that should be preloaded (available in all tests, never reloaded so they're much faster)
+* orm - allows to set ORM (currently can be :active_record or nil). Defaults to :active_record.
+* transactions - set this to false if you don't want to use transactions. This will severely slow the tests but sometimes transactions can't be used.
+
+Sample usage:
+
+  Blueprints.enable do |config|
+    config.filename = 'my_blueprints.rb'
+    config.prebuild = :preloaded_blueprint
+  end
+
+== Blueprints file
+
+Blueprints file is the file that contains all definitions of blueprints. This can either be single file or whole folder
+if you have many blueprints.
+
+By default blueprints are searched in these files in this particular order in application root (which is either RAILS_ROOT if it's defined or current folder by default):
+* blueprint.rb
+* blueprint/*.rb
+* spec/blueprint.rb
+* spec/blueprint/*.rb
+* test/blueprint.rb
+* test/blueprint/*.rb
+You can set root option to override application root and filename option to pass custom filename pattern.
 
 == Usage
 
-Blueprints look like this:
+Definitions of blueprints look like this:
 
   blueprint :apple do
     Fruit.blueprint :species => 'apple'
@@ -15,14 +61,13 @@ Blueprints look like this:
   end
 
   blueprint :fruitbowl => [:apple, :orange] do
-    FruitBowl.blueprint :fruit => [@apple,@orange]
+    @fruits = [@apple,@orange]
+    FruitBowl.blueprint :fruits => @fruits
   end
 
-  blueprint :kitchen => :fruitbowl do
-    Kitchen.blueprint :fruitbowl => @fruitbowl
-  end
+  Kitchen.blueprint :kitchen, :fruitbowl => d(:fruitbowl)
 
-...and you use them in specs like:
+...and you use them in specs/tests like this:
 
   describe Fruit, "apple" do
     before do
@@ -40,7 +85,8 @@ Blueprints look like this:
     end
 
     it "should have 2 fruits" do
-      @fruitbowl.should have(2).fruit
+      @fruits.should == [@apple, @orange]
+      @fruitbowl.should have(2).fruits
     end
   end
 
@@ -77,51 +123,13 @@ And if you also need it to depend on other blueprints:
 
   SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint)
 
-...or if name of associated blueprint and instance variable are same...
+...or if name of blueprint that this one depends on and instance variable association uses are the same...
 
   SomeModel.blueprint(:something, :associated_column => d(:some_blueprint)) # I prefer this one
 
-=== Blueprints file
+You can learn more about blueprint method in http://wiki.github.com/sinsiliux/blueprints/method-blueprint
 
-Blueprints searches for blueprints files in this particular order in Rails (Merb) root:
-* blueprint.rb
-* blueprint/*.rb
-* spec/blueprint.rb
-* spec/blueprint/*.rb
-* test/blueprint.rb
-* test/blueprint/*.rb
-You can set root option to override framework root and filename option to pass custom filename pattern
-
-== Setup
-
-The easiest way to install this gem for Ruby on Rails is just add this line to config/environment.rb (or config/environments/test.rb):
-
-  config.gem 'blueprints'
-
-If you’re not using rails, then you can install it through command line
-
-  sudo gem install blueprints
-
-Lastly you could use it as plugin:
-
-  ruby script/plugin install git://github.com/sinsiliux/blueprints.git
-
-Blueprints is activated by calling Blueprints.enable in your spec_helper/test_helper. This method accepts block and yields Blueprints::Configuration object.
-These options can be set on blueprint configuration object:
-* root - custom framework root if automatic detection fails for some reason (eg. not rails/merb project)
-* filename - custom files pattern with blueprints
-* prebuild - list of blueprints that should be preloaded (available in all tests, never reloaded so they're much faster)
-* orm - allows to set ORM (currently can be :active_record or nil). Defaults to :active_record.
-* transactions - set this to false if you don't want to use transactions. This will severely slow the tests but sometimes transactions can't be used.
-
-Sample usage:
-
-  Blueprints.enable do |config|
-    config.filename = 'my_blueprints.rb'
-    config.prebuild = :preloaded_blueprint
-  end
-
-== Advanced Usage
+=== Advanced Usage
 
 Its just ruby, right? So go nuts:
 
@@ -130,6 +138,8 @@ Its just ruby, right? So go nuts:
       User.blueprint :name => "user#{i}"
     end
   end
+
+You can also read more about advanced usages in http://wiki.github.com/sinsiliux/blueprints/advanced-usages
 
 == Transactions
 
