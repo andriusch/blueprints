@@ -21,6 +21,7 @@ module Blueprints
       ["#{path}.rb", File.join(path, "*.rb")]
     end
   end.flatten
+  mattr_reader :use_transactions, :prebuild
 
   # Returns a list of supported ORMs. For now it supports ActiveRecord and None.
   def self.supported_orms
@@ -38,10 +39,7 @@ module Blueprints
   def self.setup(current_context)
     Namespace.root.setup
     Namespace.root.copy_ivars(current_context)
-    unless @@orm == :none
-      DatabaseCleaner.strategy = :transaction
-      DatabaseCleaner.start
-    end
+    DatabaseCleaner.start unless @@orm == :none
   end
 
   # Rollbacks transaction returning everything to state before test. Should be called after every test case.
@@ -51,26 +49,30 @@ module Blueprints
 
   # Sets up configuration, clears database, runs scenarios that have to be prebuilt. Should be run before all test cases and before <tt>setup</tt>.
   # Accepts following options:
-  # * <tt>:delete_policy</tt> - allows changing how tables in database should be cleared. By default simply uses delete statement. Supports :delete and :truncate options.
   # * <tt>:filename</tt> - Allows passing custom filename pattern in case blueprints are held in place other than spec/blueprint, test/blueprint, blueprint.
   # * <tt>:prebuild</tt> - Allows passing scenarios that should be prebuilt and available in all tests. Works similarly to fixtures.
   # * <tt>:root</tt> - Allows passing custom root folder to use in case of non rails and non merb project.
   # * <tt>:orm</tt> - Allows specifying what orm should be used. Default to <tt>:active_record</tt>, also allows <tt>:none</tt>
+  # * <tt>:transactions</tt> - Allows to specify not to use transactions when it's needed.
   def self.load(options = {})
     options.symbolize_keys!
-    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm)
+    options.reverse_merge!(:filename => BLUEPRINT_FILES, :orm => :active_record, :transactions => true)
+    options.assert_valid_keys(:delete_policy, :filename, :prebuild, :root, :orm, :transactions)
     STDERR.puts "DEPRECATION WARNING: delete_policy is deprecated and truncation is now used by default" if options[:delete_policy]
     return unless Namespace.root.empty?
 
-    @@orm = (options.delete(:orm) || :active_record).to_sym
+    @@orm = options.delete(:orm).to_sym
     raise ArgumentError, "Unsupported ORM #{@@orm}. Blueprints supports only #{supported_orms.join(', ')}" unless supported_orms.include?(@@orm)
     DatabaseBackends.const_get(@@orm.to_s.classify).new
     DatabaseCleaner.clean_with :truncation unless @@orm == :none
 
     @@framework_root = options[:root] if options[:root]
-    load_scenarios_files(options[:filename] || BLUEPRINT_FILES)
+    load_scenarios_files(options[:filename])
 
-    Namespace.root.prebuild(options[:prebuild])
+    @@use_transactions = options[:transactions]
+    DatabaseCleaner.strategy = @@use_transactions ? :transaction : :truncation
+    @@prebuild = options[:prebuild]
+    Namespace.root.prebuild(@@prebuild) if @@use_transactions
   end
 
   def self.backtrace_cleaner

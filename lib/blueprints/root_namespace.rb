@@ -17,8 +17,12 @@ module Blueprints
     # Loads all instance variables from global context to current one.
     def setup
       @context = Blueprints::Context.new
-      Marshal.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
       @executed_blueprints = @global_executed_blueprints.clone
+      if Blueprints.use_transactions
+        Marshal.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
+      else
+        build(Blueprints.prebuild)
+      end
     end
 
     # Copies all instance variables from current context to another one.
