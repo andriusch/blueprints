@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.6.3"
+  s.version = "0.7.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-07-11}
+  s.date = %q{2010-07-12}
   s.default_executable = %q{blueprintify}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
@@ -31,13 +31,13 @@ Gem::Specification.new do |s|
      "lib/blueprints.rb",
      "lib/blueprints/blueprint.rb",
      "lib/blueprints/buildable.rb",
+     "lib/blueprints/configuration.rb",
      "lib/blueprints/context.rb",
      "lib/blueprints/convertable.rb",
      "lib/blueprints/convertable/fixtures.rb",
-     "lib/blueprints/database_backends/abstract.rb",
      "lib/blueprints/database_backends/active_record.rb",
-     "lib/blueprints/database_backends/none.rb",
      "lib/blueprints/errors.rb",
+     "lib/blueprints/extensions/deprecated.rb",
      "lib/blueprints/extensions/rspec.rb",
      "lib/blueprints/extensions/test_unit.rb",
      "lib/blueprints/file_context.rb",
@@ -55,6 +55,9 @@ Gem::Specification.new do |s|
      "spec/no_db/blueprints_spec.rb",
      "spec/no_db/fixtures/fruit.rb",
      "spec/no_db/spec_helper.rb",
+     "spec/test_all.sh",
+     "spec/unit/configuration_spec.rb",
+     "spec/unit/spec_helper.rb",
      "test/blueprints_test.rb",
      "test/test_helper.rb",
      "uninstall.rb"
@@ -69,6 +72,8 @@ Gem::Specification.new do |s|
      "spec/no_db/spec_helper.rb",
      "spec/no_db/blueprints_spec.rb",
      "spec/no_db/blueprint.rb",
+     "spec/unit/spec_helper.rb",
+     "spec/unit/configuration_spec.rb",
      "spec/active_record/fixtures/fruit.rb",
      "spec/active_record/fixtures/tree.rb",
      "spec/active_record/fixtures/schema.rb",
