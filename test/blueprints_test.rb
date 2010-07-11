@@ -1,16 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 class BlueprintsTest < ActiveSupport::TestCase
-  context "constants" do
-    should "be loaded from specified dirs" do
-      assert(Blueprints::BLUEPRINT_FILES == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"])
-    end
-
-    should "support required ORMS" do
-      assert_similar(Blueprints.supported_orms, [:active_record, :none])
-    end
-  end
-
   should "return result of built scenario when calling build" do
     fruit = build :fruit
     assert(fruit == @fruit)
@@ -189,13 +179,6 @@ class BlueprintsTest < ActiveSupport::TestCase
     should 'raise TypeError when scenario name is not symbol or string' do
       assert_raise(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1") do
         Blueprints::Blueprint.new(1)
-      end
-    end
-
-    should "raise ArgumentError when unknown ORM specified" do
-      Blueprints::Namespace.root.expects(:empty?).returns(true)
-      assert_raise(ArgumentError, "Unsupported ORM unknown. Blueprints supports only #{Blueprints.supported_orms.join(', ')}") do
-        Blueprints.load(:orm => :unknown)
       end
     end
   end

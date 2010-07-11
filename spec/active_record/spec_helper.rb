@@ -28,5 +28,10 @@ require 'spec/active_record/fixtures/tree'
 
 config_class.configure do |config|
   config.mock_with :mocha
-  config.enable_blueprints :root => File.expand_path(File.join(File.dirname(__FILE__))), :prebuild => :big_cherry, :transactions => !ENV["NO_TRANSACTIONS"]
+end
+
+Blueprints.enable do |config|
+  config.root = File.expand_path(File.join(File.dirname(__FILE__)))
+  config.prebuild = :big_cherry
+  config.transactions = !ENV["NO_TRANSACTIONS"]
 end

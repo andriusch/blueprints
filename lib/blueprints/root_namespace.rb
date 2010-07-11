@@ -18,10 +18,10 @@ module Blueprints
     def setup
       @context = Blueprints::Context.new
       @executed_blueprints = @global_executed_blueprints.clone
-      if Blueprints.use_transactions
+      if Blueprints.config.transactions
         Marshal.load(@global_variables).each { |name, value| @context.instance_variable_set(name, value) }
       else
-        build(Blueprints.prebuild)
+        build(Blueprints.config.prebuild)
       end
     end
 

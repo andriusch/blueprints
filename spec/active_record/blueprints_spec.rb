@@ -1,16 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe Blueprints do
-  describe "constants" do
-    it "should be loaded from specified dirs" do
-      Blueprints::BLUEPRINT_FILES.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"]
-    end
-
-    it "should support required ORMS" do
-      Blueprints.supported_orms.should =~ [:active_record, :none]
-    end
-  end
-
   it "should return result of built scenario when calling build" do
     fruit = build :fruit
     fruit.should == @fruit
@@ -190,13 +180,6 @@ describe Blueprints do
       lambda {
         Blueprints::Blueprint.new(1)
       }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
-    end
-
-    it "should raise ArgumentError when unknown ORM specified" do
-      Blueprints::Namespace.root.expects(:empty?).returns(true)
-      lambda {
-        Blueprints.load(:orm => :unknown)
-      }.should raise_error(ArgumentError, "Unsupported ORM unknown. Blueprints supports only #{Blueprints.supported_orms.join(', ')}")
     end
   end
 

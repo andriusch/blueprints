@@ -22,10 +22,14 @@ require 'spec/active_record/fixtures/fruit'
 require 'spec/active_record/fixtures/tree'
 
 class ActiveSupport::TestCase
-  enable_blueprints :root => File.join(File.dirname(__FILE__), '..'), :prebuild => :big_cherry, :filename => 'spec/active_record/blueprint.rb'
-
   def assert_similar(array1, array2)
     assert (array1 - array2).empty?, "Extra elements #{array1 - array2}"
     assert (array2 - array1).empty?, "Missing elements #{array2 - array1}"
   end
+end
+
+Blueprints.enable do |config|
+  config.root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  config.prebuild = :big_cherry
+  config.filename = 'spec/active_record/blueprint.rb'
 end
