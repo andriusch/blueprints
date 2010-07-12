@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{blueprints}
-  s.version = "0.7.1"
+  s.version = "0.7.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
@@ -26,6 +26,9 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/blueprintify",
      "blueprints.gemspec",
+     "features/blueprints.feature",
+     "features/step_definitions/blueprints_steps.rb",
+     "features/support/env.rb",
      "init.rb",
      "install.rb",
      "lib/blueprints.rb",
@@ -37,6 +40,7 @@ Gem::Specification.new do |s|
      "lib/blueprints/convertable/fixtures.rb",
      "lib/blueprints/database_backends/active_record.rb",
      "lib/blueprints/errors.rb",
+     "lib/blueprints/extensions/cucumber.rb",
      "lib/blueprints/extensions/deprecated.rb",
      "lib/blueprints/extensions/rspec.rb",
      "lib/blueprints/extensions/test_unit.rb",
