@@ -31,7 +31,13 @@ module Blueprints
   def self.enable
     yield config if block_given?
     load
-    extension = (defined? Spec or defined? RSpec) ? 'rspec' : 'test_unit'
+    extension = if defined? Cucumber
+                  'cucumber'
+                elsif defined? Spec or defined? RSpec
+                  'rspec'
+                else
+                   'test_unit'
+                end
     require File.join(File.dirname(__FILE__), 'blueprints', 'extensions', extension)
   end
 
