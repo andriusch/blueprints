@@ -9,17 +9,12 @@ module Blueprints
 
     # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
     def build_self(build_once = true)
-      if build_once and Namespace.root.executed_blueprints.include?(path)
-        Blueprints.warn("Building with options, but blueprint was already built", @name) if Namespace.root.context.options.present?
-      else
-        surface_errors do
-          if @block
-            @result = Namespace.root.context.instance_eval(&@block)
-            Namespace.root.add_variable(path, @result)
-          end
+      surface_errors do
+        if @block
+          @result = Namespace.root.context.instance_eval(&@block)
+          Namespace.root.add_variable(path, @result)
         end
       end
-      Namespace.root.executed_blueprints << path
       @result
     end
 

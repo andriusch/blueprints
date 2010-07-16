@@ -31,7 +31,8 @@ module Blueprints
 
     # Builds all children and sets instance variable named by name of namespace with the results.
     def build_self(build_once = true)
-      Namespace.root.add_variable(path, @children.collect {|p| p.last.build }.uniq)
+      @result = @children.collect {|p| p.last.build }.uniq
+      Namespace.root.add_variable(path, @result)
     end
   end
 end

@@ -35,6 +35,12 @@ module Blueprints
     #
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
+      if build_once and Namespace.root.executed_blueprints.include?(path)
+        Blueprints.warn("Building with options, but blueprint was already built", @name) if options.present?
+        return @result
+      end
+      Namespace.root.executed_blueprints << path
+
       each_namespace {|namespace| namespace.build_parents }
       build_parents
 
@@ -73,15 +79,6 @@ module Blueprints
       end
     end
 
-    def each_namespace
-      namespace = self
-      yield(namespace) while namespace = namespace.namespace
-    end
-
-    def path
-      @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
-    end
-
     def build_parents
       @parents.each do |p|
         parent = begin
@@ -92,6 +89,17 @@ module Blueprints
 
         parent.build
       end
+    end
+
+    protected
+
+    def each_namespace
+      namespace = self
+      yield(namespace) while namespace = namespace.namespace
+    end
+
+    def path
+      @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
     end
 
     def parse_name(name)

@@ -106,7 +106,7 @@ describe Blueprints do
       build :fruit
       demolish :undo => [:apple]
       Fruit.count.should == 0
-      build :fruit
+      build :apple
       Fruit.count.should == 1
     end
 
@@ -260,6 +260,7 @@ describe Blueprints do
       @pitted_acorn.should_not be_nil
       @pitted_red_apple.should_not be_nil
       @pitted.should =~ [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]]
+      build(:pitted).should == @pitted
     end
 
     describe "with red namespace" do
@@ -403,5 +404,8 @@ describe Blueprints do
       attrs[:tree].should == @pine
     end
   end
-end
 
+  it "should not fail with circular reference" do
+    build :circular_reference
+  end
+end
