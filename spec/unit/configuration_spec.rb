@@ -6,20 +6,26 @@ describe Blueprints::Configuration do
   end
 
   it "should have filename with default value" do
-    @config.filename.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"]
+    @config.filename.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"].collect do |f|
+      Pathname.new(f)
+    end
   end
 
   it "should have correct attribute values" do
     @config.orm.should == :active_record
     @config.prebuild.should == []
     @config.transactions.should be_true
-    @config.root.should be_nil
+    @config.root.should == Pathname.pwd
   end
 
-  it "should use RAILS_ROOT for root if it's defined" do
-    Object::RAILS_ROOT = 'rails/root'
-    Blueprints::Configuration.new.root.should == 'rails/root'
-    Object.send(:remove_const, :RAILS_ROOT)
+  it "should use Rails root for root if it's defined" do
+    module Rails
+      def self.root
+        Pathname.new('rails/root')
+      end
+    end
+    Blueprints::Configuration.new.root.should == Pathname.new('rails/root')
+    Object.send(:remove_const, :Rails)
   end
 
   it "should allow to set only supported orm" do
@@ -30,5 +36,15 @@ describe Blueprints::Configuration do
     lambda {
       @config.orm = :not_existing
     }.should raise_error(ArgumentError, 'Unsupported ORM :not_existing. Blueprints supports only nil, :active_record')
+  end
+
+  it "should set root to pathname" do
+    @config.root = "root"
+    @config.root.should == Pathname.new("root")
+  end
+
+  it "should automatically set filename to array of path names" do
+    @config.filename = "my_file.rb"
+    @config.filename.should == [Pathname.new("my_file.rb")]
   end
 end

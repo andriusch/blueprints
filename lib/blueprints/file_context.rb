@@ -6,7 +6,8 @@ module Blueprints
     attr_reader :file
 
     def initialize(file)
-      @file = Pathname.new(file).relative_path_from(Pathname.new(Blueprints.config.root))
+      file = Pathname.new(file)
+      @file = file.relative_path_from(Blueprints.config.root)
       FileContext.current = self
       instance_eval(File.read(file))
       FileContext.current = nil
