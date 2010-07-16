@@ -9,13 +9,7 @@ module Blueprints
 
     # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
     def build_self(build_once = true)
-      surface_errors do
-        if @block
-          @result = Namespace.root.context.instance_eval(&@block)
-          Namespace.root.add_variable(path, @result)
-        end
-      end
-      @result
+      surface_errors { @result = Namespace.root.context.instance_eval(&@block) if @block }
     end
 
     # Changes blueprint block to build another blueprint by passing additional options to it. Usually used to dry up

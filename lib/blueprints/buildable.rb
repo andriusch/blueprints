@@ -48,9 +48,9 @@ module Blueprints
       Namespace.root.context.options, Namespace.root.context.attributes = options, normalized_attributes.merge(options)
       each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.normalized_attributes }
 
-      build_self(build_once).tap do
-        Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
-      end
+      build_self(build_once)
+      Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
+      Namespace.root.add_variable(path, @result)
     end
 
     # If value is passed then it sets attributes for this buildable object.
