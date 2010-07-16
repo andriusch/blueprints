@@ -178,7 +178,7 @@ describe Blueprints do
 
     it 'should raise TypeError when scenario name is not symbol or string' do
       lambda {
-        Blueprints::Blueprint.new(1)
+        Blueprints::Blueprint.new(1, __FILE__)
       }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
     end
   end
@@ -360,8 +360,8 @@ describe Blueprints do
   it "should warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
     STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Blueprint.new(:overwritten)
-    Blueprints::Blueprint.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten, __FILE__)
+    Blueprints::Blueprint.new(:overwritten, __FILE__)
   end
 
   it "should warn when building with options and blueprint is already built" do
@@ -407,5 +407,13 @@ describe Blueprints do
 
   it "should not fail with circular reference" do
     build :circular_reference
+  end
+
+  it "should rewrite trace" do
+    begin
+      build :error
+    rescue RuntimeError => e
+      e.backtrace[0].should == "spec/active_record/blueprint.rb:2:in blueprint 'error'"
+    end
   end
 end

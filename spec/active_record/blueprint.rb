@@ -1,3 +1,7 @@
+blueprint :error do
+  raise 'error'
+end
+
 blueprint :apple do
   Fruit.create! :species => 'apple'
 end

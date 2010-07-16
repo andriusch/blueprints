@@ -59,7 +59,6 @@ module Blueprints
       root_sub = /^#{config.root}[\\\/]/
       blueprints_path = File.dirname(__FILE__).sub(root_sub, '')
 
-      bc.add_filter {|line| line.sub('(eval)', @@file) }
       bc.add_filter {|line| line.sub(root_sub, '') }
 
       bc.add_silencer {|line| File.dirname(line).starts_with?(blueprints_path) }
@@ -68,31 +67,24 @@ module Blueprints
   end
 
   def self.warn(message, blueprint)
-    $stderr.puts("**WARNING** #{message}: '#{blueprint}'")
-    $stderr.puts(backtrace_cleaner.clean(caller).first)
+    $stderr.puts("**WARNING** #{message}: '#{blueprint.name}'")
+    $stderr.puts(backtrace_cleaner.clean(blueprint.backtrace(caller)).first)
   end
 
   protected
 
   # Loads blueprints file and creates blueprints from data it contains. Is run by setup method
   def self.load_scenarios_files(*patterns)
-    FileContext.evaluating = true
-
     patterns.flatten!
     patterns.collect! {|pattern| File.join(config.root, pattern)} if config.root
 
     patterns.each do |pattern|
       unless (files = Dir.glob(pattern)).empty?
-        files.each do |f|
-          @@file = f
-          FileContext.module_eval File.read(f)
-        end
-        FileContext.evaluating = false
+        files.each { |f| FileContext.new f }
         return
       end
     end
 
-    FileContext.evaluating = false
     raise "Blueprints file not found! Put blueprints in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
   end
 end

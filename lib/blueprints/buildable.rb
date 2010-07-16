@@ -19,7 +19,7 @@ module Blueprints
       @name, parents = parse_name(name)
       depends_on(*parents)
 
-      Blueprints.warn("Overwriting existing blueprint", @name) if Namespace.root and Namespace.root.children[@name]
+      Blueprints.warn("Overwriting existing blueprint", self) if Namespace.root and Namespace.root.children[@name]
       Namespace.root.add_child(self) if Namespace.root
     end
 
@@ -36,7 +36,7 @@ module Blueprints
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
       if build_once and Namespace.root.executed_blueprints.include?(path)
-        Blueprints.warn("Building with options, but blueprint was already built", @name) if options.present?
+        Blueprints.warn("Building with options, but blueprint was already built", self) if options.present?
         return @result
       end
       Namespace.root.executed_blueprints << path

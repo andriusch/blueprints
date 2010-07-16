@@ -31,7 +31,8 @@ config_class.configure do |config|
 end
 
 Blueprints.enable do |config|
-  config.root = File.expand_path(File.join(File.dirname(__FILE__)))
+  config.root = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+  config.filename = 'spec/active_record/blueprint.rb'
   config.prebuild = :big_cherry
   config.transactions = !ENV["NO_TRANSACTIONS"]
 end

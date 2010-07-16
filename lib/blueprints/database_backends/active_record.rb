@@ -17,9 +17,9 @@ module Blueprints
       # or like this:
       #   Post.blueprint({:post => :user}, :title => 'first post', :text => 'My first post', :user => :@user)
       def blueprint(name_or_attrs, attrs = {})
-        if Blueprints::FileContext.evaluating
+        if Blueprints::FileContext.current
           klass = self
-          blueprint = Blueprints::Blueprint.new(name_or_attrs) { klass.blueprint attributes }
+          blueprint = Blueprints::Blueprint.new(name_or_attrs, Blueprints::FileContext.current.file) { klass.blueprint attributes }
           blueprint.attributes(attrs)
           blueprint
         else

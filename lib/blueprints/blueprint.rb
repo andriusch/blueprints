@@ -1,8 +1,10 @@
 module Blueprints
   # Class for actual blueprints. Allows building itself by executing block passed against current context.
   class Blueprint < Buildable
+    attr_reader :file
     # Initializes blueprint by name and block
-    def initialize(name, &block)
+    def initialize(name, file, &block)
+      @file = file
       super(name)
       @block = block
     end
@@ -19,12 +21,16 @@ module Blueprints
       @block = Proc.new { build parent => attributes }
     end
 
+    def backtrace(trace)
+      trace.collect {|line| line.sub(/^\(eval\):(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
+    end
+
     private
 
     def surface_errors
       yield
     rescue StandardError => error
-      puts "\n=> There was an error building scenario '#{@name}'", error.inspect, '', error.backtrace
+      error.set_backtrace(backtrace(error.backtrace))
       raise error
     end
   end
