@@ -69,4 +69,7 @@ namespace :attributes do
   end.attributes(:species => 'cherry')
 
   Fruit.blueprint :shortened_cherry, :species => 'cherry'
+
+  Fruit.blueprint :dependent_cherry1, :tree => d(:pine)
+  Fruit.blueprint(:dependent_cherry2, :tree => :@the_pine).depends_on(:pine)
 end.attributes(:average_diameter => 10, :species => 'fruit with attributes')

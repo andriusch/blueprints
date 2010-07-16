@@ -39,8 +39,8 @@ module Blueprints
       build_parents
 
       old_options, old_attributes = Namespace.root.context.options, Namespace.root.context.attributes
-      Namespace.root.context.options, Namespace.root.context.attributes = options, attributes.merge(options)
-      each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.attributes }
+      Namespace.root.context.options, Namespace.root.context.attributes = options, normalized_attributes.merge(options)
+      each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.normalized_attributes }
 
       build_self(build_once).tap do
         Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
@@ -49,17 +49,29 @@ module Blueprints
 
     # If value is passed then it sets attributes for this buildable object.
     # Otherwise returns attributes (defaulting to empty Hash)
-    def attributes(value = nil)
-      if value
-        raise value.inspect + @name if @name == ''
-        @attributes = value
-        self
-      else
-        @attributes ||= {}
-      end
+    def attributes(value)
+      @attributes = value
+      self
     end
 
-    protected
+    # Returns normalized attributes for that particular blueprint.
+    def normalized_attributes
+      Buildable.normalize_attributes(@attributes ||= {})
+    end
+
+    # Normalizes attributes by changing all :@var to values of @var, and all dependencies to the result of that blueprint.
+    def self.normalize_attributes(attributes)
+      attributes = attributes.dup
+      attributes.each do |attr, value|
+        if value.is_a?(Blueprints::Buildable::Dependency)
+          iv_name = value.iv_name
+          Blueprints::Namespace.root.build(value.name)
+        end
+        iv_name = value if value.is_a? Symbol and value.to_s =~ /^@.+$/
+
+        attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(iv_name) if iv_name
+      end
+    end
 
     def each_namespace
       namespace = self

@@ -211,6 +211,12 @@ describe Blueprints do
       @oak.reload.size.should == 'updated'
     end
 
+    it "should normalize attributes when updating with blueprint method" do
+      build :cherry, :oak
+      @cherry.blueprint(:tree => :@oak)
+      @cherry.tree.should == @oak
+    end
+
     it "should automatically merge passed options" do
       build :oak => {:size => 'optional'}
       @oak.name.should == 'Oak'
@@ -383,6 +389,18 @@ describe Blueprints do
     it "should reverse merge attributes from namespaces" do
       build 'attributes.cherry'
       @attributes_cherry.average_diameter.should == 10
+    end
+
+    it "should return build attributes for dependencies" do
+      attrs = build_attributes('attributes.dependent_cherry1')
+      @pine.should_not be_nil
+      attrs[:tree].should == @pine
+    end
+
+    it "should return build attributes for :@var" do
+      attrs = build_attributes('attributes.dependent_cherry2')
+      @pine.should_not be_nil
+      attrs[:tree].should == @pine
     end
   end
 end

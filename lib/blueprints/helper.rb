@@ -26,7 +26,8 @@ module Blueprints
     #     Fruit.build attributes
     #   end.attributes(:name => 'apple')
     def build_attributes(name)
-      Namespace.root[name].attributes
+      Namespace.root[name].build_parents
+      Namespace.root[name].normalized_attributes.tap { Blueprints::Namespace.root.copy_ivars(self) }
     end
 
     alias :build :build_blueprint

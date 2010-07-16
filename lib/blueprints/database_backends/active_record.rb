@@ -20,7 +20,7 @@ module Blueprints
         if Blueprints::FileContext.evaluating
           klass = self
           blueprint = Blueprints::Blueprint.new(name_or_attrs) { klass.blueprint attributes }
-          blueprint.depends_on(*attrs.values.select {|attr| attr.is_a?(Blueprints::Buildable::Dependency) }).attributes(attrs)
+          blueprint.attributes(attrs)
           blueprint
         else
           if name_or_attrs.is_a?(Array)
@@ -37,12 +37,7 @@ module Blueprints
     module InstanceMethods
       # Updates attributes of object and calls save!. Bypasses attr_protected and attr_accessible.
       def blueprint(attributes)
-        attributes.each do |attr, value|
-          iv_name = value.iv_name if value.is_a?(Blueprints::Buildable::Dependency)
-          iv_name = value if value.is_a? Symbol and value.to_s =~ /^@.+$/
-          attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(iv_name) if iv_name
-        end
-        send(:attributes=, attributes, false)
+        send(:attributes=, Blueprints::Blueprint.normalize_attributes(attributes.dup), false)
         save!
       end
     end
