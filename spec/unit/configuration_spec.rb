@@ -6,7 +6,7 @@ describe Blueprints::Configuration do
   end
 
   it "should have filename with default value" do
-    @config.filename.should == ["blueprint.rb", "blueprint/*.rb", "spec/blueprint.rb", "spec/blueprint/*.rb", "test/blueprint.rb", "test/blueprint/*.rb"].collect do |f|
+    @config.filename.should == %w{blueprint.rb blueprint/*.rb spec/blueprint.rb spec/blueprint/*.rb test/blueprint.rb test/blueprint/*.rb}.collect do |f|
       Pathname.new(f)
     end
   end
