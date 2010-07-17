@@ -106,7 +106,7 @@ class BlueprintsTest < ActiveSupport::TestCase
       build :fruit
       demolish :undo => [:apple]
       assert(Fruit.count == 0)
-      build :fruit
+      build :apple
       assert(Fruit.count == 1)
     end
 
@@ -178,7 +178,7 @@ class BlueprintsTest < ActiveSupport::TestCase
 
     should 'raise TypeError when scenario name is not symbol or string' do
       assert_raise(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1") do
-        Blueprints::Blueprint.new(1)
+        Blueprints::Blueprint.new(1, __FILE__)
       end
     end
   end
@@ -209,6 +209,12 @@ class BlueprintsTest < ActiveSupport::TestCase
       build :oak
       @oak.blueprint(:size => 'updated')
       assert(@oak.reload.size == 'updated')
+    end
+
+    should "normalize attributes when updating with blueprint method" do
+      build :cherry, :oak
+      @cherry.blueprint(:tree => :@oak)
+      assert(@cherry.tree == @oak)
     end
 
     should "automatically merge passed options" do
@@ -254,6 +260,7 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(!(@pitted_acorn.nil?))
       assert(!(@pitted_red_apple.nil?))
       assert_similar(@pitted, [@pitted_peach_tree, @pitted_peach, @pitted_acorn, [@pitted_red_apple]])
+      assert(build(:pitted) == @pitted)
     end
 
     context "with red namespace" do
@@ -353,8 +360,8 @@ class BlueprintsTest < ActiveSupport::TestCase
   should "warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
     STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Blueprint.new(:overwritten)
-    Blueprints::Blueprint.new(:overwritten)
+    Blueprints::Blueprint.new(:overwritten, __FILE__)
+    Blueprints::Blueprint.new(:overwritten, __FILE__)
   end
 
   should "warn when building with options and blueprint is already built" do
@@ -384,6 +391,29 @@ class BlueprintsTest < ActiveSupport::TestCase
       build 'attributes.cherry'
       assert(@attributes_cherry.average_diameter == 10)
     end
+
+    should "return build attributes for dependencies" do
+      attrs = build_attributes('attributes.dependent_cherry1')
+      assert(!(@pine.nil?))
+      assert(attrs[:tree] == @pine)
+    end
+
+    should "return build attributes for :@var" do
+      attrs = build_attributes('attributes.dependent_cherry2')
+      assert(!(@pine.nil?))
+      assert(attrs[:tree] == @pine)
+    end
+  end
+
+  should "not fail with circular reference" do
+    build :circular_reference
+  end
+
+  should "rewrite trace" do
+    begin
+      build :error
+    rescue RuntimeError => e
+      assert(e.backtrace[0] == "spec/active_record/blueprint.rb:2:in blueprint 'error'")
+    end
   end
 end
-
