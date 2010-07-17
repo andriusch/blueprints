@@ -6,6 +6,8 @@ function e {
     echo '----------------------------------------'
 }
 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
 e "Normal spec"
 spec spec/active_record/blueprints_spec.rb
 
@@ -16,6 +18,7 @@ e "With no db"
 spec spec/no_db/blueprints_spec.rb
 
 e "With Test::Unit"
+rake rspec_to_test
 ruby test/blueprints_test.rb
 
 e "With Cucumber"
@@ -26,11 +29,11 @@ rvm 1.8.7
 RAILS=3 rspec spec/active_record/blueprints_spec.rb
 
 e "With ruby 1.9.1"
-rvm use 1.9.1
+rvm 1.9.1
 spec spec/active_record/blueprints_spec.rb
 
 e "With ruby 1.8.6"
-rvm use 1.8.6
+rvm 1.8.6
 spec spec/active_record/blueprints_spec.rb
 
-rvm use system
+rvm system
