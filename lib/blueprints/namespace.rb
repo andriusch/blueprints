@@ -33,5 +33,9 @@ module Blueprints
     def build_self(build_once = true)
       @result = @children.collect {|p| p.last.build }.uniq
     end
+
+    def demolish
+      @children.each_value(&:demolish)
+    end
   end
 end

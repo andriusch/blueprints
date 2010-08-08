@@ -2,19 +2,13 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Blueprints::Blueprint do
   before do
-    Blueprints::Namespace.root.instance_variable_set(:@context, Blueprints::Context.new)
-    @mock = Mocha::Mockery.instance.unnamed_mock
-  end
-
-  after do
-    Blueprints::Namespace.root.children.clear
+    mock = @mock
+    @blueprint = Blueprints::Blueprint.new(:blueprint, __FILE__) { mock }
+    Blueprints::Namespace.root.build :blueprint
   end
 
   describe "demolish" do
     before do
-      mock = @mock
-      @blueprint = Blueprints::Blueprint.new(:demolish, __FILE__) { mock }
-      Blueprints::Namespace.root.build :demolish
       @mock.stubs(:destroy)
     end
 
@@ -40,7 +34,7 @@ describe Blueprints::Blueprint do
 
     it "should allow to customize demolishing" do
       @mock.expects(:demolish)
-      @blueprint.demolish { @demolish.demolish }
+      @blueprint.demolish { @blueprint.demolish }
       @blueprint.demolish
     end
   end

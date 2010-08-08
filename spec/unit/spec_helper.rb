@@ -14,4 +14,13 @@ require 'lib/blueprints'
 
 Spec::Runner.configure do |config|
   config.mock_with :mocha
+
+  config.before do
+    Blueprints::Namespace.root.instance_variable_set(:@context, Blueprints::Context.new)
+    @mock = Mocha::Mockery.instance.unnamed_mock
+  end
+
+  config.after do
+    Blueprints::Namespace.root.children.clear
+  end
 end

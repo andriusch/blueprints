@@ -6,9 +6,9 @@ module Blueprints
     def initialize(name, file, &block)
       @file = file
       super(name)
-      name = @name
+      ivname = path
       @block = block
-      @demolish_block = lambda { instance_variable_get(:"@#{name}").destroy }
+      @demolish_block = lambda { instance_variable_get("@#{ivname}").destroy }
     end
 
     # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
