@@ -31,7 +31,7 @@ module Blueprints
 
     # Builds dependencies of blueprint and then blueprint itself.
     #
-    # +build_once+ - pass false if you want to build despite the fact that it was already built.
+    # +build_once+ - pass false if you want to build blueprint again instead of updating old one.
     #
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})

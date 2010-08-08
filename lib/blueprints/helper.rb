@@ -33,10 +33,9 @@ module Blueprints
     alias :build :build_blueprint
     alias :build! :build_blueprint!
 
-    # Clears all tables in database. You can pass table names to clear only those tables. You can also pass <tt>:undo</tt> option
-    # to remove scenarios from built scenarios cache.
+    # Demolished built blueprints (by default simply calls destroy method on result of blueprint, but can be customized).
     #
-    # TODO: add sample usage
+    #   demolish :apple, :pear
     def demolish(*names)
       names.each { |name| Namespace.root[name].demolish }
     end
