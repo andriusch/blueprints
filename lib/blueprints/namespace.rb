@@ -34,6 +34,7 @@ module Blueprints
       @result = @children.collect {|p| p.last.build }.uniq
     end
 
+    # Demolished all child blueprints and namespaces
     def demolish
       @children.each_value(&:demolish)
     end

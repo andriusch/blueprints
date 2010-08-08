@@ -27,6 +27,9 @@ module Blueprints
       trace.collect { |line| line.sub(/^\(eval\):(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
     end
 
+    # If block is passed then sets custom demolish block for this blueprint.
+    # If no block is passed then calls demolish block and marks blueprint as not built.
+    # Raises DemolishError if blueprints has not been built.
     def demolish(&block)
       if block
         @demolish_block = block
