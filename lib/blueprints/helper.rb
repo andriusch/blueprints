@@ -37,21 +37,8 @@ module Blueprints
     # to remove scenarios from built scenarios cache.
     #
     # TODO: add sample usage
-    def demolish(*args)
-      STDERR.puts "DEPRECATION WARNING: demolish is deprecated and will be changed to support per blueprint demolishing in blueprints 0.8.0"
-      options = args.extract_options!
-      args = (ActiveRecord::Base.connection.tables - ['schema_migrations']) if args.blank?
-      args.each {|table| ActiveRecord::Base.connection.execute("DELETE FROM #{table}") }
-
-      if options[:undo] == :all
-        Namespace.root.executed_blueprints.clear
-      else
-        undo = [options[:undo]].flatten.compact.collect(&:to_s)
-        unless (not_found = undo - Namespace.root.executed_blueprints.to_a).blank?
-          raise(BlueprintNotFoundError, not_found)
-        end
-        Namespace.root.executed_blueprints -= undo
-      end
+    def demolish(*names)
+      names.each { |name| Namespace.root[name].demolish }
     end
   end
 end

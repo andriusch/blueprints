@@ -91,37 +91,19 @@ describe Blueprints do
     end
 
     it "should clear scenarios when calling demolish" do
-      demolish
-      Fruit.count.should == 0
-    end
-
-    it "should clear only tables passed" do
-      Tree.create!(:name => 'oak')
-      demolish :fruits
-      Tree.count.should == 1
-      Fruit.count.should == 0
-    end
-
-    it "should mark scenarios as undone when passed :undone option" do
-      build :fruit
-      demolish :undo => [:apple]
-      Fruit.count.should == 0
+      demolish :apple
+      Fruit.all.should_not include(@apple)
       build :apple
-      Fruit.count.should == 1
+      Fruit.last.should == @apple
     end
 
-    it "should mark all scenarios as undone when passed :undone option as :all" do
-      build :fruit
-      demolish :undo => :all
-      Fruit.count.should == 0
-      build :fruit
-      Fruit.count.should == 2
-    end
+    it "should overwrite auto created instance variable with another auto created one" do
+      build :acorn => {:average_diameter => 3}
+      demolish :acorn
+      @acorn.average_diameter.should == 3
 
-    it "should raise error when not executed scenarios passed to :undo option" do
-      lambda {
-        demolish :undo => :orange
-      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'orange'")
+      build :acorn => {:average_diameter => 5}
+      @acorn.average_diameter.should == 5
     end
   end
 
@@ -167,13 +149,13 @@ describe Blueprints do
     it 'should raise ScenarioNotFoundError when scenario could not be found' do
       lambda {
         build :not_existing
-      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'")
+      }.should raise_error(Blueprints::BlueprintNotFoundError)
     end
 
     it 'should raise ScenarioNotFoundError when scenario parent could not be found' do
       lambda {
         build :parent_not_existing
-      }.should raise_error(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'")
+      }.should raise_error(Blueprints::BlueprintNotFoundError)
     end
 
     it 'should raise TypeError when scenario name is not symbol or string' do
@@ -312,15 +294,6 @@ describe Blueprints do
       @acorn.average_diameter.should == nil
       @apple_with_params.average_diameter.should == 2
     end
-  end
-
-  it "should overwrite auto created instance variable with another auto created one" do
-    build :acorn => {:average_diameter => 3}
-    demolish :fruits, :undo => :acorn
-    @acorn.average_diameter.should == 3
-
-    build :acorn => {:average_diameter => 5}
-    @acorn.average_diameter.should == 5
   end
 
   describe "extending blueprints" do

@@ -91,37 +91,19 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "clear scenarios when calling demolish" do
-      demolish
-      assert(Fruit.count == 0)
-    end
-
-    should "clear only tables passed" do
-      Tree.create!(:name => 'oak')
-      demolish :fruits
-      assert(Tree.count == 1)
-      assert(Fruit.count == 0)
-    end
-
-    should "mark scenarios as undone when passed :undone option" do
-      build :fruit
-      demolish :undo => [:apple]
-      assert(Fruit.count == 0)
+      demolish :apple
+      assert(!Fruit.all.include?(@apple))
       build :apple
-      assert(Fruit.count == 1)
+      assert(Fruit.last == @apple)
     end
 
-    should "mark all scenarios as undone when passed :undone option as :all" do
-      build :fruit
-      demolish :undo => :all
-      assert(Fruit.count == 0)
-      build :fruit
-      assert(Fruit.count == 2)
-    end
+    should "overwrite auto created instance variable with another auto created one" do
+      build :acorn => {:average_diameter => 3}
+      demolish :acorn
+      assert(@acorn.average_diameter == 3)
 
-    should "raise error when not executed scenarios passed to :undo option" do
-      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'orange'") do
-        demolish :undo => :orange
-      end
+      build :acorn => {:average_diameter => 5}
+      assert(@acorn.average_diameter == 5)
     end
   end
 
@@ -165,13 +147,13 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   context 'errors' do
     should 'raise ScenarioNotFoundError when scenario could not be found' do
-      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'") do
+      assert_raise(Blueprints::BlueprintNotFoundError) do
         build :not_existing
       end
     end
 
     should 'raise ScenarioNotFoundError when scenario parent could not be found' do
-      assert_raise(Blueprints::BlueprintNotFoundError, "Blueprint/namespace not found 'not_existing'") do
+      assert_raise(Blueprints::BlueprintNotFoundError) do
         build :parent_not_existing
       end
     end
@@ -312,15 +294,6 @@ class BlueprintsTest < ActiveSupport::TestCase
       assert(@acorn.average_diameter == nil)
       assert(@apple_with_params.average_diameter == 2)
     end
-  end
-
-  should "overwrite auto created instance variable with another auto created one" do
-    build :acorn => {:average_diameter => 3}
-    demolish :fruits, :undo => :acorn
-    assert(@acorn.average_diameter == 3)
-
-    build :acorn => {:average_diameter => 5}
-    assert(@acorn.average_diameter == 5)
   end
 
   context "extending blueprints" do
