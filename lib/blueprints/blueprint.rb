@@ -6,14 +6,22 @@ module Blueprints
     def initialize(name, file, &block)
       @file = file
       super(name)
-      ivname = path
+
+      ivname = :"@#{path}"
       @block = block
-      @demolish_block = lambda { instance_variable_get("@#{ivname}").destroy }
+      @demolish_block = lambda { instance_variable_get(ivname).destroy }
+      @update_block = lambda { instance_variable_get(ivname).blueprint(options) }
     end
 
     # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
     def build_self(build_once = true)
-      surface_errors { @result = Namespace.root.context.instance_eval(&@block) if @block }
+      surface_errors do
+        if built? and build_once
+          Namespace.root.context.instance_eval(&@update_block) if RootNamespace.root.context.options.present?
+        elsif @block
+          @result = Namespace.root.context.instance_eval(&@block)
+        end
+      end
     end
 
     # Changes blueprint block to build another blueprint by passing additional options to it. Usually used to dry up
@@ -33,13 +41,17 @@ module Blueprints
     def demolish(&block)
       if block
         @demolish_block = block
-      elsif instance_variable_defined?(:@result)
+      elsif built?
         Namespace.root.context.instance_eval(&@demolish_block)
-        remove_instance_variable(:@result)
-        Blueprints::Namespace.root.executed_blueprints.delete(@name.to_s)
+        undo!
       else
         raise DemolishError, @name
       end
+    end
+
+    # Allows customizing what happens when blueprint is already built and it's being built again.
+    def update(&block)
+      @update_block = block
     end
 
     private

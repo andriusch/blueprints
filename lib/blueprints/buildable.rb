@@ -35,11 +35,8 @@ module Blueprints
     #
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
-      if build_once and Namespace.root.executed_blueprints.include?(path)
-        Blueprints.warn("Building with options, but blueprint was already built", self) if options.present?
-        return @result
-      end
-      Namespace.root.executed_blueprints << path
+      return @result if (built? or Namespace.root.executed_blueprints.include? self) and build_once
+      Namespace.root.executed_blueprints << self
 
       each_namespace {|namespace| namespace.build_parents }
       build_parents
@@ -51,6 +48,17 @@ module Blueprints
       build_self(build_once)
       Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
       Namespace.root.add_variable(path, @result)
+    end
+
+    # Returns if blueprint has been built
+    def built?
+      instance_variable_defined?(:@result)
+    end
+
+    # Marks blueprint as not built
+    def undo!
+      remove_instance_variable(:@result) if built?
+      Namespace.root.executed_blueprints.delete self
     end
 
     # If value is passed then it sets attributes for this buildable object.

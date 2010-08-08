@@ -337,12 +337,6 @@ describe Blueprints do
     Blueprints::Blueprint.new(:overwritten, __FILE__)
   end
 
-  it "should warn when building with options and blueprint is already built" do
-    STDERR.expects(:puts).with("**WARNING** Building with options, but blueprint was already built: 'big_cherry'")
-    STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+/))
-    build :big_cherry => {:species => 'some species'}
-  end
-
   describe 'attributes' do
     it "should allow to extract attributes from blueprint" do
       build_attributes('attributes.cherry').should == {:species => 'cherry'}

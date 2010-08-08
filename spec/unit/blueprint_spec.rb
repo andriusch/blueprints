@@ -29,13 +29,30 @@ describe Blueprints::Blueprint do
 
     it "should set blueprint as not built" do
       @blueprint.demolish
-      Blueprints::Namespace.root.executed_blueprints.collect(&:to_s).should_not include('demolish')
+      Blueprints::Namespace.root.executed_blueprints.should_not include(@blueprint)
     end
 
     it "should allow to customize demolishing" do
       @mock.expects(:demolish)
       @blueprint.demolish { @blueprint.demolish }
       @blueprint.demolish
+    end
+  end
+
+  describe "updating" do
+    it "should allow building blueprint with different parameters" do
+      @mock.expects(:blueprint).with(:option => 'value')
+      Blueprints::RootNamespace.root.build(:blueprint => {:option => 'value'})
+    end
+
+    it "should allow customizing update block" do
+      @blueprint.update { @blueprint.update_attributes(options) }
+      @mock.expects(:update_attributes).with(:option => 'value')
+      Blueprints::RootNamespace.root.build(:blueprint => {:option => 'value'})
+    end
+
+    it "should not update if build_once is false" do
+      Blueprints::RootNamespace.root.build({:blueprint => {:option => 'value'}}, nil, false)
     end
   end
 end
