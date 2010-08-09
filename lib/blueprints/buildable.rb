@@ -35,7 +35,7 @@ module Blueprints
     #
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
-      return @result if (built? or Namespace.root.executed_blueprints.include? self) and build_once
+      return @result if (built? or Namespace.root.executed_blueprints.include? self) and build_once and options.blank?
       Namespace.root.executed_blueprints << self
 
       each_namespace {|namespace| namespace.build_parents }
