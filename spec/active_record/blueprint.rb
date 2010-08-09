@@ -44,6 +44,7 @@ Tree.blueprint(:oak_without_attributes)
 
 blueprint :pine do
   @the_pine = Tree.blueprint :name => 'Pine', :size => 'medium'
+  @pine = Tree.blueprint :name => 'Pine', :size => 'small'
 end
 
 Fruit.blueprint(:acorn, :species => 'Acorn', :tree => d(:oak))
@@ -74,7 +75,7 @@ namespace :attributes do
 
   Fruit.blueprint :shortened_cherry, :species => 'cherry'
 
-  Fruit.blueprint :dependent_cherry1, :tree => d(:pine)
+  Fruit.blueprint :dependent_cherry1, :tree => d(:pine, :the_pine)
   Fruit.blueprint(:dependent_cherry2, :tree => :@the_pine).depends_on(:pine)
 end.attributes(:average_diameter => 10, :species => 'fruit with attributes')
 

@@ -115,6 +115,14 @@ If you need to make associations then:
 
   SomeModel.blueprint(:something, :associated_column => d(:some_blueprint))
 
+...or if the name of blueprint and the name of instance variable are not the same:
+
+   SomeModel.blueprint(:something, :associated_column => d(:some_blueprint, :some_instance_variable))
+
+...and when you need to pass options to associated blueprint:
+
+   SomeModel.blueprint(:something, :associated_column => d(:some_blueprint, :option => 'value'))
+
 You can learn more about blueprint method in http://wiki.github.com/sinsiliux/blueprints/method-blueprint
 
 === Advanced Usage

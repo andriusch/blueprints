@@ -361,14 +361,14 @@ describe Blueprints do
 
     it "should return build attributes for dependencies" do
       attrs = build_attributes('attributes.dependent_cherry1')
-      @pine.should_not be_nil
-      attrs[:tree].should == @pine
+      @the_pine.should_not be_nil
+      attrs[:tree].should == @the_pine
     end
 
     it "should return build attributes for :@var" do
       attrs = build_attributes('attributes.dependent_cherry2')
-      @pine.should_not be_nil
-      attrs[:tree].should == @pine
+      @the_pine.should_not be_nil
+      attrs[:tree].should == @the_pine
     end
   end
 

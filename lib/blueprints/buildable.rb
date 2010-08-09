@@ -1,13 +1,5 @@
 module Blueprints
   class Buildable
-    class Dependency < Struct.new(:name) # :nodoc:
-      alias :to_sym :name
-
-      def iv_name
-        :"@#{name}"
-      end
-    end
-
     attr_reader :name
     attr_accessor :namespace
 
@@ -77,10 +69,7 @@ module Blueprints
     def self.normalize_attributes(attributes)
       attributes = attributes.dup
       attributes.each do |attr, value|
-        if value.is_a?(Blueprints::Buildable::Dependency)
-          Blueprints::Namespace.root.build(value.name)
-          attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value.iv_name)
-        end
+        attributes[attr] = value.value if value.is_a?(Blueprints::Dependency)
         if value.is_a? Symbol and value.to_s =~ /^@.+$/
           STDERR.puts "DEPRECATION WARNING: :@variables are deprecated in favor of `d` method"
           attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value)

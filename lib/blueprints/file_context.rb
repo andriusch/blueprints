@@ -29,10 +29,9 @@ module Blueprints
       namespace
     end
 
-    # Creates dependency for current blueprint on some other blueprint and marks that instance variable with same name
-    # should be used for value of column. Only works on "Class.blueprint :name" type of blueprints
-    def d(name)
-      Buildable::Dependency.new(name)
+    # Wrapper around Blueprints::Dependency.new. See Blueprints::Dependency for more information.
+    def d(*args)
+      Dependency.new(*args)
     end
   end
 end
