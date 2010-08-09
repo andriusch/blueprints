@@ -23,6 +23,17 @@ describe Blueprints::Dependency do
   end
 
   it "should allow passing options for building" do
-    Blueprints::Dependency.new(:blueprint, :option => 'value').value.should == {:option => 'value'} 
+    Blueprints::Dependency.new(:blueprint, :option => 'value').value.should == {:option => 'value'}
+  end
+
+  it "should record all missing methods" do
+    dependency = Blueprints::Dependency.new(:blueprint)
+    dependency.method1.method2(1).method3 {|val| val.method4 }
+
+    @mock.expects(:method1).with().returns(mock1 = mock)
+    mock1.expects(:method2).with(1).returns(mock2 = mock)
+    mock2.expects(:method3).with().yields(mock(:method4 => true)).returns(result = mock)
+
+    dependency.value.should == result
   end
 end
