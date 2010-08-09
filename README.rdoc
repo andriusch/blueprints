@@ -113,19 +113,7 @@ You can just type:
 
 If you need to make associations then:
 
-  SomeModel.blueprint :something, :associated_column => :@association_instance_variable
-
-And if you also need it to depend on other blueprints:
-
-  SomeModel.blueprint({:something => :some_blueprint}, :associated_column => :@some_iv)
-
-...or...
-
-  SomeModel.blueprint(:something, :associated_column => :@some_iv).depends_on(:some_blueprint)
-
-...or if name of blueprint that this one depends on and instance variable association uses are the same...
-
-  SomeModel.blueprint(:something, :associated_column => d(:some_blueprint)) # I prefer this one
+  SomeModel.blueprint(:something, :associated_column => d(:some_blueprint))
 
 You can learn more about blueprint method in http://wiki.github.com/sinsiliux/blueprints/method-blueprint
 
@@ -148,11 +136,10 @@ which resets database to the state before the test. This state is empty database
 
 == TODO
 
-* Add ability to revert one blueprint.
 * Add preloading blueprints for whole block of tests.
 * Fix rake tasks
 * Add merb support
-* Add support for other test frameworks (check support of cucumber)
+* Add support for other test frameworks
 
 == Credits
 
