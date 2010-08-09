@@ -78,12 +78,13 @@ module Blueprints
       attributes = attributes.dup
       attributes.each do |attr, value|
         if value.is_a?(Blueprints::Buildable::Dependency)
-          iv_name = value.iv_name
           Blueprints::Namespace.root.build(value.name)
+          attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value.iv_name)
         end
-        iv_name = value if value.is_a? Symbol and value.to_s =~ /^@.+$/
-
-        attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(iv_name) if iv_name
+        if value.is_a? Symbol and value.to_s =~ /^@.+$/
+          STDERR.puts "DEPRECATION WARNING: :@variables are deprecated in favor of `d` method"
+          attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value)
+        end
       end
     end
 

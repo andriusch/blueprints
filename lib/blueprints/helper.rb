@@ -33,7 +33,7 @@ module Blueprints
     alias :build :build_blueprint
     alias :build! :build_blueprint!
 
-    # Demolished built blueprints (by default simply calls destroy method on result of blueprint, but can be customized).
+    # Demolishes built blueprints (by default simply calls destroy method on result of blueprint, but can be customized).
     #
     #   demolish :apple, :pear
     def demolish(*names)
