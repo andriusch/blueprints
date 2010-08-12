@@ -9,8 +9,6 @@ module Blueprints
     attr_reader :root
     # By default blueprints runs each test in it's own transaction. This may sometimes be not desirable so this options allows to turn this off.
     attr_accessor :transactions
-    # Returns ORM that is used, default is :active_record
-    attr_reader :orm
 
     # Sets default attributes for all attributes
     def initialize
@@ -24,15 +22,6 @@ module Blueprints
       @prebuild = []
       @transactions = true
       @root = defined?(Rails) ? Rails.root : Pathname.pwd
-    end
-
-    # Allows specifying what ORM should be used. See SUPPORTED_ORMS to check what values it can contain.
-    def orm=(value)
-      if SUPPORTED_ORMS.include?(value)
-        @orm = value
-      else
-        raise ArgumentError, "Unsupported ORM #{value.inspect}. Blueprints supports only #{SUPPORTED_ORMS.collect(&:inspect).join(', ')}"
-      end
     end
 
     def filename=(value)

@@ -11,8 +11,7 @@ describe Blueprints::Configuration do
     end
   end
 
-  it "should have correct attribute values" do
-    @config.orm.should == :active_record
+  it "should have correct attribute values" do\
     @config.prebuild.should == []
     @config.transactions.should be_true
     @config.root.should == Pathname.pwd
@@ -26,16 +25,6 @@ describe Blueprints::Configuration do
     end
     Blueprints::Configuration.new.root.should == Pathname.new('rails/root')
     Object.send(:remove_const, :Rails)
-  end
-
-  it "should allow to set only supported orm" do
-    Blueprints::Configuration::SUPPORTED_ORMS.should == [nil, :active_record]
-    @config.orm = nil
-    @config.orm.should be_nil
-
-    lambda {
-      @config.orm = :not_existing
-    }.should raise_error(ArgumentError, 'Unsupported ORM :not_existing. Blueprints supports only nil, :active_record')
   end
 
   it "should set root to pathname" do

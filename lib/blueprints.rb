@@ -4,9 +4,9 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context buildable namespace root_namespace blueprint file_context helper errors dependency
+configuration context buildable namespace root_namespace blueprint file_context helper errors dependency core_ext
 }
-files.each {|f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
+files.each { |f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
 module Blueprints
   # Contains current configuration of blueprints
@@ -18,12 +18,12 @@ module Blueprints
   def self.setup(current_context)
     Namespace.root.setup
     Namespace.root.copy_ivars(current_context)
-    DatabaseCleaner.start if config.orm
+    if_orm { DatabaseCleaner.start }
   end
 
   # Rollbacks transaction returning everything to state before test. Should be called after every test case.
   def self.teardown
-    DatabaseCleaner.clean if config.orm
+    if_orm { DatabaseCleaner.clean }
   end
 
   # Enables blueprints support for RSpec or Test::Unit depending on whether (R)Spec is defined or not. Yields
@@ -36,7 +36,7 @@ module Blueprints
                 elsif defined? Spec or defined? RSpec
                   'rspec'
                 else
-                   'test_unit'
+                  'test_unit'
                 end
     require File.join(File.dirname(__FILE__), 'blueprints', 'extensions', extension)
   end
@@ -45,12 +45,12 @@ module Blueprints
   def self.load
     return unless Namespace.root.empty?
 
-    require File.join(File.dirname(__FILE__), 'blueprints', 'database_backends', config.orm.to_s) if config.orm
-    DatabaseCleaner.clean_with :truncation if config.orm
-
+    if_orm do
+      DatabaseCleaner.clean_with :truncation
+      DatabaseCleaner.strategy = (config.transactions ? :transaction : :truncation)
+    end
     load_scenarios_files(config.filename)
 
-    DatabaseCleaner.strategy = (config.transactions ? :transaction : :truncation) if config.orm
     Namespace.root.prebuild(config.prebuild) if config.transactions
   end
 
@@ -59,10 +59,10 @@ module Blueprints
       root_sub = /^#{config.root}[\\\/]/
       blueprints_path = File.dirname(__FILE__).sub(root_sub, '')
 
-      bc.add_filter {|line| line.sub(root_sub, '') }
+      bc.add_filter { |line| line.sub(root_sub, '') }
 
-      bc.add_silencer {|line| File.dirname(line).starts_with?(blueprints_path) }
-      bc.add_silencer {|line| Gem.path.any? {|path| File.dirname(line).starts_with?(path) } }
+      bc.add_silencer { |line| File.dirname(line).starts_with?(blueprints_path) }
+      bc.add_silencer { |line| Gem.path.any? { |path| File.dirname(line).starts_with?(path) } }
     end
   end
 
@@ -78,10 +78,17 @@ module Blueprints
     patterns.each do |pattern|
       pattern = config.root.join(pattern)
       files = Dir[pattern.to_s]
-      files.each {|f| FileContext.new f }
+      files.each { |f| FileContext.new f }
       return if files.size > 0
     end
 
     raise "Blueprints file not found! Put blueprints in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
+  end
+
+  private
+
+  def self.if_orm
+    yield
+  rescue DatabaseCleaner::NoORMDetected, DatabaseCleaner::NoStrategySetError
   end
 end

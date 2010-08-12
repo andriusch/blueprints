@@ -35,4 +35,11 @@ describe Blueprints do
       @cherry.species.should == 'cherry'
     end
   end
+
+  it "should allow shortened forms of blueprint for any type of object" do
+    build :apple
+    @apple.should_not be_nil
+    @apple.species.should == 'apple'
+    @apple.size.should == 3
+  end
 end

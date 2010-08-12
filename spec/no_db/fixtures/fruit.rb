@@ -5,4 +5,10 @@ class Fruit
     @species = species
     @size = size
   end
+
+  private
+  
+  def self.blueprint_object(attrs)
+    new(attrs[:species], attrs[:size])
+  end
 end

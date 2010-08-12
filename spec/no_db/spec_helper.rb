@@ -11,5 +11,4 @@ end
 Blueprints.enable do |config|
   config.root = File.expand_path(File.join(File.dirname(__FILE__)))
   config.prebuild = :big_cherry
-  config.orm = nil
 end
