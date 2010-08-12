@@ -361,14 +361,14 @@ class BlueprintsTest < ActiveSupport::TestCase
 
     should "return build attributes for dependencies" do
       attrs = build_attributes('attributes.dependent_cherry1')
-      assert(!(@pine.nil?))
-      assert(attrs[:tree] == @pine)
+      assert(!(@the_pine.nil?))
+      assert(attrs[:tree] == @the_pine)
     end
 
     should "return build attributes for :@var" do
       attrs = build_attributes('attributes.dependent_cherry2')
-      assert(!(@pine.nil?))
-      assert(attrs[:tree] == @pine)
+      assert(!(@the_pine.nil?))
+      assert(attrs[:tree] == @the_pine)
     end
   end
 
