@@ -23,4 +23,16 @@ describe Blueprints do
       @big_cherry.size = 13
     end
   end
+
+  describe "build per describe" do
+    build_blueprint :cherry
+
+    it "should have cherry" do
+      @cherry.should_not be_nil
+    end
+
+    it "should have correct cherry species" do
+      @cherry.species.should == 'cherry'
+    end
+  end
 end
