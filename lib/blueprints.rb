@@ -77,8 +77,9 @@ module Blueprints
   def self.load_scenarios_files(patterns)
     patterns.each do |pattern|
       pattern = config.root.join(pattern)
-      Dir[pattern].each {|f| FileContext.new f }
-      return if Dir[pattern].size > 0
+      files = Dir[pattern.to_s]
+      files.each {|f| FileContext.new f }
+      return if files.size > 0
     end
 
     raise "Blueprints file not found! Put blueprints in #{patterns.join(' or ')} or pass custom filename pattern with :filename option"
