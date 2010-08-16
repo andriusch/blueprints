@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-08-13}
+  s.date = %q{2010-08-16}
   s.default_executable = %q{blueprintify}
   s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
   s.email = %q{sinsiliux@gmail.com}
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".gitignore",
+     "Gemfile",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
@@ -105,13 +106,28 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.0"])
       s.add_runtime_dependency(%q<database_cleaner>, ["~> 0.5.0"])
+      s.add_development_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_development_dependency(%q<activerecord>, [">= 2.3.0"])
+      s.add_development_dependency(%q<mocha>, [">= 0.9.8"])
+      s.add_development_dependency(%q<shoulda>, [">= 2.10.0"])
+      s.add_development_dependency(%q<cucumber>, [">= 0.7.0"])
     else
       s.add_dependency(%q<activesupport>, [">= 2.3.0"])
       s.add_dependency(%q<database_cleaner>, ["~> 0.5.0"])
+      s.add_dependency(%q<rspec>, [">= 1.3.0"])
+      s.add_dependency(%q<activerecord>, [">= 2.3.0"])
+      s.add_dependency(%q<mocha>, [">= 0.9.8"])
+      s.add_dependency(%q<shoulda>, [">= 2.10.0"])
+      s.add_dependency(%q<cucumber>, [">= 0.7.0"])
     end
   else
     s.add_dependency(%q<activesupport>, [">= 2.3.0"])
     s.add_dependency(%q<database_cleaner>, ["~> 0.5.0"])
+    s.add_dependency(%q<rspec>, [">= 1.3.0"])
+    s.add_dependency(%q<activerecord>, [">= 2.3.0"])
+    s.add_dependency(%q<mocha>, [">= 0.9.8"])
+    s.add_dependency(%q<shoulda>, [">= 2.10.0"])
+    s.add_dependency(%q<cucumber>, [">= 0.7.0"])
   end
 end
 
