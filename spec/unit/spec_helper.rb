@@ -22,5 +22,6 @@ Spec::Runner.configure do |config|
 
   config.after do
     Blueprints::Namespace.root.children.clear
+    Blueprints::Namespace.root.executed_blueprints.clear
   end
 end

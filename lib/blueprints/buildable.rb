@@ -27,8 +27,8 @@ module Blueprints
     #
     # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
     def build(build_once = true, options = {})
-      return @result if (built? or Namespace.root.executed_blueprints.include? self) and build_once and options.blank?
-      Namespace.root.executed_blueprints << self
+      return result if @building or (built? and build_once and options.blank?)
+      @building = true
 
       each_namespace {|namespace| namespace.build_parents }
       build_parents
@@ -39,17 +39,28 @@ module Blueprints
 
       build_self(build_once)
       Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
-      Namespace.root.add_variable(path, @result)
+      Namespace.root.executed_blueprints << self
+      @building = false
+      result
+    end
+
+    # Returns the result of blueprint
+    def result
+      Namespace.root.context.instance_variable_get(variable_name)
+    end
+
+    # Sets the result of blueprint
+    def result=(value)
+      Namespace.root.add_variable(variable_name, value)
     end
 
     # Returns if blueprint has been built
     def built?
-      instance_variable_defined?(:@result)
+      Namespace.root.executed_blueprints.include?(self)
     end
 
     # Marks blueprint as not built
     def undo!
-      remove_instance_variable(:@result) if built?
       Namespace.root.executed_blueprints.delete self
     end
 
@@ -98,6 +109,10 @@ module Blueprints
 
     def path
       @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+    end
+
+    def variable_name
+      :"@#{path}"
     end
 
     def parse_name(name)

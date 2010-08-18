@@ -17,12 +17,7 @@ describe Blueprints::Blueprint do
       @blueprint.demolish
     end
 
-    it "should unset @result after demolish" do
-      @blueprint.demolish
-      @blueprint.instance_variable_defined?(:@result).should be_false
-    end
-
-    it "should raise error if @result is not set" do
+    it "should raise error if blueprint is not built" do
       @blueprint.demolish
       lambda { @blueprint.demolish }.should raise_error(Blueprints::DemolishError)
     end

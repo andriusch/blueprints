@@ -59,8 +59,7 @@ module Blueprints
     # Sets instance variable in current context to passed value. If instance variable with same name already exists, it
     # is set only if it was set using this same method
     def add_variable(name, value)
-      name = "@#{name}" unless name.to_s[0, 1] == "@"
-      if !@context.instance_variable_get(name) or @auto_iv_list.include?(name)
+      if not @context.instance_variable_defined?(name) or @auto_iv_list.include?(name)
         @auto_iv_list << name
         @context.instance_variable_set(name, value)
       end

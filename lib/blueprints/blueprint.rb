@@ -7,7 +7,7 @@ module Blueprints
       @file = file
       super(name)
 
-      ivname = :"@#{path}"
+      ivname = variable_name
       @block = block
       @demolish_block = lambda { instance_variable_get(ivname).destroy }
       @update_block = lambda { instance_variable_get(ivname).blueprint(options) }
@@ -19,7 +19,7 @@ module Blueprints
         if built? and build_once
           Namespace.root.context.instance_eval(&@update_block) if RootNamespace.root.context.options.present?
         elsif @block
-          @result = Namespace.root.context.instance_eval(&@block)
+          self.result = Namespace.root.context.instance_eval(&@block)
         end
       end
     end

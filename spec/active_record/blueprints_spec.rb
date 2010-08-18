@@ -107,6 +107,13 @@ describe Blueprints do
     end
   end
 
+  describe "updating" do
+    it "should allow updating prebuilt blueprints" do
+      build :big_cherry => {:species => 'updated cherry'}
+      @big_cherry.species.should == 'updated cherry'
+    end
+  end
+
   describe 'with many apples scenario' do
     before do
       build :many_apples, :cherry, :cherry_basket

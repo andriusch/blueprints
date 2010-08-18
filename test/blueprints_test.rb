@@ -107,6 +107,13 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
   end
 
+  context "updating" do
+    should "allow updating prebuilt blueprints" do
+      build :big_cherry => {:species => 'updated cherry'}
+      assert(@big_cherry.species == 'updated cherry')
+    end
+  end
+
   context 'with many apples scenario' do
     setup do
       build :many_apples, :cherry, :cherry_basket
