@@ -2,10 +2,10 @@ module Blueprints
   # Class for actual blueprints. Allows building itself by executing block passed against current context.
   class Blueprint < Buildable
     attr_reader :file
-    # Initializes blueprint by name and block
-    def initialize(name, file, &block)
+    # Initializes blueprint by name, namespace, file and block
+    def initialize(name, namespace, file, &block)
       @file = file
-      super(name)
+      super(name, namespace)
 
       ivname = variable_name
       @block = block

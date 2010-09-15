@@ -9,7 +9,7 @@ module Blueprints
       @executed_blueprints = @global_executed_blueprints = []
       @auto_iv_list = Set.new
 
-      super ''
+      super '', nil
     end
 
     # Loads all instance variables from global context to current one.

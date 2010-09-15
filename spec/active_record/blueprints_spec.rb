@@ -164,12 +164,6 @@ describe Blueprints do
         build :parent_not_existing
       }.should raise_error(Blueprints::BlueprintNotFoundError)
     end
-
-    it 'should raise TypeError when scenario name is not symbol or string' do
-      lambda {
-        Blueprints::Blueprint.new(1, __FILE__)
-      }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
-    end
   end
 
   describe 'with active record blueprints extensions' do
@@ -335,13 +329,6 @@ describe Blueprints do
     build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
     Fruit.count.should == 4
     Fruit.find_by_species('not so big cherry').should_not be_nil
-  end
-
-  it "should warn when blueprint with same name exists" do
-    STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
-    STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Blueprint.new(:overwritten, __FILE__)
-    Blueprints::Blueprint.new(:overwritten, __FILE__)
   end
 
   describe 'attributes' do

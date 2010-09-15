@@ -164,12 +164,6 @@ class BlueprintsTest < ActiveSupport::TestCase
         build :parent_not_existing
       end
     end
-
-    should 'raise TypeError when scenario name is not symbol or string' do
-      assert_raise(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1") do
-        Blueprints::Blueprint.new(1, __FILE__)
-      end
-    end
   end
 
   context 'with active record blueprints extensions' do
@@ -335,13 +329,6 @@ class BlueprintsTest < ActiveSupport::TestCase
     build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
     assert(Fruit.count == 4)
     assert(!(Fruit.find_by_species('not so big cherry').nil?))
-  end
-
-  should "warn when blueprint with same name exists" do
-    STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'overwritten'")
-    STDERR.expects(:puts).with(regexp_matches(/blueprints_(spec|test)\.rb:\d+:in `new'/))
-    Blueprints::Blueprint.new(:overwritten, __FILE__)
-    Blueprints::Blueprint.new(:overwritten, __FILE__)
   end
 
   context 'attributes' do

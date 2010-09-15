@@ -11,13 +11,13 @@ Dir.chdir File.join(File.dirname(__FILE__), '..', '..')
 
 require 'spec'
 require 'lib/blueprints'
+require File.dirname(__FILE__) + '/fixtures'
 
 Spec::Runner.configure do |config|
   config.mock_with :mocha
 
   config.before do
     Blueprints::Namespace.root.instance_variable_set(:@context, Blueprints::Context.new)
-    @mock = Mocha::Mockery.instance.unnamed_mock
   end
 
   config.after do

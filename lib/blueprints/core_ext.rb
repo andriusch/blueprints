@@ -27,7 +27,7 @@ module Blueprints::Blueprintable
 
     def define_blueprint(name, attrs)
       klass = self
-      blueprint = Blueprints::Blueprint.new(name, Blueprints::FileContext.current.file) { klass.blueprint attributes }
+      blueprint = Blueprints::Blueprint.new(name, Blueprints::FileContext.current.namespaces.last, Blueprints::FileContext.current.file) { klass.blueprint attributes }
       blueprint.attributes(attrs)
       blueprint
     end

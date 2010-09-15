@@ -7,8 +7,8 @@ module Blueprints
     delegate :empty?, :size, :to => :@children
 
     # Creates namespace by name. See Buildable#new.
-    def initialize(name)
-      super(name)
+    def initialize(name, namespace)
+      super(name, namespace)
       @children = {}
     end
 

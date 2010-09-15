@@ -3,16 +3,18 @@ module Blueprints
     attr_reader :name
     attr_accessor :namespace
 
-    # Initializes new Buildable object by name.
+    # Initializes new Buildable object by name and namespace which it belongs to.
     # Name can be Symbol, String or Hash. If Hash is passed, then first key is assumed name, and value(s) of that key
     # are assumed as dependencies. Raises error class of name parameter is not what is expected.
     # Warns if name has already been taken.
-    def initialize(name)
+    def initialize(name, namespace)
       @name, parents = parse_name(name)
       depends_on(*parents)
 
-      Blueprints.warn("Overwriting existing blueprint", self) if Namespace.root and Namespace.root.children[@name]
-      Namespace.root.add_child(self) if Namespace.root
+      if namespace
+        Blueprints.warn("Overwriting existing blueprint", self) if namespace.children[@name]
+        namespace.add_child(self)
+      end
     end
 
     # Defines blueprint dependencies. Used internally, but can be used externally too.

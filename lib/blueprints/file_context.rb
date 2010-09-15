@@ -3,11 +3,13 @@ module Blueprints
   class FileContext
     @@current = nil
     cattr_accessor :current
-    attr_reader :file
+    attr_reader :file, :namespaces
 
     def initialize(file)
       file = Pathname.new(file)
       @file = file.relative_path_from(Blueprints.config.root)
+      @namespaces = [Namespace.root]
+
       FileContext.current = self
       instance_eval(File.read(file))
       FileContext.current = nil
@@ -15,18 +17,14 @@ module Blueprints
 
     # Creates a new blueprint by name and block passed
     def blueprint(name, &block)
-      Blueprint.new(name, @file, &block)
+      Blueprint.new(name, @namespaces.last, @file, &block)
     end
 
     # Creates new namespace by name, and evaluates block against it.
     def namespace(name)
-      old_namespace = Namespace.root
-      namespace = Namespace.new(name)
-      Namespace.root = namespace
+      @namespaces.push Namespace.new(name, @namespaces.last)
       yield
-      old_namespace.add_child(namespace)
-      Namespace.root = old_namespace
-      namespace
+      @namespaces.pop
     end
 
     # Wrapper around Blueprints::Dependency.new. See Blueprints::Dependency for more information.
