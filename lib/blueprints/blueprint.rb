@@ -13,8 +13,13 @@ module Blueprints
       @update_block = lambda { instance_variable_get(ivname).blueprint(options) }
     end
 
+    def used?
+      @used
+    end
+
     # Builds blueprint and adds it to executed blueprint hash. Setups instance variable with same name as blueprint if it is not defined yet.
     def build_self(build_once = true)
+      @used = true
       surface_errors do
         if built? and build_once
           Namespace.root.context.instance_eval(&@update_block) if RootNamespace.root.context.options.present?

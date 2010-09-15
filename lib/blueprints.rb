@@ -66,6 +66,17 @@ module Blueprints
     end
   end
 
+  # Returns array of blueprints that have not been used since now. Allows passing namespace to start search from (defaults to root namespace)
+  def self.unused(from = Namespace.root)
+    from.children.values.collect do |child|
+      if child.is_a?(Blueprints::Blueprint)
+        child.path('.') unless child.used?
+      else
+        unused(child)
+      end
+    end.flatten.compact
+  end
+
   def self.warn(message, blueprint)
     $stderr.puts("**WARNING** #{message}: '#{blueprint.name}'")
     $stderr.puts(backtrace_cleaner.clean(blueprint.backtrace(caller)).first)

@@ -66,6 +66,11 @@ module Blueprints
       Namespace.root.executed_blueprints.delete self
     end
 
+    # Returns full path to this buildable
+    def path(join_with = '_')
+      @path = (namespace.path(join_with) + join_with unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+    end
+
     # If value is passed then it sets attributes for this buildable object.
     # Otherwise returns attributes (defaulting to empty Hash)
     def attributes(value)
@@ -107,10 +112,6 @@ module Blueprints
     def each_namespace
       namespace = self
       yield(namespace) while namespace = namespace.namespace
-    end
-
-    def path
-      @path = (namespace.path + "_" unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
     end
 
     def variable_name

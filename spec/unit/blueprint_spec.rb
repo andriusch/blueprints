@@ -17,6 +17,14 @@ describe Blueprints::Blueprint do
     }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
   end
 
+  describe "building" do
+    it "should mark blueprint as built" do
+      lambda {
+        Blueprints::Namespace.root.build :blueprint
+      }.should change(@blueprint, :used?).from(false).to(true)
+    end
+  end
+
   describe "demolish" do
     before do
       @result = Blueprints::Namespace.root.build :blueprint
