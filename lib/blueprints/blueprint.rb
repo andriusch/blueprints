@@ -32,7 +32,7 @@ module Blueprints
     end
 
     def backtrace(trace)
-      trace.collect { |line| line.sub(/^\(eval\):(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
+      trace.collect! { |line| line.sub(/^\(eval\):(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
     end
 
     # If block is passed then sets custom demolish block for this blueprint.
@@ -59,7 +59,7 @@ module Blueprints
     def surface_errors
       yield
     rescue StandardError => error
-      error.set_backtrace(backtrace(error.backtrace))
+      backtrace(error.backtrace)
       raise error
     end
   end
