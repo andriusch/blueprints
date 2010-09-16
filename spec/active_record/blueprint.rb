@@ -56,8 +56,8 @@ blueprint(:huge_acorn => :huge_oak).extends(:acorn, :average_diameter => 100)
 
 namespace :pitted => :pine do
   Tree.blueprint :peach_tree, :name => 'pitted peach tree'
-  Fruit.blueprint(:peach, :species => 'pitted peach', :tree => :@peach_tree).depends_on(:peach_tree)
-  Fruit.blueprint(:acorn, :species => 'pitted acorn', :tree => :@oak).depends_on(:oak)
+  Fruit.blueprint :peach, :species => 'pitted peach', :tree => d(:'pitted.peach_tree')
+  Fruit.blueprint :acorn, :species => 'pitted acorn', :tree => d(:oak)
 
   namespace :red => :orange do
     Fruit.blueprint(:apple, :species => 'pitted red apple')
@@ -75,8 +75,7 @@ namespace :attributes do
 
   Fruit.blueprint :shortened_cherry, :species => 'cherry'
 
-  Fruit.blueprint :dependent_cherry1, :tree => d(:pine, :the_pine)
-  Fruit.blueprint(:dependent_cherry2, :tree => :@the_pine).depends_on(:pine)
+  Fruit.blueprint :dependent_cherry, :tree => d(:pine, :the_pine)
 end.attributes(:average_diameter => 10, :species => 'fruit with attributes')
 
 blueprint :circular_reference => :circular_reference

@@ -15,7 +15,7 @@ class Blueprints::Dependency
   def initialize(name, *args)
     @name = name
     @options = args.extract_options!
-    @iv_name = args.first || @name
+    @iv_name = (args.first || @name).to_s.gsub('.', '_')
     @registry = []
   end
 

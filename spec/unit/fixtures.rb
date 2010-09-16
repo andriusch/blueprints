@@ -29,9 +29,11 @@ def namespace
 end
 
 def namespace_blueprint
-  @namespace_blueprint ||= Blueprints::Blueprint.new(:blueprint, namespace, __FILE__) { mock1 }
+  result = mock1
+  @namespace_blueprint ||= Blueprints::Blueprint.new(:blueprint, namespace, __FILE__) { result }
 end
 
 def namespace_blueprint2
-  @namespace_blueprint2 ||= Blueprints::Blueprint.new(:blueprint2, namespace, __FILE__) { mock2 }
+  result = mock2
+  @namespace_blueprint2 ||= Blueprints::Blueprint.new(:blueprint2, namespace, __FILE__) { result }
 end

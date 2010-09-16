@@ -196,7 +196,7 @@ describe Blueprints do
 
     it "should normalize attributes when updating with blueprint method" do
       build :cherry, :oak
-      @cherry.blueprint(:tree => :@oak)
+      @cherry.blueprint(:tree => d(:oak))
       @cherry.tree.should == @oak
     end
 
@@ -354,13 +354,7 @@ describe Blueprints do
     end
 
     it "should return build attributes for dependencies" do
-      attrs = build_attributes('attributes.dependent_cherry1')
-      @the_pine.should_not be_nil
-      attrs[:tree].should == @the_pine
-    end
-
-    it "should return build attributes for :@var" do
-      attrs = build_attributes('attributes.dependent_cherry2')
+      attrs = build_attributes('attributes.dependent_cherry')
       @the_pine.should_not be_nil
       attrs[:tree].should == @the_pine
     end

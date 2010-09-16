@@ -8,6 +8,6 @@ describe Blueprints do
     namespace_blueprint2
 
     Blueprints::Namespace.root.build [:blueprint, :"namespace.blueprint2"]
-    Blueprints.unused.should == ['blueprint2', 'namespace.blueprint']
+    Blueprints.unused.should =~ ['blueprint2', 'namespace.blueprint']
   end
 end

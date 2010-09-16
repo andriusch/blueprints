@@ -16,6 +16,11 @@ describe Blueprints::Dependency do
     Blueprints::Dependency.new(:options_blueprint, :value).value.should == mock2
   end
 
+  it "should replace . in instance variable name with _" do
+    namespace_blueprint
+    Blueprints::Dependency.new(:'namespace.blueprint').value.should == mock1
+  end
+
   it "should allow passing options for building" do
     Blueprints::Dependency.new(:options_blueprint, :option => 'value').value.should == {:option => 'value'}
   end

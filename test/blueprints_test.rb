@@ -196,7 +196,7 @@ class BlueprintsTest < ActiveSupport::TestCase
 
     should "normalize attributes when updating with blueprint method" do
       build :cherry, :oak
-      @cherry.blueprint(:tree => :@oak)
+      @cherry.blueprint(:tree => d(:oak))
       assert(@cherry.tree == @oak)
     end
 
@@ -354,13 +354,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "return build attributes for dependencies" do
-      attrs = build_attributes('attributes.dependent_cherry1')
-      assert(!(@the_pine.nil?))
-      assert(attrs[:tree] == @the_pine)
-    end
-
-    should "return build attributes for :@var" do
-      attrs = build_attributes('attributes.dependent_cherry2')
+      attrs = build_attributes('attributes.dependent_cherry')
       assert(!(@the_pine.nil?))
       assert(attrs[:tree] == @the_pine)
     end

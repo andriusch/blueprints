@@ -4,11 +4,12 @@ version = ENV['RAILS']
 gem 'activerecord', "~> #{version}" if version
 require 'active_record'
 
-$: << File.join(File.dirname(__FILE__), '..', '..')
+Root = Pathname.new(__FILE__).dirname.join('..', '..')
+$: << Root.to_s
 
 ActiveRecord::Base.logger = Logger.new("debug.log")
 
-databases = YAML::load(IO.read("spec/active_record/fixtures/database.yml"))
+databases = YAML::load(Root.join("spec/active_record/fixtures/database.yml").read)
 db_info = databases[ENV["DB"] || "test"]
 ActiveRecord::Base.establish_connection(db_info)
 

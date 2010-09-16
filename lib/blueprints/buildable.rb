@@ -85,13 +85,8 @@ module Blueprints
 
     # Normalizes attributes by changing all :@var to values of @var, and all dependencies to the result of that blueprint.
     def self.normalize_attributes(attributes)
-      attributes = attributes.dup
-      attributes.each do |attr, value|
-        attributes[attr] = value.value if value.is_a?(Blueprints::Dependency)
-        if value.is_a? Symbol and value.to_s =~ /^@.+$/
-          STDERR.puts "DEPRECATION WARNING: :@variables are deprecated in favor of `d` method"
-          attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value)
-        end
+      attributes.each_with_object({}) do |(attr, value), hash|
+        hash[attr] = if value.is_a?(Blueprints::Dependency) then value.value else value end
       end
     end
 

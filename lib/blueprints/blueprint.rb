@@ -13,7 +13,7 @@ module Blueprints
       @update_block = Proc.new { instance_variable_get(ivname).blueprint(options) }
     end
 
-    # Returns whether blueprint was ever used 
+    # Returns whether blueprint was ever used
     def used?
       @used
     end
