@@ -1,19 +1,10 @@
-#require 'logger'
-#require 'active_record'
+$: << File.join(File.dirname(__FILE__), '..', '..')
 
-Dir.chdir File.join(File.dirname(__FILE__), '..', '..')
-
-#ActiveRecord::Base.logger = Logger.new("debug.log")
-
-#databases = YAML::load(IO.read("spec/active_record/fixtures/database.yml"))
-#db_info = databases[ENV["DB"] || "test"]
-#ActiveRecord::Base.establish_connection(db_info)
-
-require 'spec'
+require 'rspec'
 require 'lib/blueprints'
-require File.dirname(__FILE__) + '/fixtures'
+require 'spec/unit/fixtures'
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   config.mock_with :mocha
 
   config.before do

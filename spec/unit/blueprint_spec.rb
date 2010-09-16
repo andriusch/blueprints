@@ -21,7 +21,7 @@ describe Blueprints::Blueprint do
     it "should mark blueprint as built" do
       lambda {
         Blueprints::Namespace.root.build :blueprint
-      }.should change(@blueprint, :used?).from(false).to(true)
+      }.should change(@blueprint, :used?).from(nil).to(true)
     end
   end
 

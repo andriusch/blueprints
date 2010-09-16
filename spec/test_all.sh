@@ -10,6 +10,7 @@ function e {
 
 e "Normal spec"
 rspec spec/active_record/blueprints_spec.rb
+rspec spec/unit/*_spec.rb
 
 e "Without transactions"
 NO_TRANSACTIONS=true rspec spec/active_record/blueprints_spec.rb
@@ -30,6 +31,7 @@ RAILS=2.3.0 spec "_1.3.0_" spec/active_record/blueprints_spec.rb
 e "With ruby 1.9.2"
 rvm 1.9.2
 rspec spec/active_record/blueprints_spec.rb
+rspec spec/unit/*_spec.rb
 
 e "With ruby 1.9.1"
 rvm 1.9.1
