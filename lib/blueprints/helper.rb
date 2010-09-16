@@ -11,12 +11,12 @@ module Blueprints
     #
     #   # options can also be passed for several blueprints
     #   build :pear, :apple => {:color => 'red'}, :orange => {:color => 'orange'}
-    def build_blueprint(*names)
+    def build(*names)
       Namespace.root.build(names, self, true)
     end
 
     # Same as #build_blueprint except that you can use it to build same blueprint several times.
-    def build_blueprint!(*names)
+    def build!(*names)
       Namespace.root.build(names, self, false)
     end
 
@@ -30,8 +30,10 @@ module Blueprints
       Namespace.root[name].normalized_attributes.tap { Blueprints::Namespace.root.copy_ivars(self) }
     end
 
-    alias :build :build_blueprint
-    alias :build! :build_blueprint!
+    # Returns Blueprint::Dependency object that can be used to define dependencies on other blueprints.
+    def d(*args)
+      Dependency.new(*args)
+    end
 
     # Demolishes built blueprints (by default simply calls destroy method on result of blueprint, but can be customized).
     #
@@ -39,5 +41,10 @@ module Blueprints
     def demolish(*names)
       names.each { |name| Namespace.root[name].demolish }
     end
+
+    alias :build_blueprint :build
+    alias :build_blueprint! :build!
+    alias :blueprint_dependency :d
+    alias :blueprint_demolish :demolish
   end
 end
