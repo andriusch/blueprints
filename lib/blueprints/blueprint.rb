@@ -9,8 +9,8 @@ module Blueprints
 
       ivname = variable_name
       @block = block
-      @demolish_block = lambda { instance_variable_get(ivname).destroy }
-      @update_block = lambda { instance_variable_get(ivname).blueprint(options) }
+      @demolish_block = Proc.new { instance_variable_get(ivname).destroy }
+      @update_block = Proc.new { instance_variable_get(ivname).blueprint(options) }
     end
 
     def used?
