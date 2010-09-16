@@ -1,10 +1,10 @@
 Dir.chdir File.join(File.dirname(__FILE__), '..', '..')
 
-require 'spec/autorun'
+require 'rspec'
 require 'lib/blueprints'
 require 'spec/no_db/fixtures/fruit'
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   config.mock_with :mocha
 end
 

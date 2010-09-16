@@ -1,10 +1,10 @@
 require 'fileutils'
 require 'logger'
 version = ENV['RAILS']
-gem 'activerecord', version == '3' ? '>= 3.0.0.beta' : "~> #{version}" if version
+gem 'activerecord', "~> #{version}" if version
 require 'active_record'
 
-Dir.chdir File.join(File.dirname(__FILE__), '..', '..')
+$: << File.join(File.dirname(__FILE__), '..', '..')
 
 ActiveRecord::Base.logger = Logger.new("debug.log")
 
@@ -12,13 +12,13 @@ databases = YAML::load(IO.read("spec/active_record/fixtures/database.yml"))
 db_info = databases[ENV["DB"] || "test"]
 ActiveRecord::Base.establish_connection(db_info)
 
-config_class = if version.to_s[0, 1] == '3'
+config_class = if version.to_s[0, 1] == '2'
+  require 'spec'
+  Spec::Runner
+else
   gem 'rspec', '>= 2.0.0.beta'
   require 'rspec'
   RSpec
-else
-  require 'spec'
-  Spec::Runner
 end
 
 require 'lib/blueprints'

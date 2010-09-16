@@ -9,13 +9,13 @@ function e {
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 e "Normal spec"
-spec spec/active_record/blueprints_spec.rb
+rspec spec/active_record/blueprints_spec.rb
 
 e "Without transactions"
-NO_TRANSACTIONS=true spec spec/active_record/blueprints_spec.rb
+NO_TRANSACTIONS=true rspec spec/active_record/blueprints_spec.rb
 
 e "With no db"
-spec spec/no_db/blueprints_spec.rb
+rspec spec/no_db/blueprints_spec.rb
 
 e "With Test::Unit"
 rake rspec_to_test
@@ -24,16 +24,19 @@ ruby test/blueprints_test.rb
 e "With Cucumber"
 cucumber features/blueprints.feature
 
-e "With Rails 3"
-rvm 1.8.7
-RAILS=3 rspec spec/active_record/blueprints_spec.rb
+e "With Rails 2 and RSpec 1.3.0"
+RAILS=2.3.0 spec "_1.3.0_" spec/active_record/blueprints_spec.rb
+
+e "With ruby 1.9.2"
+rvm 1.9.2
+rspec spec/active_record/blueprints_spec.rb
 
 e "With ruby 1.9.1"
 rvm 1.9.1
-spec spec/active_record/blueprints_spec.rb
+RAILS=2.3.0 spec spec/active_record/blueprints_spec.rb
 
 e "With ruby 1.8.6"
 rvm 1.8.6
-spec spec/active_record/blueprints_spec.rb
+RAILS=2.3.0 spec spec/active_record/blueprints_spec.rb
 
 rvm system

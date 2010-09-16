@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'logger'
 require 'active_record'
 require 'test/unit'
 require 'active_record/test_case'

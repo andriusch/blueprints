@@ -12,7 +12,7 @@ begin
     gemspec.executables = ['blueprintify']
     gemspec.add_dependency 'activesupport', '>=2.3.0'
     gemspec.add_dependency 'database_cleaner', '~>0.5.0'
-    gemspec.add_development_dependency 'rspec', '>=1.3.0'
+    gemspec.add_development_dependency 'rspec', '>=2.0.0.beta'
     gemspec.add_development_dependency 'activerecord', '>=2.3.0'
     gemspec.add_development_dependency 'mocha', '>=0.9.8'
     gemspec.add_development_dependency 'shoulda', '>=2.10.0'
