@@ -17,7 +17,7 @@ module Blueprints
 
     # Defines blueprint dependencies. Used internally, but can be used externally too.
     def depends_on(*scenarios)
-      @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
+      @parents = (@parents || []) + scenarios.map { |s| s.to_sym }
       self
     end
 
@@ -80,12 +80,13 @@ module Blueprints
     def self.normalize_attributes(attributes)
       attributes = attributes.dup
       attributes.each do |attr, value|
-        attributes[attr] = value.value if value.is_a?(Blueprints::Dependency)
+        attributes[attr] = value.blueprint_value if value.respond_to?(:blueprint_value)
         if value.is_a? Symbol and value.to_s =~ /^@.+$/
           STDERR.puts "DEPRECATION WARNING: :@variables are deprecated in favor of `d` method"
           attributes[attr] = Blueprints::Namespace.root.context.instance_variable_get(value)
         end
       end
+      attributes
     end
 
     def build_parents
@@ -118,7 +119,7 @@ module Blueprints
     def parse_name(name)
       case name
         when Hash
-          return name.keys.first.to_sym, [name.values.first].flatten.map{|sc| parse_name(sc).first}
+          return name.keys.first.to_sym, [name.values.first].flatten.map { |sc| parse_name(sc).first }
         when Symbol, String
           name = name.to_sym unless name == ''
           return name, []
