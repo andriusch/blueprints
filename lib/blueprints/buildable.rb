@@ -19,7 +19,7 @@ module Blueprints
 
     # Defines blueprint dependencies. Used internally, but can be used externally too.
     def depends_on(*scenarios)
-      @parents = (@parents || []) + scenarios.map{|s| s.to_sym}
+      @parents = (@parents || []) + scenarios.map { |s| s.to_sym }
       self
     end
 
@@ -86,7 +86,7 @@ module Blueprints
     # Normalizes attributes by changing all :@var to values of @var, and all dependencies to the result of that blueprint.
     def self.normalize_attributes(attributes)
       attributes.each_with_object({}) do |(attr, value), hash|
-        hash[attr] = if value.is_a?(Blueprints::Dependency) then value.value else value end
+        hash[attr] = if value.respond_to?(:blueprint_value) then value.blueprint_value else value end
       end
     end
 
@@ -116,7 +116,7 @@ module Blueprints
     def parse_name(name)
       case name
         when Hash
-          return name.keys.first.to_sym, [name.values.first].flatten.map{|sc| parse_name(sc).first}
+          return name.keys.first.to_sym, [name.values.first].flatten.map { |sc| parse_name(sc).first }
         when Symbol, String
           name = name.to_sym unless name == ''
           return name, []
