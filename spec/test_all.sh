@@ -41,4 +41,9 @@ e "With ruby 1.8.6"
 rvm 1.8.6
 RAILS=2.3.0 spec -c spec/active_record/blueprints_spec.rb
 
+e "With rubinius"
+rvm rbx
+rspec -c spec/active_record/blueprints_spec.rb
+rspec -c spec/unit/*_spec.rb
+
 rvm system

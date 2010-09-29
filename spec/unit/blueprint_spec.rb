@@ -7,7 +7,7 @@ describe Blueprints::Blueprint do
 
   it "should warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'blueprint'")
-    STDERR.expects(:puts).with(regexp_matches(/blueprint_spec\.rb:\d+:in `new'/))
+    STDERR.expects(:puts).with(regexp_matches(/blueprint_spec\.rb:\d+:in `.+'/))
     Blueprints::Blueprint.new(blueprint.name, blueprint.namespace, blueprint.file)
   end
 

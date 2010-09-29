@@ -57,12 +57,10 @@ module Blueprints
   def self.backtrace_cleaner
     @backtrace_cleaner ||= ActiveSupport::BacktraceCleaner.new.tap do |bc|
       root_sub = /^#{config.root}[\\\/]/
-      blueprints_path = File.dirname(__FILE__).sub(root_sub, '')
+      blueprints_path = File.expand_path(File.dirname(__FILE__))
 
       bc.add_filter { |line| line.sub(root_sub, '') }
-
-      bc.add_silencer { |line| File.dirname(line).starts_with?(blueprints_path) }
-      bc.add_silencer { |line| Gem.path.any? { |path| File.dirname(line).starts_with?(path) } }
+      bc.add_silencer { |line| [blueprints_path, *Gem.path].any? { |path| File.expand_path(File.dirname(line)).starts_with?(path) } }
     end
   end
 
