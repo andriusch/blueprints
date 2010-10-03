@@ -1,5 +1,19 @@
+module Blueprints::Extendable
+  def self.included(mod)
+    if defined?(ActiveSupport::Concern)
+      mod.extend ActiveSupport::Concern
+    else
+      def mod.included(mod)
+        mod.extend Blueprints::Blueprintable::ClassMethods
+      end
+    end
+  end
+end
+
 # Include this module into your class if you need klass.blueprint and object.blueprint methods.
 module Blueprints::Blueprintable
+  include Blueprints::Extendable
+
   module ClassMethods
     # Two forms of this method can be used. First one is typically used inside blueprint block. Essentially it does
     # same as <tt>create!</tt>, except it does bypass attr_protected and attr_accessible. It accepts only a hash or attributes,
@@ -39,10 +53,6 @@ module Blueprints::Blueprintable
     end
   end
 
-  def self.included(mod)
-    mod.extend Blueprints::Blueprintable::ClassMethods
-  end
-
   # Updates attributes of object by calling setter methods.
   def blueprint(attributes)
     Blueprints::Blueprint.normalize_attributes(attributes).each do |attr, val|
@@ -53,11 +63,8 @@ end
 
 # Include this instead of Blueprints::Blueprintable if record needs to persist, includes Blueprints::Blueprintable
 module Blueprints::Saveable
+  include Blueprints::Extendable
   include Blueprints::Blueprintable
-
-  def self.included(mod)
-    mod.extend Blueprints::Blueprintable::ClassMethods
-  end
 
   # Overrides object.blueprint to also call save!
   def blueprint(attributes)
@@ -67,3 +74,4 @@ module Blueprints::Saveable
 end
 
 ::ActiveRecord::Base.send(:include, Blueprints::Saveable) if defined?(ActiveRecord)
+::Mongoid::Document.send(:include, Blueprints::Saveable) if defined?(Mongoid)

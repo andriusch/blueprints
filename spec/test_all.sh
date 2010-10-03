@@ -18,6 +18,9 @@ NO_TRANSACTIONS=true rspec -c spec/active_record/blueprints_spec.rb
 e "With no db"
 rspec -c spec/no_db/blueprints_spec.rb
 
+e "With mongoid"
+rspec -c spec/mongoid/blueprints_spec.rb
+
 e "With Test::Unit"
 rake rspec_to_test
 ruby test/blueprints_test.rb
