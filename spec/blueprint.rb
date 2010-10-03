@@ -3,17 +3,17 @@ blueprint :error do
 end
 
 blueprint :apple do
-  Fruit.create! :species => 'apple'
+  Fruit.blueprint :species => 'apple'
 end
 
 blueprint :many_apples => [:apple, :apple, :apple]
 
 blueprint :bananas_and_apples => :apple do
-  @banana = Fruit.create! :species => 'banana'
+  @banana = Fruit.blueprint :species => 'banana'
 end
 
 blueprint :orange do
-  Fruit.create! :species => 'orange'
+  Fruit.blueprint :species => 'orange'
 end
 
 blueprint :fruit => [:apple, :orange] do
@@ -25,11 +25,11 @@ blueprint :bananas_and_apples_and_oranges => [:bananas_and_apples, :orange] do
 end
 
 blueprint :cherry do
-  Fruit.create! :species => 'cherry', :average_diameter => 3
+  Fruit.blueprint :species => 'cherry', :average_diameter => 3
 end
 
 blueprint :big_cherry => :cherry do
-  Fruit.create! options.reverse_merge(:species => @cherry.species, :average_diameter => 7)
+  Fruit.blueprint options.reverse_merge(:species => @cherry.species, :average_diameter => 7)
 end
 
 blueprint :cherry_basket => [:big_cherry, :cherry] do
@@ -65,7 +65,7 @@ namespace :pitted => :pine do
 end
 
 blueprint :apple_with_params do
-  Fruit.create! options.reverse_merge(:species => 'apple')
+  Fruit.blueprint options.reverse_merge(:species => 'apple')
 end
 
 namespace :attributes do

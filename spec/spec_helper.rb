@@ -1,7 +1,7 @@
 @orm, @version = (ENV['ORM'] || 'active_record').split('-', 2)
 gem_mappings = {'active_record' => 'activerecord'}
 gem gem_mappings[@orm], "~> #{@version}" if @version
-require @orm
+require @orm unless @orm == 'none'
 
 Root = Pathname.new(__FILE__).dirname.join('..')
 $: << Root.to_s

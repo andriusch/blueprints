@@ -13,7 +13,7 @@ rspec -c spec/blueprints_spec.rb
 rspec -c spec/unit/*_spec.rb
 
 e "With no db"
-rspec -c spec/no_db/blueprints_spec.rb
+ORM=none rspec -c spec/blueprints_spec.rb
 
 e "With mongoid"
 ORM=mongoid rspec -c spec/blueprints_spec.rb

@@ -67,6 +67,20 @@ describe Blueprints do
     end
   end
 
+  describe "build per describe" do
+    unless File.dirname(__FILE__).ends_with?('test')
+      build_blueprint :apple
+
+      it "should have cherry" do
+        @apple.should_not be_nil
+      end
+
+      it "should have correct cherry species" do
+        @apple.species.should == 'apple'
+      end
+    end
+  end
+
   describe 'with preloaded cherry scenario' do
     it "should have correct size after changed by second test" do
       @cherry.average_diameter.should == 3
@@ -207,7 +221,6 @@ describe Blueprints do
     end
 
     it "should allow to pass array of hashes to blueprint method" do
-      Fruit.create
       fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
       fruits.collect(&:species).should == %w{fruit1 fruit2}
     end

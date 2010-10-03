@@ -67,6 +67,20 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
   end
 
+  context "build per describe" do
+    unless File.dirname(__FILE__).ends_with?('test')
+      build_blueprint :apple
+
+      should "have cherry" do
+        assert(!(@apple.nil?))
+      end
+
+      should "have correct cherry species" do
+        assert(@apple.species == 'apple')
+      end
+    end
+  end
+
   context 'with preloaded cherry scenario' do
     should "have correct size after changed by second test" do
       assert(@cherry.average_diameter == 3)
@@ -207,7 +221,6 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "allow to pass array of hashes to blueprint method" do
-      Fruit.create
       fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
       assert(fruits.collect(&:species) == %w{fruit1 fruit2})
     end
