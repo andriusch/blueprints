@@ -1,4 +1,5 @@
-$: << File.join(File.dirname(__FILE__), '..', '..')
+Root = Pathname.new(__FILE__).dirname.join('..', '..')
+$: << Root.to_s
 
 require 'rspec'
 require 'lib/blueprints'

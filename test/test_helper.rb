@@ -5,22 +5,12 @@ require 'test/unit'
 require 'active_record/test_case'
 require 'shoulda'
 require 'mocha'
-begin
-  require 'mysqlplus'
-rescue LoadError
-end
 
-Dir.chdir(File.join(File.dirname(__FILE__), '..'))
-
-ActiveRecord::Base.logger = Logger.new("debug.log")
-
-databases = YAML::load(IO.read("spec/active_record/fixtures/database.yml"))
-db_info = databases[ENV["DB"] || "test"]
-ActiveRecord::Base.establish_connection(db_info)
+Root = Pathname.new(__FILE__).dirname.join('..')
+$: << Root.to_s
 
 require 'lib/blueprints'
-require 'spec/active_record/fixtures/fruit'
-require 'spec/active_record/fixtures/tree'
+require "spec/support/active_record/initializer"
 
 class ActiveSupport::TestCase
   def assert_similar(array1, array2)
@@ -30,6 +20,6 @@ class ActiveSupport::TestCase
 end
 
 Blueprints.enable do |config|
-  config.root = File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec', 'active_record'))
+  config.root = Root.join('spec')
   config.prebuild = :big_cherry
 end

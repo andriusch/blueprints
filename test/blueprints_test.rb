@@ -70,13 +70,13 @@ class BlueprintsTest < ActiveSupport::TestCase
   context 'with preloaded cherry scenario' do
     should "have correct size after changed by second test" do
       assert(@cherry.average_diameter == 3)
-      @cherry.update_attribute(:average_diameter, 1)
+      @cherry.blueprint(:average_diameter => 1)
       assert(@cherry.average_diameter == 1)
     end
 
     should "have correct size" do
       assert(@cherry.average_diameter == 3)
-      @cherry.update_attribute(:average_diameter, 5)
+      @cherry.blueprint(:average_diameter => 5)
       assert(@cherry.average_diameter == 5)
     end
 
@@ -120,11 +120,11 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "create only one apple" do
-      assert(Fruit.all(:conditions => 'species = "apple"').size == 1)
+      assert(Fruit.all(:conditions => {:species => "apple"}).size == 1)
     end
 
     should "create only two cherries even if they were preloaded" do
-      assert(Fruit.all(:conditions => 'species = "cherry"').size == 2)
+      assert(Fruit.all(:conditions => {:species => "cherry"}).size == 2)
     end
 
     should "contain cherries in basket if basket is loaded in test and cherries preloaded" do
@@ -148,7 +148,7 @@ class BlueprintsTest < ActiveSupport::TestCase
       rescue
       end
       assert(!(@apple.reload.nil?))
-      assert(Fruit.find_by_species('orange').nil?)
+      assert(Fruit.first(:conditions => {:species => 'orange'}).nil?)
     end
   end
 
@@ -328,7 +328,7 @@ class BlueprintsTest < ActiveSupport::TestCase
   should "allow to build! without checking if it was already built" do
     build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
     assert(Fruit.count == 4)
-    assert(!(Fruit.find_by_species('not so big cherry').nil?))
+    assert(!(Fruit.first(:conditions => {:species => 'not so big cherry'}).nil?))
   end
 
   context 'attributes' do

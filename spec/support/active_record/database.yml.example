@@ -1,0 +1,7 @@
+adapter: mysql
+socket: /var/run/mysqld/mysqld.sock
+encoding: utf8
+database: blueprints_test
+username: root
+password:
+host: localhost

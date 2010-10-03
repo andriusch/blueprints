@@ -1,7 +1,7 @@
 .idea
 *.gem
 html
-spec/active_record/fixtures/database.yml
+database.yml
 debug.log
 .bundle
 *.rbc

@@ -36,28 +36,23 @@ namespace :db do
     require 'rubygems'
     require 'active_record'
 
-    Dir.chdir File.dirname(__FILE__)
+    Root = Pathname.new(__FILE__).dirname
+    require Root.join("spec/support/active_record/initializer")
 
-    ActiveRecord::Base.logger = Logger.new("debug.log")
-
-    databases = YAML::load(IO.read("spec/active_record/fixtures/database.yml"))
-    db_info = databases[ENV["DB"] || "test"]
-    ActiveRecord::Base.establish_connection(db_info)
-
-    load("spec/active_record/fixtures/schema.rb")
+    load("spec/support/active_record/schema.rb")
   end
 end
 
 desc "Convert rspec specs to test/unit tests"
 task :rspec_to_test do
   Dir.chdir File.dirname(__FILE__)
-  data = IO.read('spec/active_record/blueprints_spec.rb')
+  data = IO.read('spec/blueprints_spec.rb')
 
   data.gsub!("require File.dirname(__FILE__) + '/spec_helper'", "require File.dirname(__FILE__) + '/test_helper'")
   data.gsub!("describe Blueprints do", 'class BlueprintsTest < ActiveSupport::TestCase')
 
   # lambda {
-  #   hornsby_clear :undo => :just_orange
+  #   demolish :just_orange
   # }.should raise_error(ArgumentError)
   data.gsub!(/(\s+)lambda \{\n(.*)\n(\s+)\}.should raise_error\((.*)\)/, "\\1assert_raise(\\4) do\n\\2\n\\3end")
   # should =~ => assert_similar

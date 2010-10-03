@@ -70,13 +70,13 @@ describe Blueprints do
   describe 'with preloaded cherry scenario' do
     it "should have correct size after changed by second test" do
       @cherry.average_diameter.should == 3
-      @cherry.update_attribute(:average_diameter, 1)
+      @cherry.blueprint(:average_diameter => 1)
       @cherry.average_diameter.should == 1
     end
 
     it "should have correct size" do
       @cherry.average_diameter.should == 3
-      @cherry.update_attribute(:average_diameter, 5)
+      @cherry.blueprint(:average_diameter => 5)
       @cherry.average_diameter.should == 5
     end
 
@@ -120,11 +120,11 @@ describe Blueprints do
     end
 
     it "should create only one apple" do
-      Fruit.all(:conditions => 'species = "apple"').size.should == 1
+      Fruit.all(:conditions => {:species => "apple"}).size.should == 1
     end
 
     it "should create only two cherries even if they were preloaded" do
-      Fruit.all(:conditions => 'species = "cherry"').size.should == 2
+      Fruit.all(:conditions => {:species => "cherry"}).size.should == 2
     end
 
     it "should contain cherries in basket if basket is loaded in test and cherries preloaded" do
@@ -148,7 +148,7 @@ describe Blueprints do
       rescue
       end
       @apple.reload.should_not be_nil
-      Fruit.find_by_species('orange').should be_nil
+      Fruit.first(:conditions => {:species => 'orange'}).should be_nil
     end
   end
 
@@ -328,7 +328,7 @@ describe Blueprints do
   it "should allow to build! without checking if it was already built" do
     build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
     Fruit.count.should == 4
-    Fruit.find_by_species('not so big cherry').should_not be_nil
+    Fruit.first(:conditions => {:species => 'not so big cherry'}).should_not be_nil
   end
 
   describe 'attributes' do
