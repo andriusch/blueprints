@@ -368,7 +368,7 @@ describe Blueprints do
     begin
       build :error
     rescue RuntimeError => e
-      e.backtrace[0].should == "spec/active_record/blueprint.rb:2:in blueprint 'error'"
+      e.backtrace[0].should == "blueprint.rb:2:in blueprint 'error'"
     end
   end
 end

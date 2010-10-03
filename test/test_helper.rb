@@ -30,7 +30,6 @@ class ActiveSupport::TestCase
 end
 
 Blueprints.enable do |config|
-  config.root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  config.root = File.expand_path(File.join(File.dirname(__FILE__), '..', 'spec', 'active_record'))
   config.prebuild = :big_cherry
-  config.filename = 'spec/active_record/blueprint.rb'
 end

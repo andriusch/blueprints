@@ -368,7 +368,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     begin
       build :error
     rescue RuntimeError => e
-      assert(e.backtrace[0] == "spec/active_record/blueprint.rb:2:in blueprint 'error'")
+      assert(e.backtrace[0] == "blueprint.rb:2:in blueprint 'error'")
     end
   end
 end
