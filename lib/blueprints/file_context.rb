@@ -11,7 +11,7 @@ module Blueprints
       @namespaces = [Namespace.root]
 
       FileContext.current = self
-      instance_eval(File.read(file))
+      instance_eval(File.read(file), file)
       FileContext.current = nil
     end
 
