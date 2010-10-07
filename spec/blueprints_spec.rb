@@ -146,26 +146,6 @@ describe Blueprints do
     end
   end
 
-  describe 'transactions' do
-    before do
-      build :apple
-    end
-
-    it "should drop only inner transaction" do
-      @apple.reload.should_not be_nil
-      begin
-        ActiveRecord::Base.transaction do
-          f = Fruit.create(:species => 'orange')
-          f.reload.should_not be_nil
-          raise 'some error'
-        end
-      rescue
-      end
-      @apple.reload.should_not be_nil
-      Fruit.first(:conditions => {:species => 'orange'}).should be_nil
-    end
-  end
-
   describe 'errors' do
     it 'should raise ScenarioNotFoundError when scenario could not be found' do
       lambda {

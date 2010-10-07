@@ -1,4 +1,4 @@
-@orm, @version = (ENV['ORM'] || 'active_record').split('-', 2)
+@orm, @version = (ENV['ORM'] || 'active_record').split('.', 2)
 gem_mappings = {'active_record' => 'activerecord'}
 gem gem_mappings[@orm], "~> #{@version}" if @version
 require @orm unless @orm == 'none'
@@ -7,7 +7,8 @@ Root = Pathname.new(__FILE__).dirname.join('..')
 $: << Root.to_s
 
 require 'logger'
-@logger = Logger.new(Root.join('spec/support/mongoid/debug.log'))
+@logger_file = Root.join('debug.log')
+@logger = Logger.new(@logger_file)
 
 require 'lib/blueprints'
 require "spec/support/#{@orm}/initializer"

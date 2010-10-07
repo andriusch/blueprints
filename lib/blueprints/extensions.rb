@@ -78,6 +78,18 @@ module Blueprints::Extensions
     end
   end
 
+  # Include this instead of Blueprints::Extensions::Saveable if you want non bang save method (eg.using datamapper)
+  module SoftSaveable
+    include Extendable
+    include Blueprintable
+
+    # Overrides object.blueprint to also call save!
+    def blueprint(attributes)
+      super(attributes)
+      save
+    end
+  end
+
   # Include this instead of Blueprints::Extensions::Saveable if you need support for dynamic attributes (eg. using mongodb)
   module DynamicSaveable
     include Extendable
@@ -98,3 +110,4 @@ end
 
 ActiveRecord::Base.send(:include, Blueprints::Extensions::Saveable) if defined?(ActiveRecord)
 Mongoid::Document.send(:include, Blueprints::Extensions::DynamicSaveable) if defined?(Mongoid)
+DataMapper::Model.send(:append_inclusions, Blueprints::Extensions::SoftSaveable) if defined?(DataMapper)
