@@ -38,7 +38,7 @@ module Blueprints
     end
 
     def backtrace(trace)
-      trace.collect! { |line| line.sub(/^\(eval\):(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
+      trace.collect! { |line| line.sub(/^#{@file}:(\d+).*/, "#{@file}:\\1:in blueprint '#{@name}'") }
     end
 
     # If block is passed then sets custom demolish block for this blueprint.

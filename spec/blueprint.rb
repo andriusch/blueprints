@@ -1,7 +1,3 @@
-blueprint :error do
-  raise 'error'
-end
-
 blueprint :apple do
   Fruit.blueprint :species => 'apple'
 end

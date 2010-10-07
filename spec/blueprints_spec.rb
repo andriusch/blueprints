@@ -356,12 +356,4 @@ describe Blueprints do
   it "should not fail with circular reference" do
     build :circular_reference
   end
-
-  it "should rewrite trace" do
-    begin
-      build :error
-    rescue RuntimeError => e
-      e.backtrace[0].should == "blueprint.rb:2:in blueprint 'error'"
-    end
-  end
 end

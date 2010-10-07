@@ -5,6 +5,15 @@ describe Blueprints::Blueprint do
     blueprint
   end
 
+  it "should rewrite trace" do
+    error_blueprint = Blueprints::Blueprint.new(:error, Blueprints::Namespace.root, __FILE__) { raise 'error' }
+    begin
+      error_blueprint.build
+    rescue RuntimeError => e
+      e.backtrace[0].should =~ %r{spec/unit/blueprint_spec.rb:#{__LINE__ - 4}:in blueprint 'error'}
+    end
+  end
+
   it "should warn when blueprint with same name exists" do
     STDERR.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'blueprint'")
     STDERR.expects(:puts).with(regexp_matches(/blueprint_spec\.rb:\d+:in `.+'/))
