@@ -146,26 +146,6 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
   end
 
-  context 'transactions' do
-    setup do
-      build :apple
-    end
-
-    should "drop only inner transaction" do
-      assert(!(@apple.reload.nil?))
-      begin
-        ActiveRecord::Base.transaction do
-          f = Fruit.create(:species => 'orange')
-          assert(!(f.reload.nil?))
-          raise 'some error'
-        end
-      rescue
-      end
-      assert(!(@apple.reload.nil?))
-      assert(Fruit.first(:conditions => {:species => 'orange'}).nil?)
-    end
-  end
-
   context 'errors' do
     should 'raise ScenarioNotFoundError when scenario could not be found' do
       assert_raise(Blueprints::BlueprintNotFoundError) do
@@ -375,13 +355,5 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   should "not fail with circular reference" do
     build :circular_reference
-  end
-
-  should "rewrite trace" do
-    begin
-      build :error
-    rescue RuntimeError => e
-      assert(e.backtrace[0] == "blueprint.rb:2:in blueprint 'error'")
-    end
   end
 end

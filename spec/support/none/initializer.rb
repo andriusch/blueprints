@@ -1,5 +1,5 @@
 class NoneOrm
-  include Blueprints::Blueprintable
+  include Blueprints::Extensions::Blueprintable
 
   class << self
     def add (record)

@@ -5,7 +5,7 @@ module Blueprints::Extensions
         mod.extend ActiveSupport::Concern
       else
         def mod.included(mod)
-          mod.extend Blueprints::Blueprintable::ClassMethods
+          mod.extend Blueprints::Extensions::Blueprintable::ClassMethods
         end
       end
     end
