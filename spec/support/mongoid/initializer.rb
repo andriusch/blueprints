@@ -10,7 +10,6 @@ end
 class Tree
   include Mongoid::Document
 
-  field :name
   field :size
 
   attr_protected :size

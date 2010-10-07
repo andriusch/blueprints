@@ -4,7 +4,7 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context buildable namespace root_namespace blueprint file_context helper errors dependency core_ext
+configuration context buildable namespace root_namespace blueprint file_context helper errors dependency extensions
 }
 files.each { |f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
