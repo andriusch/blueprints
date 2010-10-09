@@ -18,6 +18,9 @@ ORM=none rspec -c spec/blueprints_spec.rb
 e "With mongoid"
 ORM=mongoid rspec -c spec/blueprints_spec.rb
 
+e "With mongo_mapper"
+ORM=mongo_mapper rspec -c spec/blueprints_spec.rb
+
 e "With Test::Unit"
 rake rspec_to_test
 ruby test/blueprints_test.rb

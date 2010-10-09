@@ -57,8 +57,10 @@ task :rspec_to_test do
   data.gsub!(/(\s+)lambda \{\n(.*)\n(\s+)\}.should raise_error\((.*)\)/, "\\1assert_raise(\\4) do\n\\2\n\\3end")
   # should =~ => assert_similar
   data.gsub!(/^(\s+)(.*)\.should\s*=~\s*(.*)/, '\1assert_similar(\2, \3)')
-  # A.should_not include(B) => assert_false(A.include?(B))
+  # A.should_not include(B) => assert(!A.include?(B))
   data.gsub!(/^(\s+)(.*)\.should_not\s*include\((.*)\)/, '\1assert(!\2.include?(\3))')
+  # A.should include(B) => assert(A.include?(B))
+  data.gsub!(/^(\s+)(.*)\.should\s*include\((.*)\)/, '\1assert(\2.include?(\3))')
 
   # .should_not => assert(!())
   data.gsub!(/^(\s+)(.*)\.should_not(.*)/, '\1assert(!(\2\3))')

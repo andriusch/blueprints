@@ -108,7 +108,7 @@ describe Blueprints do
       demolish :apple
       Fruit.all.should_not include(@apple)
       build :apple
-      Fruit.last.should == @apple
+      Fruit.all.should include(@apple)
     end
 
     it "should overwrite auto created instance variable with another auto created one" do

@@ -108,7 +108,7 @@ class BlueprintsTest < ActiveSupport::TestCase
       demolish :apple
       assert(!Fruit.all.include?(@apple))
       build :apple
-      assert(Fruit.last == @apple)
+      assert(Fruit.all.include?(@apple))
     end
 
     should "overwrite auto created instance variable with another auto created one" do
