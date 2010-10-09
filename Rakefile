@@ -3,8 +3,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "blueprints"
-    gemspec.summary = "Another replacement for factories and fixtures"
-    gemspec.description = "Another replacement for factories and fixtures. The library that lazy typists will love"
+    gemspec.summary = "Awesome replacement for factories and fixtures"
+    gemspec.description = "Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible."
     gemspec.email = "sinsiliux@gmail.com"
     gemspec.homepage = "http://github.com/sinsiliux/blueprints"
     gemspec.authors = ["Andrius Chamentauskas"]

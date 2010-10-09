@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrius Chamentauskas"]
-  s.date = %q{2010-10-03}
+  s.date = %q{2010-10-09}
   s.default_executable = %q{blueprintify}
-  s.description = %q{Another replacement for factories and fixtures. The library that lazy typists will love}
+  s.description = %q{Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.}
   s.email = %q{sinsiliux@gmail.com}
   s.executables = ["blueprintify"]
   s.extra_rdoc_files = [
@@ -40,9 +40,9 @@ Gem::Specification.new do |s|
      "lib/blueprints/context.rb",
      "lib/blueprints/convertable.rb",
      "lib/blueprints/convertable/fixtures.rb",
-     "lib/blueprints/core_ext.rb",
      "lib/blueprints/dependency.rb",
      "lib/blueprints/errors.rb",
+     "lib/blueprints/extensions.rb",
      "lib/blueprints/extensions/cucumber.rb",
      "lib/blueprints/extensions/rspec.rb",
      "lib/blueprints/extensions/test_unit.rb",
@@ -50,22 +50,18 @@ Gem::Specification.new do |s|
      "lib/blueprints/helper.rb",
      "lib/blueprints/namespace.rb",
      "lib/blueprints/root_namespace.rb",
-     "spec/active_record/blueprint.rb",
-     "spec/active_record/blueprints_spec.rb",
-     "spec/active_record/fixtures/database.yml.example",
-     "spec/active_record/fixtures/fruit.rb",
-     "spec/active_record/fixtures/schema.rb",
-     "spec/active_record/fixtures/tree.rb",
-     "spec/active_record/spec_helper.rb",
-     "spec/mongoid/blueprint.rb",
-     "spec/mongoid/blueprints_spec.rb",
-     "spec/mongoid/fixtures/fruit.rb",
-     "spec/mongoid/spec_helper.rb",
-     "spec/no_db/blueprint.rb",
-     "spec/no_db/blueprints_spec.rb",
-     "spec/no_db/fixtures/fruit.rb",
-     "spec/no_db/spec_helper.rb",
-     "spec/test_all.sh",
+     "spec/blueprint.rb",
+     "spec/blueprints_spec.rb",
+     "spec/spec_helper.rb",
+     "spec/support/active_record/database.yml.example",
+     "spec/support/active_record/initializer.rb",
+     "spec/support/active_record/schema.rb",
+     "spec/support/dm-core/initializer.rb",
+     "spec/support/mongo_mapper/database.yml.example",
+     "spec/support/mongo_mapper/initializer.rb",
+     "spec/support/mongoid/database.yml.example",
+     "spec/support/mongoid/initializer.rb",
+     "spec/support/none/initializer.rb",
      "spec/unit/active_record_spec.rb",
      "spec/unit/blueprint_spec.rb",
      "spec/unit/blueprints_spec.rb",
@@ -77,22 +73,22 @@ Gem::Specification.new do |s|
      "spec/unit/spec_helper.rb",
      "test/blueprints_test.rb",
      "test/test_helper.rb",
+     "test_all.sh",
      "uninstall.rb"
   ]
   s.homepage = %q{http://github.com/sinsiliux/blueprints}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Another replacement for factories and fixtures}
+  s.summary = %q{Awesome replacement for factories and fixtures}
   s.test_files = [
-    "spec/mongoid/fixtures/fruit.rb",
-     "spec/mongoid/spec_helper.rb",
-     "spec/mongoid/blueprints_spec.rb",
-     "spec/mongoid/blueprint.rb",
-     "spec/no_db/fixtures/fruit.rb",
-     "spec/no_db/spec_helper.rb",
-     "spec/no_db/blueprints_spec.rb",
-     "spec/no_db/blueprint.rb",
+    "spec/spec_helper.rb",
+     "spec/support/mongoid/initializer.rb",
+     "spec/support/mongo_mapper/initializer.rb",
+     "spec/support/none/initializer.rb",
+     "spec/support/active_record/initializer.rb",
+     "spec/support/active_record/schema.rb",
+     "spec/support/dm-core/initializer.rb",
      "spec/unit/active_record_spec.rb",
      "spec/unit/blueprint_spec.rb",
      "spec/unit/spec_helper.rb",
@@ -102,12 +98,8 @@ Gem::Specification.new do |s|
      "spec/unit/blueprints_spec.rb",
      "spec/unit/buildable_spec.rb",
      "spec/unit/dependency_spec.rb",
-     "spec/active_record/fixtures/fruit.rb",
-     "spec/active_record/fixtures/tree.rb",
-     "spec/active_record/fixtures/schema.rb",
-     "spec/active_record/spec_helper.rb",
-     "spec/active_record/blueprints_spec.rb",
-     "spec/active_record/blueprint.rb",
+     "spec/blueprints_spec.rb",
+     "spec/blueprint.rb",
      "test/test_helper.rb",
      "test/blueprints_test.rb"
   ]
