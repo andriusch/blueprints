@@ -1,28 +1,6 @@
-require 'rubygems'
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "blueprints"
-    gemspec.summary = "Awesome replacement for factories and fixtures"
-    gemspec.description = "Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible."
-    gemspec.email = "sinsiliux@gmail.com"
-    gemspec.homepage = "http://github.com/sinsiliux/blueprints"
-    gemspec.authors = ["Andrius Chamentauskas"]
-    gemspec.bindir = 'bin'
-    gemspec.executables = ['blueprintify']
-    gemspec.add_dependency 'activesupport', '>=2.3.0'
-    gemspec.add_dependency 'database_cleaner', '~>0.5.0'
-    gemspec.add_development_dependency 'rspec', '>=2.0.0.beta'
-    gemspec.add_development_dependency 'activerecord', '>=2.3.0'
-    gemspec.add_development_dependency 'mongoid', '>=2.0.0.beta'
-    gemspec.add_development_dependency 'mocha', '>=0.9.8'
-    gemspec.add_development_dependency 'shoulda', '>=2.10.0'
-    gemspec.add_development_dependency 'cucumber', '>=0.7.0'
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install jeweler"
-end
+require  'rubygems'
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rd|
