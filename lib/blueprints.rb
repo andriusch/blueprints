@@ -4,20 +4,23 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context buildable namespace root_namespace blueprint file_context helper errors dependency extensions
+configuration context eval_context buildable namespace root_namespace blueprint helper errors dependency extensions
 }
 files.each { |f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
 
+# Main namespace of blueprints. Contains methods for Blueprints setup.
 module Blueprints
   # Contains current configuration of blueprints
+  # @return [Blueprints::Configuration] Current configuration.
   def self.config
     @@config ||= Blueprints::Configuration.new
   end
 
   # Setups variables from global context and starts transaction. Should be called before every test case.
+  # @param current_context Object to copy instance variables for prebuilt blueprints/namespaces.
   def self.setup(current_context)
     Namespace.root.setup
-    Namespace.root.copy_ivars(current_context)
+    Namespace.root.eval_context.copy_instance_variables(current_context)
     if_orm { DatabaseCleaner.start }
   end
 
@@ -28,6 +31,8 @@ module Blueprints
 
   # Enables blueprints support for RSpec or Test::Unit depending on whether (R)Spec is defined or not. Yields
   # Blueprints::Configuration object that you can use to configure blueprints.
+  # @yield [config] Used to configure blueprints.
+  # @yieldparam [Blueprints::Configuration] config Current blueprints configuration.
   def self.enable
     yield config if block_given?
     load
@@ -54,6 +59,8 @@ module Blueprints
     Namespace.root.prebuild(config.prebuild) if config.transactions
   end
 
+  # Returns backtrace cleaner that is used to extract lines from user application.
+  # @return [ActiveSupport::BacktraceCleaner] Backtrace cleaner
   def self.backtrace_cleaner
     @backtrace_cleaner ||= ActiveSupport::BacktraceCleaner.new.tap do |bc|
       root_sub = /^#{config.root}[\\\/]/
@@ -64,7 +71,9 @@ module Blueprints
     end
   end
 
-  # Returns array of blueprints that have not been used since now. Allows passing namespace to start search from (defaults to root namespace)
+  # Returns array of blueprints that have not been used until now.
+  # @param [Blueprints::Namespace] from Namespace to start recursive search from.
+  # @return [Array<Symbol>] List of unused blueprints.
   def self.unused(from = Namespace.root)
     from.children.values.collect do |child|
       if child.is_a?(Blueprints::Blueprint)
@@ -75,6 +84,9 @@ module Blueprints
     end.flatten.compact
   end
 
+  # Warns a user (often about deprecated feature).
+  # @param [String] message Message to output.
+  # @param [Blueprints::Blueprint] blueprint Name of blueprint that this occurred in.
   def self.warn(message, blueprint)
     $stderr.puts("**WARNING** #{message}: '#{blueprint.name}'")
     $stderr.puts(backtrace_cleaner.clean(blueprint.backtrace(caller)).first)
@@ -82,12 +94,14 @@ module Blueprints
 
   protected
 
-  # Loads blueprints file and creates blueprints from data it contains. Is run by setup method
+  # Loads blueprints file and creates blueprints from data it contains. Is run by setup method.
+  # @param [Array<String>] patterns List of filesystem patterns to search blueprint files in.
+  # @raise [RuntimeError] If no blueprints file can be found.
   def self.load_scenarios_files(patterns)
     patterns.each do |pattern|
       pattern = config.root.join(pattern)
       files = Dir[pattern.to_s]
-      files.each { |f| FileContext.new f }
+      files.each { |file| Context.eval_within_context(:file => file, :namespace => Namespace.root) }
       return if files.size > 0
     end
 

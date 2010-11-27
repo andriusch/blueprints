@@ -1,15 +1,59 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Blueprints::Namespace do
+  describe "children" do
+    it "should allow adding children to namespace" do
+      namespace.add_child(blueprint)
+      namespace[:blueprint].should == blueprint
+    end
+
+    it "should warn when adding children overwrites existing one" do
+      namespace_blueprint
+      Blueprints.expects(:warn).with("Overwriting existing blueprint", blueprint)
+      namespace.add_child(blueprint)
+    end
+
+    it "should allow recursive finding of children" do
+      namespace_blueprint
+      Blueprints::Namespace.root['namespace.blueprint'].should == namespace_blueprint
+    end
+
+    it "should raise error if blueprint can't be found" do
+      namespace_blueprint
+      expect {
+        Blueprints::Namespace.root['namespace.blueprint2']
+      }.to raise_error(Blueprints::BlueprintNotFoundError)
+    end
+  end
+
+  describe "build" do
+    before do
+      blueprint
+      namespace_blueprint
+      namespace_blueprint2
+    end
+
+    it "should set result to results of all blueprints in namespace" do
+      result = namespace.build(stage)
+      result.should =~ [mock1, mock2]
+    end
+
+    it "should pass build once and eval context params" do
+      namespace_blueprint.expects(:build).with(instance_of(Blueprints::EvalContext), false, :option => 'value')
+      namespace_blueprint2.expects(:build).with(instance_of(Blueprints::EvalContext), false, :option => 'value')
+      namespace.build(stage, false, :option => 'value')
+    end
+  end
+
   describe "demolish" do
     it "should allow to demolish namespace" do
       blueprint
       namespace_blueprint
       namespace_blueprint2
-      results = Blueprints::Namespace.root.build :namespace
+      results = namespace.build stage
       results.each { |result| result.expects(:destroy) }
 
-      @namespace.demolish
+      @namespace.demolish(stage)
     end
   end
 end

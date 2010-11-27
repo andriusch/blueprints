@@ -1,10 +1,12 @@
 module DescribeHelper
   # Creates new before filter that builds blueprints before each spec.
+  # @param names (see Helper#build)
   def build_blueprint(*names)
     before { build_blueprint *names }
   end
 
-  # Same as #build_blueprint except that you can use it to build same blueprint several times.
+  # Same as DescribeHelper#build_blueprint except that you can use it to build same blueprint several times.
+  # @param names (see Helper#build)
   def build_blueprint!(*names)
     before { build_blueprint! *names }
   end

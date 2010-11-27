@@ -190,7 +190,7 @@ describe Blueprints do
 
     it "should normalize attributes when updating with blueprint method" do
       build :cherry, :oak
-      @cherry.blueprint(:tree => d(:oak))
+      build :cherry => {:tree => d(:oak)}
       @cherry.tree.should == @oak
     end
 
@@ -326,8 +326,8 @@ describe Blueprints do
 
   describe 'attributes' do
     it "should allow to extract attributes from blueprint" do
-      build_attributes('attributes.cherry').should == {:species => 'cherry'}
-      build_attributes('attributes.shortened_cherry').should == {:species => 'cherry'}
+      build_attributes('attributes.cherry').should == {:species => 'cherry', :average_diameter => 10}
+      build_attributes('attributes.shortened_cherry').should == {:species => 'cherry', :average_diameter => 10}
       build_attributes(:big_cherry).should == {}
     end
 

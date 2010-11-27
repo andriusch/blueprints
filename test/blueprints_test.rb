@@ -190,7 +190,7 @@ class BlueprintsTest < ActiveSupport::TestCase
 
     should "normalize attributes when updating with blueprint method" do
       build :cherry, :oak
-      @cherry.blueprint(:tree => d(:oak))
+      build :cherry => {:tree => d(:oak)}
       assert(@cherry.tree == @oak)
     end
 
@@ -326,8 +326,8 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   context 'attributes' do
     should "allow to extract attributes from blueprint" do
-      assert(build_attributes('attributes.cherry') == {:species => 'cherry'})
-      assert(build_attributes('attributes.shortened_cherry') == {:species => 'cherry'})
+      assert(build_attributes('attributes.cherry') == {:species => 'cherry', :average_diameter => 10})
+      assert(build_attributes('attributes.shortened_cherry') == {:species => 'cherry', :average_diameter => 10})
       assert(build_attributes(:big_cherry) == {})
     end
 

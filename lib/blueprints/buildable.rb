@@ -1,62 +1,61 @@
 module Blueprints
   class Buildable
+    delegate :namespace, :to => :@context
     attr_reader :name
-    attr_accessor :namespace
 
-    # Initializes new Buildable object by name and namespace which it belongs to.
-    # Name can be Symbol, String or Hash. If Hash is passed, then first key is assumed name, and value(s) of that key
-    # are assumed as dependencies. Raises error class of name parameter is not what is expected.
-    # Warns if name has already been taken.
-    def initialize(name, namespace)
+    # Initializes new Buildable object by name and context which it belongs to.
+    # @param [Symbol, String, Hash] name Name of buildable. If hash is passed then first key is assumed name, and
+    #   value(s) of that key are assumed as dependencies.
+    # @param [Blueprints::Context] context Context of buildable that later might get updated.
+    # @raise [TypeError] If name is invalid.
+    def initialize(name, context)
+      @context = context
       @name, parents = parse_name(name)
       depends_on(*parents)
 
-      if namespace
-        Blueprints.warn("Overwriting existing blueprint", self) if namespace.children[@name]
-        namespace.add_child(self)
+      namespace.add_child(self) if namespace
+    end
+
+    # Defines dependencies of buildable by updating it's context.
+    # @param [Array<String, Symbol>] dependencies List of dependencies.
+    def depends_on(*dependencies)
+      update_context(:dependencies => dependencies)
+    end
+
+    # @overload attributes
+    #   Returns attributes of buildable
+    #   @return [Hash] Attributes of buildable
+    # @overload attributes(value)
+    #   Merges attributes of buildable with new attributes by updating context
+    #   @param [Hash] Updated attributes
+    def attributes(value = nil)
+      if value
+        update_context(:attributes => value)
+      else
+        @context.attributes
       end
     end
 
-    # Defines blueprint dependencies. Used internally, but can be used externally too.
-    def depends_on(*scenarios)
-      @parents = (@parents || []) + scenarios.map { |s| s.to_sym }
-      self
-    end
-
     # Builds dependencies of blueprint and then blueprint itself.
-    #
-    # +build_once+ - pass false if you want to build blueprint again instead of updating old one.
-    #
-    # +options+ - list of options to be accessible in the body of a blueprint. Defaults to empty Hash.
-    def build(build_once = true, options = {})
-      return result if @building or (built? and build_once and options.blank?)
+    # @param [Blueprints::EvalContext] eval_context Context to build buildable object in.
+    # @param [true, false] build_once Used if buildable is already built. If true then old one is updated else buildable is built again.
+    # @param [Hash] options List of options to be accessible in the body of a blueprint.
+    def build(eval_context, build_once = true, options = {})
+      return result(eval_context) if @building or (built? and build_once and options.blank?)
       @building = true
 
-      each_namespace {|namespace| namespace.build_parents }
-      build_parents
+      each_namespace { |namespace| namespace.build_parents(eval_context) }
+      build_parents(eval_context)
 
-      old_options, old_attributes = Namespace.root.context.options, Namespace.root.context.attributes
-      Namespace.root.context.options, Namespace.root.context.attributes = options, normalized_attributes.merge(options)
-      each_namespace {|namespace| Namespace.root.context.attributes.reverse_merge! namespace.normalized_attributes }
-
-      build_self(build_once)
-      Namespace.root.context.options, Namespace.root.context.attributes = old_options, old_attributes
+      result = build_self(eval_context, build_once, options)
       Namespace.root.executed_blueprints << self
+
       @building = false
       result
     end
 
-    # Returns the result of blueprint
-    def result
-      Namespace.root.context.instance_variable_get(variable_name)
-    end
-
-    # Sets the result of blueprint
-    def result=(value)
-      Namespace.root.add_variable(variable_name, value)
-    end
-
     # Returns if blueprint has been built
+    # @return [true, false] true if was built, false otherwise
     def built?
       Namespace.root.executed_blueprints.include?(self)
     end
@@ -67,38 +66,23 @@ module Blueprints
     end
 
     # Returns full path to this buildable
+    # @param [String] join_with Separator used to join names of parent namespaces and buildable itself.
     def path(join_with = '_')
       @path = (namespace.path(join_with) + join_with unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
     end
 
-    # If value is passed then it sets attributes for this buildable object.
-    # Otherwise returns attributes (defaulting to empty Hash)
-    def attributes(value)
-      @attributes = value
-      self
-    end
-
-    # Returns normalized attributes for that particular blueprint.
-    def normalized_attributes
-      Buildable.normalize_attributes(@attributes ||= {})
-    end
-
-    # Normalizes attributes by changing all :@var to values of @var, and all dependencies to the result of that blueprint.
-    def self.normalize_attributes(attributes)
-      attributes.each_with_object({}) do |(attr, value), hash|
-        hash[attr] = if value.respond_to?(:blueprint_value) then value.blueprint_value else value end
-      end
-    end
-
-    def build_parents
-      @parents.each do |p|
+    # Builds all dependencies. Should be called before building itself. Searches dependencies first in parent then in root namespace.
+    # @param [Blueprints::EvalContext] eval_context Context to build parents against.
+    # @raise [Blueprints::BlueprintNotFoundError] If one of dependencies can't be found.
+    def build_parents(eval_context)
+      @context.dependencies.each do |name|
         parent = begin
-          namespace[p]
+          namespace[name]
         rescue BlueprintNotFoundError
-          Namespace.root[p]
+          Namespace.root[name]
         end
 
-        parent.build
+        parent.build(eval_context)
       end
     end
 
@@ -123,6 +107,26 @@ module Blueprints
         else
           raise TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint #{name.inspect}"
       end
+    end
+
+    private
+
+    def result(eval_context)
+      if block_given?
+        yield.tap do |result|
+          if @auto_variable or not eval_context.instance_variable_defined?(variable_name)
+            eval_context.instance_variable_set(variable_name, result)
+            @auto_variable = true
+          end
+        end
+      else
+        eval_context.instance_variable_get(variable_name)
+      end
+    end
+
+    def update_context(options)
+      @context = @context.with_context(options)
+      self
     end
   end
 end

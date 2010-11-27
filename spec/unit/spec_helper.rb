@@ -9,11 +9,11 @@ RSpec.configure do |config|
   config.mock_with :mocha
 
   config.before do
-    Blueprints::Namespace.root.instance_variable_set(:@context, Blueprints::Context.new)
+    Blueprints::Namespace.root.eval_context = Blueprints::EvalContext.new
   end
 
   config.after do
-    Blueprints::Namespace.root.children.clear
+    Blueprints::Namespace.root.instance_variable_get(:@children).clear
     Blueprints::Namespace.root.executed_blueprints.clear
   end
 end

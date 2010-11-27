@@ -45,8 +45,8 @@ end
 
 Fruit.blueprint(:acorn, :species => 'Acorn', :tree => d(:oak))
 blueprint :small_acorn do
-  @small_acorn = build :acorn => {:average_diameter => 1}
   @small_acorn_options = options
+  build :acorn => {:average_diameter => 1}
 end
 blueprint(:huge_acorn => :huge_oak).extends(:acorn, :average_diameter => 100)
 
@@ -64,7 +64,7 @@ blueprint :apple_with_params do
   Fruit.blueprint options.reverse_merge(:species => 'apple')
 end
 
-namespace :attributes do
+attributes(:average_diameter => 10, :species => 'fruit with attributes').namespace :attributes do
   blueprint :cherry do
     Fruit.blueprint attributes
   end.attributes(:species => 'cherry')
@@ -72,6 +72,6 @@ namespace :attributes do
   Fruit.blueprint :shortened_cherry, :species => 'cherry'
 
   Fruit.blueprint :dependent_cherry, :tree => d(:pine, :the_pine)
-end.attributes(:average_diameter => 10, :species => 'fruit with attributes')
+end
 
 blueprint :circular_reference => :circular_reference

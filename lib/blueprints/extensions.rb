@@ -1,4 +1,5 @@
 module Blueprints::Extensions
+  # Here to support ActiveSupport 2.x. Will be removed once support for ActiveRecord 2.3 is terminated.
   module Extendable
     def self.included(mod)
       if defined?(ActiveSupport::Concern)
@@ -16,18 +17,21 @@ module Blueprints::Extensions
     include Extendable
 
     module ClassMethods
-      # Two forms of this method can be used. First one is typically used inside blueprint block. Essentially it does
-      # same as <tt>create!</tt>, except it does bypass attr_protected and attr_accessible. It accepts only a hash or attributes,
-      # same as <tt>create!</tt> does.
-      #   blueprint :post => [:user, :board] do
+      # @overload blueprint(attributes)
+      #   Does same as +create!+ method except that it also bypasses attr_protected and attr_accessible. Typically used in blueprint block.
+      #   @example Create post for user
       #     @user.posts.blueprint(:title => 'first post', :text => 'My first post')
-      #   end
-      # The second form is used when you want to define new blueprint. It takes first argument as name of blueprint
-      # and second one as hash of attributes. As you cannot use instance variables outside of blueprint block, you need
-      # to prefix them with colon. So the example above could be rewritten like this:
-      #   Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => d(:user)).depends_on(:board)
+      #   @param [Hash, Array<Hash>] attributes Attributes used to create objects.
+      #   @return Created object(s).
+      # @overload blueprint(name, attributes = {})
+      #   Defines new blueprint that creates an object with attributes passed.
+      #   @example Create blueprint named :post.
+      #     Post.blueprint(:post, :title => 'first post', :text => 'My first post', :user => d(:user)).depends_on(:board)
+      #   @param [String, Symbol, Hash] name Name of blueprint.
+      #   @param [Hash] attributes Attributes hash.
+      #   @return [Blueprints::Blueprint] Defined blueprint.
       def blueprint(name_or_attrs, attrs = {})
-        if Blueprints::FileContext.current
+        if Blueprints::Context.current
           define_blueprint(name_or_attrs, attrs)
         else
           if name_or_attrs.is_a?(Array)
@@ -41,8 +45,8 @@ module Blueprints::Extensions
       private
 
       def define_blueprint(name, attrs)
-        klass = self
-        blueprint = Blueprints::Blueprint.new(name, Blueprints::FileContext.current.namespaces.last, Blueprints::FileContext.current.file) { klass.blueprint attributes }
+        klass     = self
+        blueprint = Blueprints::Blueprint.new(name, Blueprints::Context.current) { klass.blueprint attributes }
         blueprint.attributes(attrs)
         blueprint
       end
@@ -52,9 +56,10 @@ module Blueprints::Extensions
       end
     end
 
-    # Updates attributes of object by calling setter methods.
+    # Updates attributes of object by calling setter methods. Does same as +update_attributes!+ except it also bypasses attr_protected and attr_accessible.
+    # @param [Hash] attributes Attributes that are used to update object.
     def blueprint(attributes)
-      Blueprints::Blueprint.normalize_attributes(attributes).each do |attribute, value|
+      attributes.each do |attribute, value|
         blueprint_attribute attribute, value
       end
     end
@@ -83,7 +88,7 @@ module Blueprints::Extensions
     include Extendable
     include Blueprintable
 
-    # Overrides object.blueprint to also call save!
+    # Overrides object.blueprint to also call save
     def blueprint(attributes)
       super(attributes)
       save
