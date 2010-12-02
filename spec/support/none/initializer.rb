@@ -54,7 +54,7 @@ class Tree < NoneOrm
   attr_accessor :name, :size, :fruits
 end
 
-Rspec.configure do |config|
+RSpec.configure do |config|
   config.before do
     [Fruit, Tree].each do |klass|
       klass.instance_variables.each { |iv| klass.send(:remove_instance_variable, iv) }
