@@ -5,3 +5,5 @@ database.yml
 debug.log
 .bundle
 *.rbc
+doc
+.yardoc
