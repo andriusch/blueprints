@@ -2,10 +2,10 @@ require 'cucumber'
 require 'active_record'
 require 'pathname'
 Root = Pathname.new(__FILE__).dirname.join('..', '..')
-$: << Root.to_s
+$: << Root.join('lib').to_s
 
-require 'lib/blueprints'
-require "spec/support/active_record/initializer"
+require 'blueprints'
+require File.dirname(__FILE__) + "/../../spec/support/active_record/initializer"
 
 # Comment out the next two lines if you're not using RSpec's matchers (should / should_not) in your steps.
 #require 'cucumber/rspec'

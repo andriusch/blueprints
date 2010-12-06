@@ -6,7 +6,7 @@ require 'set'
 files = %w{
 configuration context eval_context buildable namespace root_namespace blueprint helper errors dependency extensions
 }
-files.each { |f| require File.join(File.dirname(__FILE__), 'blueprints', f) }
+files.each { |f| require "blueprints/#{f}" }
 
 # Main namespace of blueprints. Contains methods for Blueprints setup.
 module Blueprints

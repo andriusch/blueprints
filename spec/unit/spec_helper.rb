@@ -1,9 +1,9 @@
 Root = Pathname.new(__FILE__).dirname.join('..', '..')
-$: << Root.to_s
+$: << Root.join('lib').to_s
 
 require 'rspec'
-require 'lib/blueprints'
-require 'spec/unit/fixtures'
+require 'blueprints'
+require File.dirname(__FILE__) + '/fixtures'
 
 RSpec.configure do |config|
   config.mock_with :mocha

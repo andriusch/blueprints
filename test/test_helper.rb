@@ -7,10 +7,10 @@ require 'shoulda'
 require 'mocha'
 
 Root = Pathname.new(__FILE__).dirname.join('..')
-$: << Root.to_s
+$: << Root.join('lib').to_s
 
-require 'lib/blueprints'
-require "spec/support/active_record/initializer"
+require 'blueprints'
+require File.dirname(__FILE__) + "/../spec/support/active_record/initializer"
 
 class ActiveSupport::TestCase
   def assert_similar(array1, array2)
