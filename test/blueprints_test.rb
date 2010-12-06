@@ -68,7 +68,7 @@ class BlueprintsTest < ActiveSupport::TestCase
   end
 
   context "build per describe" do
-    unless File.dirname(__FILE__).ends_with?('test')
+    unless File.dirname(__FILE__) =~ /test$/
       build_blueprint :apple
 
       should "have cherry" do

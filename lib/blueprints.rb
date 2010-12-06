@@ -1,5 +1,11 @@
 require 'active_support'
-require 'active_support/core_ext'
+require 'active_support/core_ext/kernel/singleton_class'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/core_ext/hash/reverse_merge'
+require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/enumerable'
 require 'database_cleaner'
 require 'set'
 

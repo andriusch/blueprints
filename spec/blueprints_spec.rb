@@ -68,7 +68,7 @@ describe Blueprints do
   end
 
   describe "build per describe" do
-    unless File.dirname(__FILE__).ends_with?('test')
+    unless File.dirname(__FILE__) =~ /test$/
       build_blueprint :apple
 
       it "should have cherry" do
