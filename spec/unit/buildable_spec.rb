@@ -1,6 +1,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Blueprints::Buildable do
+  it "should inspect buildable nicely" do
+    namespace_blueprint.attributes(:attr => 'value').depends_on(:dependency)
+    namespace_blueprint.inspect.should == %q(<#Blueprints::Blueprint name: "namespace.blueprint", attributes: {:attr=>"value"}, dependencies: [:dependency]>)
+  end
+
   describe "name" do
     after do
       Blueprints.config.default_attributes = :name

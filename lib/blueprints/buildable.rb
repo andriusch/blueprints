@@ -21,6 +21,12 @@ module Blueprints
       namespace.add_child(self) if namespace
     end
 
+    # Returns class, name, attributes and dependencies of buildable in nice formatted string.
+    # @return [String] Inspected properties of buildable.
+    def inspect
+      "<##{self.class} name: #{full_name.inspect}, attributes: #{attributes.inspect}, dependencies: #{dependencies.inspect}>"
+    end
+
     # Defines dependencies of buildable by updating it's context.
     # @param [Array<String, Symbol>] dependencies List of dependencies.
     def depends_on(*dependencies)
