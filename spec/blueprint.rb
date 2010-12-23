@@ -75,3 +75,5 @@ attributes(:average_diameter => 10, :species => 'fruit with attributes').namespa
 end
 
 blueprint :circular_reference => :circular_reference
+
+Tree.blueprint :name => 'infered'

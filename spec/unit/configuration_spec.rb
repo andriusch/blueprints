@@ -36,4 +36,15 @@ describe Blueprints::Configuration do
     @config.filename = "my_file.rb"
     @config.filename.should == [Pathname.new("my_file.rb")]
   end
+
+  describe "default attributes" do
+    it "should be name by default" do
+      @config.default_attributes.should == [:name]
+    end
+
+    it "should automatically convert them to array" do
+      @config.default_attributes = :id
+      @config.default_attributes.should == [:id]
+    end
+  end
 end

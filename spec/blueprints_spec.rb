@@ -201,7 +201,7 @@ describe Blueprints do
     end
 
     it "should allow to pass array of hashes to blueprint method" do
-      fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
+      fruits = Fruit.blueprint({:species => 'fruit1'}, {:species => 'fruit2'})
       fruits.collect(&:species).should == %w{fruit1 fruit2}
     end
 
@@ -355,5 +355,9 @@ describe Blueprints do
 
   it "should not fail with circular reference" do
     build :circular_reference
+  end
+
+  it "should allow inferring blueprint name" do
+    build(:infered).name.should == 'infered'
   end
 end

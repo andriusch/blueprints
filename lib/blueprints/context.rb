@@ -44,7 +44,7 @@ module Blueprints
     #   end
     # @param name (see Buildable#initialize)
     # @return [Blueprints::Blueprint] Newly defined blueprint.
-    def blueprint(name, &block)
+    def blueprint(name = nil, &block)
       Blueprint.new(name, self, &block)
     end
 

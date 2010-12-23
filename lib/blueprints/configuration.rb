@@ -15,6 +15,8 @@ module Blueprints
     attr_reader :root
     # By default blueprints runs each test in it's own transaction. This may sometimes be not desirable so this options allows to turn this off.
     attr_accessor :transactions
+    # Default attributes are used when blueprints has no name specified.
+    attr_reader :default_attributes
 
     # Initializes new Configuration object with default attributes.
     # By defaults filename patterns are: blueprint.rb and blueprint/*.rb in spec, test and root directories.
@@ -29,6 +31,7 @@ module Blueprints
       @prebuild = []
       @transactions = true
       @root = defined?(Rails) ? Rails.root : Pathname.pwd
+      @default_attributes = [:name]
     end
 
     def filename=(value)
@@ -37,6 +40,10 @@ module Blueprints
 
     def root=(value)
       @root = Pathname.new(value)
+    end
+
+    def default_attributes=(value)
+      @default_attributes = Array(value)
     end
   end
 end

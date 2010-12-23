@@ -11,12 +11,6 @@ describe Blueprints::Blueprint do
     end
   end
 
-  it 'should raise TypeError when scenario name is not symbol or string' do
-    lambda {
-      Blueprints::Blueprint.new(1, context)
-    }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint 1")
-  end
-
   describe "building" do
     it "should mark blueprint as built" do
       lambda {

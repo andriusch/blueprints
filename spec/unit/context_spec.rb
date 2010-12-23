@@ -87,6 +87,11 @@ describe Blueprints::Context do
       namespace.children.should == {:blueprint => bp}
     end
 
+    it "should allow creating blueprint with inferred name" do
+      blueprint = subject.attributes(:name => 'bp').blueprint
+      blueprint.name.should == :bp
+    end
+
     it "should allow setting dependency" do
       dep = context.d(:bp, :option => 'val')
       dep.should be_instance_of(Blueprints::Dependency)

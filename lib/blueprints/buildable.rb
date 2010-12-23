@@ -4,12 +4,17 @@ module Blueprints
     attr_reader :name
 
     # Initializes new Buildable object by name and context which it belongs to.
-    # @param [Symbol, String, Hash] name Name of buildable. If hash is passed then first key is assumed name, and
+    # @param [#to_sym, Hash] name Name of buildable. If hash is passed then first key is assumed name, and
     #   value(s) of that key are assumed as dependencies.
     # @param [Blueprints::Context] context Context of buildable that later might get updated.
     # @raise [TypeError] If name is invalid.
     def initialize(name, context)
       @context = context
+
+      if name.nil?
+        default_attribute = Blueprints.config.default_attributes.detect { |attribute| attributes.has_key?(attribute) }
+        name = attributes[default_attribute].parameterize('_') if default_attribute
+      end
       @name, parents = parse_name(name)
       depends_on(*parents)
 
@@ -98,14 +103,13 @@ module Blueprints
     end
 
     def parse_name(name)
-      case name
-        when Hash
-          return name.keys.first.to_sym, [name.values.first].flatten.map { |sc| parse_name(sc).first }
-        when Symbol, String
-          name = name.to_sym unless name == ''
-          return name, []
-        else
-          raise TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint #{name.inspect}"
+      if name.is_a?(Hash)
+        return name.keys.first.to_sym, [name.values.first].flatten.map { |sc| parse_name(sc).first }
+      elsif name.respond_to?(:to_sym)
+        name = name.to_sym unless name == ''
+        return name, []
+      else
+        raise TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint #{name.inspect}"
       end
     end
 

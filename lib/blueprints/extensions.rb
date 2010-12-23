@@ -30,25 +30,21 @@ module Blueprints::Extensions
       #   @param [String, Symbol, Hash] name Name of blueprint.
       #   @param [Hash] attributes Attributes hash.
       #   @return [Blueprints::Blueprint] Defined blueprint.
-      def blueprint(name_or_attrs, attrs = {})
+      def blueprint(*args)
         if Blueprints::Context.current
-          define_blueprint(name_or_attrs, attrs)
+          attrs = args.extract_options!
+          define_blueprint(args.first, attrs)
         else
-          if name_or_attrs.is_a?(Array)
-            name_or_attrs.collect { |attrs| blueprint(attrs) }
-          else
-            blueprint_object(name_or_attrs)
-          end
+          objects = args.collect { |attrs| blueprint_object(attrs) }
+          args.size == 1 ? objects.first : objects
         end
       end
 
       private
 
       def define_blueprint(name, attrs)
-        klass     = self
-        blueprint = Blueprints::Blueprint.new(name, Blueprints::Context.current) { klass.blueprint attributes }
-        blueprint.attributes(attrs)
-        blueprint
+        klass = self
+        Blueprints::Context.current.attributes(attrs).blueprint(name) { klass.blueprint attributes }
       end
 
       def blueprint_object(attrs)

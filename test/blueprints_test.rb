@@ -201,7 +201,7 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
 
     should "allow to pass array of hashes to blueprint method" do
-      fruits = Fruit.blueprint([{:species => 'fruit1'}, {:species => 'fruit2'}])
+      fruits = Fruit.blueprint({:species => 'fruit1'}, {:species => 'fruit2'})
       assert(fruits.collect(&:species) == %w{fruit1 fruit2})
     end
 
@@ -355,5 +355,9 @@ class BlueprintsTest < ActiveSupport::TestCase
 
   should "not fail with circular reference" do
     build :circular_reference
+  end
+
+  should "allow inferring blueprint name" do
+    assert(build(:infered).name == 'infered')
   end
 end
