@@ -10,8 +10,8 @@ module Blueprints
     # @param name (see Buildable#initialize)
     # @param context (see Buildable#initialize)
     def initialize(name, context)
-      super(name, context)
       @children = {}
+      super(name, context)
     end
 
     # Adds child to namespaces children. Warns if this will overwrite existing child.
@@ -49,6 +49,13 @@ module Blueprints
     # @param [Blueprints::EvalContext] eval_context Eval context that this namespace was built in.
     def demolish(eval_context)
       @children.each_value { |blueprint| blueprint.demolish(eval_context) }
+    end
+
+    protected
+
+    def update_context(options)
+      @children.each_value { |child| child.update_context(options) }
+      super
     end
   end
 end

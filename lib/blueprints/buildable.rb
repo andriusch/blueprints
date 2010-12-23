@@ -1,6 +1,6 @@
 module Blueprints
   class Buildable
-    delegate :namespace, :to => :@context
+    delegate :namespace, :dependencies, :to => :@context
     attr_reader :name
 
     # Initializes new Buildable object by name and context which it belongs to.
@@ -120,6 +120,11 @@ module Blueprints
       end
     end
 
+    def update_context(options)
+      @context = @context.with_context(options)
+      self
+    end
+
     private
 
     def result(eval_context)
@@ -133,11 +138,6 @@ module Blueprints
       else
         eval_context.instance_variable_get(variable_name)
       end
-    end
-
-    def update_context(options)
-      @context = @context.with_context(options)
-      self
     end
   end
 end

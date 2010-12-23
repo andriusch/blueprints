@@ -26,6 +26,18 @@ describe Blueprints::Namespace do
     end
   end
 
+  describe "children context" do
+    before do
+      namespace_blueprint
+    end
+
+    it "should update attributes and dependencies of children when updating those of namespace" do
+      namespace.attributes(:parent => 1).depends_on(:parent_depends)
+      namespace_blueprint.attributes[:parent].should == 1
+      namespace_blueprint.dependencies.should include(:parent_depends)
+    end
+  end
+
   describe "build" do
     before do
       blueprint
