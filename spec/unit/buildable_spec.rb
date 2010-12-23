@@ -12,6 +12,10 @@ describe Blueprints::Buildable do
       }.should raise_error(TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint []")
     end
 
+    it "should return full name" do
+      namespace_blueprint.full_name.should == 'namespace.blueprint'
+    end
+
     describe "inferring" do
       it "should infer name using default attributes" do
         Blueprints::Buildable.new(nil, context.attributes(:name => 'inferred_name')).name.should == :inferred_name

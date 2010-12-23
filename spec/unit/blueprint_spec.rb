@@ -12,10 +12,19 @@ describe Blueprints::Blueprint do
   end
 
   describe "building" do
-    it "should mark blueprint as built" do
-      lambda {
+    describe "build count" do
+      it "should increase build count" do
+        lambda {
+          blueprint.build(stage)
+        }.should change(blueprint, :uses).by(1)
+      end
+
+      it "should not increase build count if blueprint was already built" do
         blueprint.build(stage)
-      }.should change(blueprint, :used?).from(nil).to(true)
+        lambda {
+          blueprint.build(stage, false)
+        }.should_not change(blueprint, :uses)
+      end
     end
 
     it "should copy instance variables to container" do

@@ -72,8 +72,15 @@ module Blueprints
 
     # Returns full path to this buildable
     # @param [String] join_with Separator used to join names of parent namespaces and buildable itself.
+    # @return [String] full path to this buildable joined with separator
     def path(join_with = '_')
-      @path = (namespace.path(join_with) + join_with unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+      (namespace.path(join_with) + join_with unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+    end
+
+    # Returns full name for this buildable
+    # @return [String] full buildable name
+    def full_name
+      path('.')
     end
 
     # Builds all dependencies. Should be called before building itself. Searches dependencies first in parent then in root namespace.

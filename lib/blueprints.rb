@@ -70,7 +70,7 @@ module Blueprints
   # @return [ActiveSupport::BacktraceCleaner] Backtrace cleaner
   def self.backtrace_cleaner
     @backtrace_cleaner ||= ActiveSupport::BacktraceCleaner.new.tap do |bc|
-      root_sub = /^#{config.root}[\\\/]/
+      root_sub        = /^#{config.root}[\\\/]/
       blueprints_path = File.expand_path(File.dirname(__FILE__))
 
       bc.add_filter { |line| line.sub(root_sub, '') }
@@ -79,16 +79,21 @@ module Blueprints
   end
 
   # Returns array of blueprints that have not been used until now.
-  # @param [Blueprints::Namespace] from Namespace to start recursive search from.
-  # @return [Array<Symbol>] List of unused blueprints.
-  def self.unused(from = Namespace.root)
-    from.children.values.collect do |child|
-      if child.is_a?(Blueprints::Blueprint)
-        child.path('.') unless child.used?
-      else
-        unused(child)
-      end
-    end.flatten.compact
+  # @return [Array<String>] List of unused blueprints.
+  def self.unused
+    each_blueprint.select { |blueprint| blueprint.uses.zero? }.collect(&:full_name)
+  end
+
+  # Returns array of most used blueprints.
+  # @param [Hash] options Options on what blueprints to return.
+  # @option options [Integer] :count Max amount of most used blueprints to return.
+  # @option options [Integer] :at_least Only blueprints that have at least specified number of uses will be returned.
+  # @return [Array<Array<String, Integer>>] List of most used blueprints together with their use counts.
+  def self.most_used(options = {})
+    blueprints = each_blueprint.collect { |blueprint| [blueprint.full_name, blueprint.uses] }.sort { |a, b| b[1] <=> a[1] }
+    blueprints = blueprints.take(options[:count]) if options[:count]
+    blueprints.reject! { |blueprint| blueprint[1] < options[:at_least] } if options[:at_least]
+    blueprints
   end
 
   # Warns a user (often about deprecated feature).
@@ -107,7 +112,7 @@ module Blueprints
   def self.load_scenarios_files(patterns)
     patterns.each do |pattern|
       pattern = config.root.join(pattern)
-      files = Dir[pattern.to_s]
+      files   = Dir[pattern.to_s]
       files.each { |file| Context.eval_within_context(:file => file, :namespace => Namespace.root) }
       return if files.size > 0
     end
@@ -116,6 +121,27 @@ module Blueprints
   end
 
   private
+
+  def self.each_blueprint(from = Namespace.root)
+    enumerator_class.new do |enum|
+      from.children.values.collect do |child|
+        if child.is_a?(Blueprints::Blueprint)
+          enum.yield child
+        else
+          each_blueprint(child).each { |blueprint| enum.yield blueprint }
+        end
+      end
+    end
+  end
+
+  def self.enumerator_class
+    @enumerator_class ||= if defined?(Enumerator)
+                            Enumerator
+                          else
+                            require 'generator'
+                            Generator
+                          end
+  end
 
   def self.if_orm
     yield

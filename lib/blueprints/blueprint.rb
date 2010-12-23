@@ -1,6 +1,9 @@
 module Blueprints
   # Class for actual blueprints. Allows building itself by executing block passed against current context.
   class Blueprint < Buildable
+    # Holds how many times this particular blueprint was built
+    attr_reader :uses
+
     # Initializes blueprint by name, context and block. Also sets default demolish and update blocks.
     # @param name (see Buildable#initialize)
     # @param context (see Buildable#initialize)
@@ -11,12 +14,7 @@ module Blueprints
       @block = block
       @demolish_block = Proc.new { instance_variable_get(ivname).destroy }
       @update_block = Proc.new { instance_variable_get(ivname).blueprint(options) }
-    end
-
-    # Returns whether blueprint was ever used
-    # @return [true, false] True if blueprint was used, false otherwise.
-    def used?
-      @used
+      @uses = 0
     end
 
     # Builds blueprint and adds it to executed blueprint array. Setups instance variable with same name as blueprint if it is not defined yet.
@@ -25,7 +23,7 @@ module Blueprints
     # @param build_once (see Buildable#build)
     # @param options (see Buildable#build)
     def build_self(eval_context, build_once, options)
-      @used = true
+      @uses += 1 unless built?
       surface_errors do
         if built? and build_once
           eval_context.instance_eval(@context, options, &@update_block) if options.present?
