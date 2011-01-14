@@ -6,4 +6,4 @@ module ActiveRecord
       end
     end
   end
-end
+end if defined?(ActiveRecord)
