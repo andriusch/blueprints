@@ -318,10 +318,21 @@ class BlueprintsTest < ActiveSupport::TestCase
     end
   end
 
-  should "allow to build! without checking if it was already built" do
-    build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
-    assert(Fruit.count == 4)
-    assert(!(Fruit.first(:conditions => {:species => 'not so big cherry'}).nil?))
+  context "build!" do
+    should "allow to building same blueprint again" do
+      build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
+      assert(Fruit.count == 4)
+      assert(!(Fruit.first(:conditions => {:species => 'not so big cherry'}).nil?))
+    end
+
+    should "allow building same blueprint n times" do
+      oaks = build! 5, :oak
+      assert(oaks.size == 5)
+      oaks.each do |oak|
+        assert(oak.instance_of?(Tree))
+        assert(oak.name == 'Oak')
+      end
+    end
   end
 
   context 'attributes' do

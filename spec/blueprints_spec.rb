@@ -318,10 +318,21 @@ describe Blueprints do
     end
   end
 
-  it "should allow to build! without checking if it was already built" do
-    build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
-    Fruit.count.should == 4
-    Fruit.first(:conditions => {:species => 'not so big cherry'}).should_not be_nil
+  describe "build!" do
+    it "should allow to building same blueprint again" do
+      build! :big_cherry, :big_cherry => {:species => 'not so big cherry'}
+      Fruit.count.should == 4
+      Fruit.first(:conditions => {:species => 'not so big cherry'}).should_not be_nil
+    end
+
+    it "should allow building same blueprint n times" do
+      oaks = build! 5, :oak
+      oaks.should have(5).items
+      oaks.each do |oak|
+        oak.should be_instance_of(Tree)
+        oak.name.should == 'Oak'
+      end
+    end
   end
 
   describe 'attributes' do

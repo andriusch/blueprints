@@ -1,3 +1,4 @@
+
 module Blueprints
   # Defines a root namespace that is used when no other namespace is. Apart from functionality in namespace it also allows
   # building blueprints/namespaces by name. Is also used for copying instance variables between blueprints/contexts/global

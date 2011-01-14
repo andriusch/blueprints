@@ -10,14 +10,25 @@ module Blueprints
     # @example passing options to several blueprints.
     #   build :pear, :apple => {:color => 'red'}, :orange => {:color => 'orange'}
     # @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
+    # @return Return value of last blueprint
     def build(*names)
       Namespace.root.build(names, self, true)
     end
 
     # Same as #build except that you can use it to build same blueprint several times.
-    # @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
+    # @overload build!(*names)
+    #   @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
+    #   @return Return value of last blueprint
+    # @overload build!(count, *names)
+    #   @param [Integer] count Times to build passed blueprint
+    #   @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
+    #   @return [Array] Array of return values of last blueprint, which is same size as count that you pass
     def build!(*names)
-      Namespace.root.build(names, self, false)
+      if names.first.is_a?(Integer)
+        (0...names.shift).collect { build! *names }
+      else
+        Namespace.root.build(names, self, false)
+      end
     end
 
     # Returns attributes that are used to build blueprint.
