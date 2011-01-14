@@ -69,4 +69,9 @@ it "should paginate correctly" do
   users = (0..5).collect { build! :user }
   User.paginate(:per_page => 5, :page => 1).should == users[0..4]
 end
+
+it "should paginate correctly" do
+  users = build! 5, :user
+  User.paginate(:per_page => 5, :page => 1).should == users[0..4]
+end
 {% endhighlight %}

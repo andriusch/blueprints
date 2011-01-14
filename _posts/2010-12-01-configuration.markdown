@@ -72,3 +72,12 @@ Blueprints.enable do |config|
 end
 {% endhighlight %}
 
+### default_attributes
+
+This option allows you configure what attributes are used when trying to [infer name of blueprint](/blueprints/inferring).
+
+{% highlight ruby %}
+Blueprints.enable do |config|
+  config.default_attributes = :name, :nickname
+end
+{% endhighlight %}
