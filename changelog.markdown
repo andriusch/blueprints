@@ -1,0 +1,43 @@
+---
+layout: application
+title: Changelog
+---
+
+Most notable changes will per minor/major version will be listed here.
+
+## Version 0.8.x
+- Removed features deprecated in 0.7.x.
+- [Demolish method](/update_demolish) now works on single blueprints not the whole table.
+- Removed warning when building blueprint with options but it was already built. It now updates already built blueprints.
+- A more powerful [d method](/dependencies) that now allows passing options, changing instance variable name and calling
+methods on instance variable.
+- Build method for describe block which allows rewriting `before { build :xxx }` blocks to `build :xxx`
+- Automatic detection of ORM, easier extending your own classes with .blueprint methods.
+- Deprecated :@variables in favor of d method.
+
+## Version 0.7.x
+- Deprecated enable_blueprints in favor of Blueprints.enable.
+- Added ability to not use transactions.
+- Using DatabaseCleaner for database cleanups so it should be easier to use blueprints with ORMs other than ActiveRecord.
+- First steps for fixture converter which allows to migrate from using fixtures to blueprints.
+
+## Version 0.6.x
+- Added ability to set attributes per blueprint and then later get them using [build_attributes](/attributes).
+- Added warning when trying to build blueprint with options but it was already built. Added warning when overwriting
+blueprint with same name.
+- Added build! method which build blueprint even if it was built previously.
+- Added method 'd' for creating blueprints with Class.blueprint, when associated instance variable has same name as blueprint.
+So `Class.blueprint :column => d(:hello)` is same as `Class.blueprint(:column => :@hello).depends_on(:hello)`
+
+## Version 0.5.x
+
+- Changed passing options syntax from `build :blueprint, :option => 'value'` to `build :blueprint => {:option => 'value'}`.
+This also means that each blueprint gains it's own separate options hash when building.
+- Added ability to [extend blueprints](/extending).
+- Demolishing and and rebuilding blueprint now correctly resets instance variables.
+
+## Version 0.4.x
+
+- Blueprint method on active record object to update it's attributes
+- You can now pass options hash when building blueprint. It will be accessible in blueprint block (note that when using
+shorthand of defining blueprints with ARClass.blueprint, options are automatically merged to objects attributes).

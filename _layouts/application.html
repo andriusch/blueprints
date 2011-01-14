@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+{% include head.html %}
+{% include header.html %}
+
+<div id="content" class="span-24">
+  <article class="span-17 colborder">
+    <h1>{{page.title}}</h1>
+    {{ content }}
+  </article>
+
+  <div id="sidebar" class="span-6 last">
+    <ul>
+      {% for post in site.posts %}
+        <li><a href="{{post.url}}">{{post.title}}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% include footer.html %}
+{% include footer_js.html %}
+</body>
+</html>

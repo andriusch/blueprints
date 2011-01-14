@@ -1,0 +1,15 @@
+---
+layout: application
+title: seeds.rb (Rails >=2.3.4)
+---
+
+To use blueprints for seed data add this to seeds.rb:
+
+{% highlight ruby %}
+require 'blueprints'
+Blueprints.load
+include Blueprints::Helper
+build :users
+{% endhighlight %}
+
+You can then run rake db:seed to load blueprints you requested.

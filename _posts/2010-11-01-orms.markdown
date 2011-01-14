@@ -1,0 +1,38 @@
+---
+layout: application
+title: ORMs
+---
+
+## Transactions
+
+Blueprints by default is transactional, meaning that before every test transaction is started and after every test that transaction is dropped
+which resets database to the state before the test. This state is empty database + any scenarios that you specify in enable_blueprints.
+
+Sometimes using transactions is not possible (eg. using MongoDB or in cucumber scenarios). In that case you can turn off transactions when
+enabling Blueprints. Be aware though that disabling transactions on relational databases is quite a major performance loss.
+
+## ORM support
+
+Blueprints is not tied to any ORM, however it does use Database Cleaner gem which currently supports Active Record, Data Mapper, Mongo Mapper, Mongoid and Couch Potato.
+
+### Active Record
+
+Blueprints support Active Record >= 2.3 (yes that includes 3.0). Lower versions are not supported due to lack of nested transactions,
+however they should probably work without transactions. Class and instance 'blueprint' method is added to all models.
+
+### Mongoid
+
+Blueprints was tested with Mongoid 2.0 only. It does support lower versions, but 'blueprint' method might not be available prior 2.0.
+
+### Mongo Mapper
+
+Tested with Mongo Mapper 0.8.4, but should work with all prior versions too. Class and instance 'blueprint' method is added to all models.
+
+### Data Mapper
+
+Is not fully supported (does not work with transactions). Maybe some Data Mapper guru can help me with that? Class and instance 'blueprint' method is added to all models.
+
+### Other ORMs and not ORMs
+
+If you're using some other ORM (except Couch Potato)  you will need to manually clean database before all tests. If you want to have blueprint method in your
+models you should take a look at Blueprints::Extensions modules (I will gladly help adding support to other ORMs).
