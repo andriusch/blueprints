@@ -5,6 +5,14 @@ title: Changelog
 
 Most notable changes will per minor/major version will be listed here.
 
+## Version 0.9.x
+- Added ability to get most used blueprints.
+- More powerful attributes and dependencies using contexts.
+- Inferring names of blueprints.
+- Added support for most popular ORMs.
+- `build! 5, :user` now builds 5 users.
+- Documentation.
+
 ## Version 0.8.x
 - Removed features deprecated in 0.7.x.
 - [Demolish method](/blueprints/update_demolish) now works on single blueprints not the whole table.
