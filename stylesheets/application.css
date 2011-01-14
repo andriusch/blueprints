@@ -6,7 +6,7 @@ body {
 a { color: white; }
 h1, h2, h3, h4, h5, h6 { margin-top: 0.75em; }
 .container {
-  background: url("/images/main.jpg") no-repeat;
+  background: url("/blueprints/images/main.jpg") no-repeat;
   min-height: 650px;
 }
 header { text-align: center; }

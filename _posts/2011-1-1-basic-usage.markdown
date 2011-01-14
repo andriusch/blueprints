@@ -34,7 +34,7 @@ By default blueprints are searched in these files in this particular order in ap
 
 {% include file_patterns.markdown %}
 
-You can set root option to override application root and filename option to pass custom filename pattern. For more information see [configuration](/configuration)
+You can set root option to override application root and filename option to pass custom filename pattern. For more information see [configuration](/blueprints/configuration)
 
 ### Definitions
 

@@ -7,9 +7,9 @@ Most notable changes will per minor/major version will be listed here.
 
 ## Version 0.8.x
 - Removed features deprecated in 0.7.x.
-- [Demolish method](/update_demolish) now works on single blueprints not the whole table.
+- [Demolish method](/blueprints/update_demolish) now works on single blueprints not the whole table.
 - Removed warning when building blueprint with options but it was already built. It now updates already built blueprints.
-- A more powerful [d method](/dependencies) that now allows passing options, changing instance variable name and calling
+- A more powerful [d method](/blueprints/dependencies) that now allows passing options, changing instance variable name and calling
 methods on instance variable.
 - Build method for describe block which allows rewriting `before { build :xxx }` blocks to `build :xxx`
 - Automatic detection of ORM, easier extending your own classes with .blueprint methods.
@@ -22,7 +22,7 @@ methods on instance variable.
 - First steps for fixture converter which allows to migrate from using fixtures to blueprints.
 
 ## Version 0.6.x
-- Added ability to set attributes per blueprint and then later get them using [build_attributes](/attributes).
+- Added ability to set attributes per blueprint and then later get them using [build_attributes](/blueprints/attributes).
 - Added warning when trying to build blueprint with options but it was already built. Added warning when overwriting
 blueprint with same name.
 - Added build! method which build blueprint even if it was built previously.
@@ -33,7 +33,7 @@ So `Class.blueprint :column => d(:hello)` is same as `Class.blueprint(:column =>
 
 - Changed passing options syntax from `build :blueprint, :option => 'value'` to `build :blueprint => {:option => 'value'}`.
 This also means that each blueprint gains it's own separate options hash when building.
-- Added ability to [extend blueprints](/extending).
+- Added ability to [extend blueprints](/blueprints/extending).
 - Demolishing and and rebuilding blueprint now correctly resets instance variables.
 
 ## Version 0.4.x

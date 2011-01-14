@@ -50,7 +50,7 @@ end
 By default Blueprints runs in transactional mode. This means that before each test/spec transaction is opened. Then you
 create, manipulate and destroy data using methods provided by Blueprints or any other means. After each test transaction
 is dropped thus returning your database state to the one before transaction was started. However in some cases
-transactions need to be turned off (eg. [using non transactional database](/orms) or running using cucumber with
+transactions need to be turned off (eg. [using non transactional database](/blueprints/orms) or running using cucumber with
 selenium). This option allows you to do that. Note that turning off transactions will usually slow your tests severely.
 
 {% highlight ruby %}
