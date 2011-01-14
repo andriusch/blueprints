@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.authors = ["Andrius Chamentauskas"]
   s.email = %q{sinsiliux@gmail.com}
   s.default_executable = %q{blueprintify}
-  s.homepage = %q{http://github.com/sinsiliux/blueprints}
+  s.homepage = %q{http://sinsiliux.github.com/blueprints}
   s.summary = %q{Awesome replacement for factories and fixtures}
   s.description = %q{Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.}
 
