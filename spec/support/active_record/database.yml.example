@@ -1,4 +1,4 @@
-adapter: mysql
+adapter: mysql2
 socket: /var/run/mysqld/mysqld.sock
 encoding: utf8
 database: blueprints_test

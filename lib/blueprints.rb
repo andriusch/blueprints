@@ -11,7 +11,7 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context eval_context buildable namespace root_namespace blueprint helper errors dependency extensions
+configuration context eval_context buildable namespace root_namespace blueprint helper errors dependency extensions database_cleaner_fix
 }
 files.each { |f| require "blueprints/#{f}" }
 
