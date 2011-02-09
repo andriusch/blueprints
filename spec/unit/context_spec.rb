@@ -96,5 +96,11 @@ describe Blueprints::Context do
       dep = context.d(:bp, :option => 'val')
       dep.should be_instance_of(Blueprints::Dependency)
     end
+
+    it "should allow finding blueprint you define" do
+      blueprint = subject.blueprint :blueprint
+      subject.find(:blueprint).should == blueprint
+      subject[:blueprint].should == blueprint
+    end
   end
 end

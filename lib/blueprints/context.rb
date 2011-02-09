@@ -133,6 +133,14 @@ module Blueprints
       Dependency.new(*args)
     end
 
+    # Finds blueprint/namespace by it's path
+    # @param path (see Namespace#[])
+    # @return (see Namespace#[])
+    def find(path)
+      @namespace[path]
+    end
+    alias [] find
+
     # Return current context.
     # @return [Blueprints::Context] Current context.
     def self.current
