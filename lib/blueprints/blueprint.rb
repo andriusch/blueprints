@@ -40,7 +40,7 @@ module Blueprints
     #   blueprint(:published_post).extends(:post, :published_at => Time.now)
     # @param [Symbol, String] parent Name of parent blueprint.
     # @param [Hash] options Options to be passed when building parent.
-    def extends(parent, options)
+    def extends(parent, options = {})
       attributes(options)
       @block = Proc.new { build parent => attributes }
     end

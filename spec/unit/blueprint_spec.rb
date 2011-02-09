@@ -121,4 +121,14 @@ describe Blueprints::Blueprint do
       blueprint.build stage, false, :option => 'value'
     end
   end
+
+  describe "extending" do
+    before do
+      blueprint
+    end
+
+    it "should allow extending with nothing" do
+      blueprint2.extends(:blueprint)
+    end
+  end
 end
