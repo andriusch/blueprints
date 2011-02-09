@@ -109,7 +109,16 @@ module Blueprints::Extensions
   end
 end
 
-ActiveRecord::Base.send(:include, Blueprints::Extensions::Saveable) if defined?(ActiveRecord)
+if defined?(ActiveRecord)
+  ActiveRecord::Base.send(:include, Blueprints::Extensions::Saveable)
+  class ActiveRecord::Associations::AssociationProxy
+    include Blueprints::Extensions::Blueprintable::ClassMethods
+
+    def blueprint_object(attrs)
+      build.tap { |object| object.blueprint(attrs) }
+    end
+  end
+end
 Mongoid::Document.send(:include, Blueprints::Extensions::DynamicSaveable) if defined?(Mongoid)
 MongoMapper::Document.send(:append_inclusions, Blueprints::Extensions::DynamicSaveable) if defined?(MongoMapper)
 DataMapper::Model.send(:append_inclusions, Blueprints::Extensions::SoftSaveable) if defined?(DataMapper)

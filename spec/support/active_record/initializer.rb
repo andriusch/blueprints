@@ -4,7 +4,10 @@ end
 
 class Tree < ActiveRecord::Base
   attr_protected :size
-  has_many :fruits
+  has_many :fruits, :after_add => :fruit_after_add
+
+  def fruit_after_add(_)
+  end
 end
 
 db_config = YAML::load(Root.join("spec/support/active_record/database.yml").read)
