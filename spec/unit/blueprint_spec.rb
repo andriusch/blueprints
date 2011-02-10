@@ -71,6 +71,20 @@ describe Blueprints::Blueprint do
       blueprint2.depends_on(:blueprint).build(stage)
       blueprint.should be_built
     end
+
+    it "should not overwrite options and attributes methods" do
+      def stage.options
+        :options
+      end
+      def stage.attributes
+        :attributes
+      end
+
+      blueprint2.build(stage, true, :option => 'value')
+
+      stage.options.should == :options
+      stage.attributes.should == :attributes
+    end
   end
 
   describe "demolish" do
