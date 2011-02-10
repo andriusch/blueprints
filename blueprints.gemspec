@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency(%q<activesupport>, [">= 2.3.0"])
   s.add_runtime_dependency(%q<database_cleaner>, ["~> 0.5.0"])
-  s.add_development_dependency(%q<rspec>, ["~> 2.2.0"])
+  s.add_development_dependency(%q<rspec>, ["~> 2.0"])
   s.add_development_dependency(%q<mysql2>)
   s.add_development_dependency(%q<activerecord>, [">= 2.3.0"])
   s.add_development_dependency(%q<bson_ext>, [">= 1.1.4"])
