@@ -17,51 +17,45 @@ module Blueprints
       super '', Context.new
     end
 
-    # Loads all instance variables from global context to current one. Creates new eval context.
-    def setup
-      @eval_context = EvalContext.new
+    # Loads all instance variables from global context to current one.
+    def setup(eval_context)
       (@executed_blueprints - @global_executed_blueprints).each(&:undo!)
       @executed_blueprints = @global_executed_blueprints.clone
 
       if Blueprints.config.transactions
         Marshal.load(@global_variables).each { |name, value| eval_context.instance_variable_set(name, value) }
       else
-        build(Blueprints.config.prebuild)
+        build(Blueprints.config.prebuild, eval_context)
       end
     end
 
-    # Sets up global context and executes prebuilt blueprints against it.
+    # Sets up a context and executes prebuilt blueprints against it.
     # @param [Array<Symbol, String>] blueprints Names of blueprints that are prebuilt.
     def prebuild(blueprints)
-      build(blueprints) if blueprints
+      eval_context = Object.new
+      eval_context.extend Blueprints::Helper
+      build(blueprints, eval_context) if blueprints
 
       @global_executed_blueprints = @executed_blueprints
       @global_variables = Marshal.dump(eval_context.instance_variables.each_with_object({}) { |iv, hash| hash[iv] = eval_context.instance_variable_get(iv) })
     end
 
-    # Builds blueprints that are passed against current context. Copies instance variables to context given if one is given.
+    # Builds blueprints that are passed against current context.
     # @param [Array<Symbol, String>] names List of blueprints/namespaces to build.
-    # @param current_context Object to copy instance variables from eval context after building to.
+    # @param current_context Object to build blueprints against.
     # @param build_once (see Buildable.build)
     # @return Result of last blueprint/namespace.
-    def build(names, current_context = nil, build_once = true)
+    def build(names, current_context, build_once = true)
       names = [names] unless names.is_a?(Array)
       result = names.inject(nil) do |result, member|
         if member.is_a?(Hash)
-          member.map { |name, options| self[name].build(eval_context, build_once, options) }.last
+          member.map { |name, options| self[name].build(current_context, build_once, options) }.last
         else
-          self[member].build(eval_context, build_once)
+          self[member].build(current_context, build_once)
         end
       end
 
-      eval_context.copy_instance_variables(current_context) if current_context
       result
-    end
-
-    # Return current eval context or creates a new one.
-    # @return [Blueprints::EvalContext] Eval context to be used to build blueprints.
-    def eval_context
-      @eval_context ||= EvalContext.new
     end
 
     @@root = RootNamespace.new

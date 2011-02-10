@@ -6,12 +6,8 @@ describe Blueprints::Dependency do
     options_blueprint
   end
 
-  let :stage do
-    Blueprints::Namespace.root.eval_context
-  end
-
   def value(dep)
-    stage.instance_eval(context, {}, &dep)
+    stage.instance_eval(&dep)
   end
 
   it "should allow getting instance variable value" do

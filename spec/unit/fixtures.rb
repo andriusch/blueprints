@@ -11,7 +11,7 @@ def mock2
 end
 
 def stage
-  @stage ||= Blueprints::EvalContext.new
+  @stage ||= Object.new.tap { |o| o.extend Blueprints::Helper }
 end
 
 def context

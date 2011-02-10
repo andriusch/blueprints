@@ -51,8 +51,8 @@ describe Blueprints::Namespace do
     end
 
     it "should pass build once and eval context params" do
-      namespace_blueprint.expects(:build).with(instance_of(Blueprints::EvalContext), false, :option => 'value')
-      namespace_blueprint2.expects(:build).with(instance_of(Blueprints::EvalContext), false, :option => 'value')
+      namespace_blueprint.expects(:build).with(stage, false, :option => 'value')
+      namespace_blueprint2.expects(:build).with(stage, false, :option => 'value')
       namespace.build(stage, false, :option => 'value')
     end
   end

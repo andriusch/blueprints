@@ -11,7 +11,7 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context eval_context buildable namespace root_namespace blueprint helper errors dependency extensions database_cleaner_fix
+configuration context buildable namespace root_namespace blueprint helper errors dependency extensions database_cleaner_fix
 }
 files.each { |f| require "blueprints/#{f}" }
 
@@ -26,8 +26,7 @@ module Blueprints
   # Setups variables from global context and starts transaction. Should be called before every test case.
   # @param current_context Object to copy instance variables for prebuilt blueprints/namespaces.
   def self.setup(current_context)
-    Namespace.root.setup
-    Namespace.root.eval_context.copy_instance_variables(current_context)
+    Namespace.root.setup(current_context)
     if_orm { DatabaseCleaner.start }
   end
 

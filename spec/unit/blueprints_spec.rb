@@ -10,17 +10,17 @@ describe Blueprints do
     end
 
     it "should allow getting unused blueprints" do
-      Blueprints::Namespace.root.build [:blueprint, :"namespace.blueprint2"]
+      Blueprints::Namespace.root.build [:blueprint, :"namespace.blueprint2"], stage
       Blueprints.unused.should =~ ['blueprint2', 'namespace.blueprint']
     end
 
     describe "most used" do
       before do
-        Blueprints::Namespace.root.build [:blueprint, :blueprint2, :"namespace.blueprint"]
+        Blueprints::Namespace.root.build [:blueprint, :blueprint2, :"namespace.blueprint"], stage
         Blueprints::Namespace.root.executed_blueprints.clear
-        Blueprints::Namespace.root.build [:blueprint2, :"namespace.blueprint"]
+        Blueprints::Namespace.root.build [:blueprint2, :"namespace.blueprint"], stage
         Blueprints::Namespace.root.executed_blueprints.clear
-        Blueprints::Namespace.root.build [:"namespace.blueprint"]
+        Blueprints::Namespace.root.build [:"namespace.blueprint"], stage
       end
 
       it "should return all blueprints with their usages" do

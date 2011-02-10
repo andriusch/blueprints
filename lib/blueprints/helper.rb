@@ -44,8 +44,8 @@ module Blueprints
     # @return [Hash] Normalized attributes of blueprint/namespace
     def build_attributes(name)
       blueprint = Namespace.root[name]
-      blueprint.build_parents(Namespace.root.eval_context)
-      Namespace.root.eval_context.normalize_hash(blueprint.attributes).tap { Namespace.root.eval_context.copy_instance_variables(self) }
+      blueprint.build_parents(self)
+      blueprint.normalized_attributes(self)
     end
 
     # Returns Blueprint::Dependency object that can be used to define dependencies on other blueprints.
@@ -64,7 +64,7 @@ module Blueprints
     #   demolish :apple, :pear
     # @param [Array<Symbol, String>] names Names of blueprints/namespaces to demolish.
     def demolish(*names)
-      names.each { |name| Namespace.root[name].demolish(Namespace.root.eval_context) }
+      names.each { |name| Namespace.root[name].demolish(self) }
     end
 
     alias :build_blueprint :build

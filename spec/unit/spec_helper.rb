@@ -9,7 +9,7 @@ RSpec.configure do |config|
   config.mock_with :mocha
 
   config.before do
-    Blueprints::Namespace.root.eval_context = Blueprints::EvalContext.new
+    Blueprints::Namespace.root.eval_context = Object.new
   end
 
   config.after do

@@ -84,6 +84,22 @@ describe Blueprints::Blueprint do
 
       stage.options.should == :options
       stage.attributes.should == :attributes
+      end
+
+    it "should normalize options and attributes" do
+      blueprint
+      stage.instance_variable_set(:@value, 2)
+      blueprint2 { [options, attributes] }.attributes(:attr => Blueprints::Dependency.new(:blueprint))
+      options, attributes = blueprint2.build(stage, true, :attr2 => lambda { @value + 2 }, :attr3 => :value)
+
+      options.should == {:attr2 => 4, :attr3 => :value}
+      attributes.should == {:attr => mock1, :attr2 => 4, :attr3 => :value}
+    end
+
+    it "should return normalized attributes" do
+      blueprint2
+      blueprint.attributes(:attr => Blueprints::Dependency.new(:blueprint2))
+      blueprint.normalized_attributes(stage, :attr2 => 1).should == {:attr => mock1, :attr2 => 1}
     end
   end
 

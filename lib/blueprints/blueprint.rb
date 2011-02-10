@@ -26,9 +26,9 @@ module Blueprints
       @uses += 1 unless built?
       surface_errors do
         if built? and build_once
-          eval_context.instance_eval(@context, options, &@update_block) if options.present?
+          eval_block(eval_context, options, &@update_block) if options.present?
         elsif @block
-          result(eval_context) { eval_context.instance_eval(@context, options, &@block) }
+          result(eval_context) { eval_block(eval_context, options, &@block) }
         end
       end
     end
@@ -62,7 +62,7 @@ module Blueprints
       if block
         @demolish_block = block
       elsif eval_context and built?
-        eval_context.instance_eval(@context, {}, &@demolish_block)
+        eval_context.instance_eval(&@demolish_block)
         undo!
       else
         raise DemolishError, @name
@@ -74,7 +74,42 @@ module Blueprints
       @update_block = block
     end
 
+    # Returns normalized attributes for this blueprint. Normalized means that all dependencies are replaced by real
+    # instances and all procs evaluated.
+    # @param eval_context Context that blueprints are built against
+    # @param [Hash] options Options hash, merged into attributes
+    # @return [Hash] normalized attributes for this blueprint
+    def normalized_attributes(eval_context, options = {})
+      normalize_hash(eval_context, @context.attributes.merge(options))
+    end
+
     private
+
+    def eval_block(eval_context, options, &block)
+      with_method(eval_context, :options, options = normalize_hash(eval_context, options)) do
+        with_method(eval_context, :attributes, normalized_attributes(eval_context, options)) do
+          eval_context.instance_eval(&block)
+        end
+      end
+    end
+
+    def normalize_hash(eval_context, hash)
+      hash.each_with_object({}) do |(attr, value), normalized|
+        normalized[attr] = if value.respond_to?(:to_proc) and not Symbol === value
+                             eval_context.instance_exec(&value)
+                           else
+                             value
+                           end
+      end
+    end
+
+    def with_method(eval_context, name, value)
+      old_method = eval_context.method(name) if eval_context.respond_to?(name)
+      eval_context.singleton_class.class_eval do
+        define_method(name) { value }
+        yield.tap { define_method(name, &old_method) if old_method }
+      end
+    end
 
     def surface_errors
       yield
