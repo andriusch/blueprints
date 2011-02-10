@@ -11,7 +11,7 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context buildable namespace root_namespace blueprint helper errors dependency extensions database_cleaner_fix
+configuration context buildable namespace root_namespace blueprint helper errors dependency extensions
 }
 files.each { |f| require "blueprints/#{f}" }
 
@@ -144,6 +144,6 @@ module Blueprints
 
   def self.if_orm
     yield
-  rescue DatabaseCleaner::NoORMDetected, DatabaseCleaner::NoStrategySetError
+  rescue DatabaseCleaner::NoORMDetected
   end
 end
