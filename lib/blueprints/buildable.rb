@@ -101,6 +101,9 @@ module Blueprints
       end
     end
 
+    # Infers name of buildable using default attributes from Blueprints.config
+    # @param [Hash] attributes Attributes of buildable object to infer the name from.
+    # @return [String] Inferred name
     def self.infer_name(attributes)
       default_attribute = Blueprints.config.default_attributes.detect { |attribute| attributes.has_key?(attribute) }
       attributes[default_attribute].parameterize('_') if default_attribute
