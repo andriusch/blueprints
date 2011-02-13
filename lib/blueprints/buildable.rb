@@ -11,10 +11,7 @@ module Blueprints
     def initialize(name, context)
       @context = context
 
-      if name.nil?
-        default_attribute = Blueprints.config.default_attributes.detect { |attribute| attributes.has_key?(attribute) }
-        name = attributes[default_attribute].parameterize('_') if default_attribute
-      end
+      name = self.class.infer_name(attributes) if name.nil?
       @name, parents = parse_name(name)
       depends_on(*parents)
 
@@ -102,6 +99,11 @@ module Blueprints
 
         parent.build(eval_context)
       end
+    end
+
+    def self.infer_name(attributes)
+      default_attribute = Blueprints.config.default_attributes.detect { |attribute| attributes.has_key?(attribute) }
+      attributes[default_attribute].parameterize('_') if default_attribute
     end
 
     protected

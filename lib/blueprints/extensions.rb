@@ -33,7 +33,7 @@ module Blueprints::Extensions
       def blueprint(*args)
         if Blueprints::Context.current
           attrs = args.extract_options!
-          define_blueprint(args.first, attrs)
+          define_blueprint(args.first || Blueprints::Buildable.infer_name(attrs) || name.underscore, attrs)
         else
           objects = args.collect { |attrs| blueprint_object(attrs) }
           args.size == 1 ? objects.first : objects

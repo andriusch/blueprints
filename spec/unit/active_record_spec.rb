@@ -29,4 +29,20 @@ describe ActiveRecord::Base do
       end
     end
   end
+
+  describe "defining blueprints" do
+    describe "inferring name" do
+      it "should infer name from class name" do
+        blueprint = nil
+        Blueprints::Context.eval_within_context({}) { blueprint = Tree.blueprint :attr => 'val' }
+        blueprint.name.should == :tree
+      end
+
+      it "should still infer name from name default attributes first" do
+        blueprint = nil
+        Blueprints::Context.eval_within_context({}) { blueprint = Tree.blueprint :name => 'my_tree' }
+        blueprint.name.should == :my_tree
+      end
+    end
+  end
 end
