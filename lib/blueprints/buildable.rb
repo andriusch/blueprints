@@ -44,18 +44,20 @@ module Blueprints
       end
     end
 
-    # Builds dependencies of blueprint and then blueprint itself.
+    # Builds dependencies of buildable and then buildable itself.
     # @param [Blueprints::EvalContext] eval_context Context to build buildable object in.
-    # @param [true, false] build_once Used if buildable is already built. If true then old one is updated else buildable is built again.
-    # @param [Hash] options List of options to be accessible in the body of a blueprint.
-    def build(eval_context, build_once = true, options = {})
-      return result(eval_context) if @building or (built? and build_once and options.blank?)
+    # @param [Hash] options List of options to build this buildable with.
+    # @option options [Hash] :options ({}) List of options to be accessible in the body of a blueprint.
+    # @option options [true, false] :rebuild (false) If true this buildable is treated as not built yet and is rebuilt even if it was built before.
+    # @option options [Symbol] :strategy (:default) Strategy to use when building.
+    def build(eval_context, options = {})
+      return result(eval_context) if @building or (built? and not options[:rebuild] and options[:options].blank?)
       @building = true
 
       each_namespace { |namespace| namespace.build_parents(eval_context) }
       build_parents(eval_context)
 
-      result = build_self(eval_context, build_once, options)
+      result = build_self(eval_context, options)
       Namespace.root.executed_blueprints << self
 
       @building = false

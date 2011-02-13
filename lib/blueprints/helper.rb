@@ -12,23 +12,31 @@ module Blueprints
     # @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
     # @return Return value of last blueprint
     def build(*names)
-      Namespace.root.build(names, self, true)
+      Namespace.root.build(names, self)
     end
 
-    # Same as #build except that you can use it to build same blueprint several times.
+    # Same as Blueprints::Helper#build except that you can use it to build same blueprint several times.
     # @overload build!(*names)
-    #   @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
-    #   @return Return value of last blueprint
+    #   @param names (see Helper#build)
+    #   @return (see Helper#build)
     # @overload build!(count, *names)
     #   @param [Integer] count Times to build passed blueprint
-    #   @param [Array<Symbol, String, Hash>] names Names of blueprints/namespaces to build. Pass Hash if you want to pass additional options.
+    #   @param names (see Helper#build)
     #   @return [Array] Array of return values of last blueprint, which is same size as count that you pass
     def build!(*names)
       if names.first.is_a?(Integer)
         (0...names.shift).collect { build! *names }
       else
-        Namespace.root.build(names, self, false)
+        Namespace.root.build(names, self, :rebuild => true)
       end
+    end
+
+    # Same as Blueprints::Helper#build except it also allows you to pass strategy to use (#build always uses default strategy).
+    # @param [Symbol] strategy Strategy to use when building blueprint/namespace.
+    # @param names (see Helper#build)
+    # @return (see Helper#build)
+    def build_with(strategy, *names)
+      Namespace.root.build(names, self, :strategy => strategy)
     end
 
     # Returns attributes that are used to build blueprint.

@@ -43,15 +43,16 @@ module Blueprints
     # Builds blueprints that are passed against current context.
     # @param [Array<Symbol, String>] names List of blueprints/namespaces to build.
     # @param current_context Object to build blueprints against.
-    # @param build_once (see Buildable.build)
+    # @param options (see Buildable#build)
+    # @option options (see Buildable#build)
     # @return Result of last blueprint/namespace.
-    def build(names, current_context, build_once = true)
+    def build(names, current_context, options = {})
       names = [names] unless names.is_a?(Array)
       result = names.inject(nil) do |result, member|
         if member.is_a?(Hash)
-          member.map { |name, options| self[name].build(current_context, build_once, options) }.last
+          member.map { |name, opts| self[name].build(current_context, options.merge(:options => opts)) }.last
         else
-          self[member].build(current_context, build_once)
+          self[member].build(current_context, options)
         end
       end
 

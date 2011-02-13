@@ -50,10 +50,10 @@ describe Blueprints::Namespace do
       result.should =~ [mock1, mock2]
     end
 
-    it "should pass build once and eval context params" do
-      namespace_blueprint.expects(:build).with(stage, false, :option => 'value')
-      namespace_blueprint2.expects(:build).with(stage, false, :option => 'value')
-      namespace.build(stage, false, :option => 'value')
+    it "should pass options and eval context params" do
+      namespace_blueprint.expects(:build).with(stage, :option => 'value')
+      namespace_blueprint2.expects(:build).with(stage, :option => 'value')
+      namespace.build(stage, :option => 'value')
     end
   end
 

@@ -44,6 +44,10 @@ class NoneOrm
   def destroy
     self.class.destroy(self)
   end
+
+  def new_record?
+    true
+  end
 end
 
 class Fruit < NoneOrm

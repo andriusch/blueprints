@@ -44,7 +44,11 @@ module Blueprints::Extensions
 
       def define_blueprint(name, attrs)
         klass = self
-        Blueprints::Context.current.attributes(attrs).blueprint(name) { klass.blueprint attributes }
+        Blueprints::Context.current.attributes(attrs).blueprint(name) do
+          klass.blueprint attributes
+        end.blueprint(:new) do
+          klass.new.tap { |object| object.blueprint_without_save(attributes) }
+        end
       end
 
       def blueprint_object(attrs)
@@ -59,6 +63,7 @@ module Blueprints::Extensions
         blueprint_attribute attribute, value
       end
     end
+    alias blueprint_without_save blueprint
 
     private
 

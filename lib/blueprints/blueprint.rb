@@ -11,26 +11,11 @@ module Blueprints
       super(name, context)
 
       ivname = variable_name
-      @block = block
-      @demolish_block = Proc.new { instance_variable_get(ivname).destroy }
-      @update_block = Proc.new { instance_variable_get(ivname).blueprint(options) }
+      @strategies = {}
+      @strategies[:default] = block
+      @strategies[:demolish] = Proc.new { instance_variable_get(ivname).destroy }
+      @strategies[:update] = Proc.new { instance_variable_get(ivname).blueprint(options) }
       @uses = 0
-    end
-
-    # Builds blueprint and adds it to executed blueprint array. Setups instance variable with same name as blueprint if it is not defined yet.
-    # Marks blueprint as used.
-    # @param eval_context (see Buildable#build)
-    # @param build_once (see Buildable#build)
-    # @param options (see Buildable#build)
-    def build_self(eval_context, build_once, options)
-      @uses += 1 unless built?
-      surface_errors do
-        if built? and build_once
-          eval_block(eval_context, options, &@update_block) if options.present?
-        elsif @block
-          result(eval_context) { eval_block(eval_context, options, &@block) }
-        end
-      end
     end
 
     # Changes blueprint block to build another blueprint by passing additional options to it. Usually used to dry up
@@ -41,8 +26,7 @@ module Blueprints
     # @param [Symbol, String] parent Name of parent blueprint.
     # @param [Hash] options Options to be passed when building parent.
     def extends(parent, options = {})
-      attributes(options)
-      @block = Proc.new { build parent => attributes }
+      attributes(options).blueprint(:default) { build parent => attributes }
     end
 
     # Changes backtrace to include what blueprint was being built.
@@ -60,9 +44,9 @@ module Blueprints
     #   @raise [Blueprints::DemolishError] If blueprint has not been built yet.
     def demolish(eval_context = nil, &block)
       if block
-        @demolish_block = block
+        blueprint(:demolish, &block)
       elsif eval_context and built?
-        eval_context.instance_eval(&@demolish_block)
+        eval_context.instance_eval(&@strategies[:demolish])
         undo!
       else
         raise DemolishError, @name
@@ -71,7 +55,16 @@ module Blueprints
 
     # Allows customizing what happens when blueprint is already built and it's being built again.
     def update(&block)
-      @update_block = block
+      blueprint(:update, &block)
+    end
+
+    # Defines strategy for this blueprint. Blueprint can later be built using this strategy by passing :strategy option
+    # to Buildable#build method.
+    # @param [#to_sym] name Name of strategy.
+    # @return [Blueprints::Blueprint] self.
+    def blueprint(name, &block)
+      @strategies[name.to_sym] = block
+      self
     end
 
     # Returns normalized attributes for this blueprint. Normalized means that all dependencies are replaced by real
@@ -84,6 +77,24 @@ module Blueprints
     end
 
     private
+
+    # Builds blueprint and adds it to executed blueprint array. Setups instance variable with same name as blueprint if it is not defined yet.
+    # Marks blueprint as used.
+    # @param eval_context (see Buildable#build)
+    # @param options (see Buildable#build)
+    # @option :rebuild (see Buildable#build)
+    def build_self(eval_context, options)
+      @uses += 1 unless built?
+      opts = options[:options] || {}
+      strategy = (options[:strategy] || :default).to_sym
+      surface_errors do
+        if built? and not options[:rebuild]
+          eval_block(eval_context, opts, &@strategies[:update]) if opts.present?
+        elsif @strategies[strategy]
+          result(eval_context) { eval_block(eval_context, opts, &@strategies[strategy]) }
+        end
+      end
+    end
 
     def eval_block(eval_context, options, &block)
       with_method(eval_context, :options, options = normalize_hash(eval_context, options)) do

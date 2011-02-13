@@ -371,4 +371,12 @@ describe Blueprints do
   it "should allow inferring blueprint name" do
     build(:infered).name.should == 'infered'
   end
+
+  it "should allow building with :new strategy" do
+    build_with(:new, :oak)
+    @oak.should be_instance_of(Tree)
+    @oak.should be_new_record
+    @oak.name.should == 'Oak'
+    @oak.size.should == 'large'
+  end
 end

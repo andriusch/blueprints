@@ -36,15 +36,6 @@ module Blueprints
       end
     end
 
-    # Builds all children and sets an instance variable named by name of namespace with the results.
-    # @param eval_context (see Buildable#build)
-    # @param build_once (see Buildable#build)
-    # @param options (see Buildable#build)
-    # @return [Array] Results of all blueprints.
-    def build_self(eval_context, build_once, options)
-      result(eval_context) { @children.values.collect { |child| child.build(eval_context, build_once, options) }.uniq }
-    end
-
     # Demolishes all child blueprints and namespaces.
     # @param [Blueprints::EvalContext] eval_context Eval context that this namespace was built in.
     def demolish(eval_context)
@@ -52,6 +43,15 @@ module Blueprints
     end
 
     protected
+
+    # Builds all children and sets an instance variable named by name of namespace with the results.
+    # @param eval_context (see Buildable#build)
+    # @param build_once (see Buildable#build)
+    # @param options (see Buildable#build)
+    # @return [Array] Results of all blueprints.
+    def build_self(eval_context, options)
+      result(eval_context) { @children.values.collect { |child| child.build(eval_context, options) }.uniq }
+    end
 
     def update_context(options)
       @children.each_value { |child| child.update_context(options) }

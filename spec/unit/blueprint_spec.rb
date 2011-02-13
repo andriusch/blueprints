@@ -22,7 +22,7 @@ describe Blueprints::Blueprint do
       it "should not increase build count if blueprint was already built" do
         blueprint.build(stage)
         lambda {
-          blueprint.build(stage, false)
+          blueprint.build(stage, :rebuild => true)
         }.should_not change(blueprint, :uses)
       end
     end
@@ -51,14 +51,14 @@ describe Blueprints::Blueprint do
       it "should reset auto variable" do
         blueprint.build(stage)
         stage.instance_variable_set(:@blueprint, :false_result)
-        blueprint.build(stage, false)
+        blueprint.build(stage, :rebuild => true)
         stage.instance_variable_get(:@blueprint).should == mock1
       end
     end
 
     it "should allow passing options" do
       (result = mock).expects(:options=).with(:option => 'value')
-      blueprint2 { result.options = options }.build(stage, true, :option => 'value')
+      blueprint2 { result.options = options }.build(stage, :options => {:option => 'value'})
     end
 
     it "should include attributes for blueprint" do
@@ -80,7 +80,7 @@ describe Blueprints::Blueprint do
         :attributes
       end
 
-      blueprint2.build(stage, true, :option => 'value')
+      blueprint2.build(stage, :options => {:option => 'value'})
 
       stage.options.should == :options
       stage.attributes.should == :attributes
@@ -90,7 +90,7 @@ describe Blueprints::Blueprint do
       blueprint
       stage.instance_variable_set(:@value, 2)
       blueprint2 { [options, attributes] }.attributes(:attr => Blueprints::Dependency.new(:blueprint))
-      options, attributes = blueprint2.build(stage, true, :attr2 => lambda { @value + 2 }, :attr3 => :value)
+      options, attributes = blueprint2.build(stage, :options => {:attr2 => lambda { @value + 2 }, :attr3 => :value})
 
       options.should == {:attr2 => 4, :attr3 => :value}
       attributes.should == {:attr => mock1, :attr2 => 4, :attr3 => :value}
@@ -100,6 +100,18 @@ describe Blueprints::Blueprint do
       blueprint2
       blueprint.attributes(:attr => Blueprints::Dependency.new(:blueprint2))
       blueprint.normalized_attributes(stage, :attr2 => 1).should == {:attr => mock1, :attr2 => 1}
+    end
+
+    describe "strategies" do
+      it "should allow defining different strategies" do
+        new_result = mock('new_result')
+        blueprint.blueprint(:new) { new_result }
+        blueprint.build(stage, :strategy => 'new').should == new_result
+      end
+
+      it "should return blueprint itself" do
+        blueprint.blueprint(:new) { 1 }.should == blueprint
+      end
     end
   end
 
@@ -138,17 +150,17 @@ describe Blueprints::Blueprint do
 
     it "should allow building blueprint with different parameters" do
       @result.expects(:blueprint).with(:option => 'value')
-      blueprint.build stage, true, :option => 'value'
+      blueprint.build stage, :options => {:option => 'value'}
     end
 
     it "should allow customizing update block" do
       blueprint.update { @blueprint.update_attributes(options) }
       @result.expects(:update_attributes).with(:option => 'value')
-      blueprint.build stage, true, :option => 'value'
+      blueprint.build stage, :options => {:option => 'value'}
     end
 
     it "should not update if build_once is false" do
-      blueprint.build stage, false, :option => 'value'
+      blueprint.build stage, :options => {:option => 'value'}, :rebuild => true
     end
   end
 

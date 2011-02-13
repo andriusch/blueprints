@@ -371,4 +371,12 @@ class BlueprintsTest < ActiveSupport::TestCase
   should "allow inferring blueprint name" do
     assert(build(:infered).name == 'infered')
   end
+
+  should "allow building with :new strategy" do
+    build_with(:new, :oak)
+    assert(@oak.instance_of?(Tree))
+    assert(@oak.new_record?)
+    assert(@oak.name == 'Oak')
+    assert(@oak.size == 'large')
+  end
 end
