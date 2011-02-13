@@ -90,12 +90,10 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (>= 2.3.0)
-  activesupport (>= 2.3.0)
   blueprints!
   bson_ext (>= 1.1.4)
   bundler (>= 1.0.0)
   cucumber (>= 0.7.0)
-  database_cleaner (~> 0.6.1)
   dm-migrations (>= 1.0.0)
   dm-mysql-adapter (>= 1.0.0)
   dm-transactions (>= 1.0.0)
