@@ -1,13 +1,16 @@
+require 'mocha'
+include Mocha::API
+
 def file
   __FILE__
 end
 
 def mock1
-  @mock ||= Mocha::Mockery.instance.unnamed_mock
+  @mock ||= mock('mock1')
 end
 
 def mock2
-  @mock2 ||= Mocha::Mockery.instance.unnamed_mock
+  @mock2 ||= mock('mock1')
 end
 
 def stage
