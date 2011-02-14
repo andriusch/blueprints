@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Blueprints::Blueprint do
   it "should rewrite trace" do
-    context         = Blueprints::Context.new(:file => __FILE__)
+    context = Blueprints::Context.new(:file => __FILE__)
     error_blueprint = Blueprints::Blueprint.new(:error, context) { raise 'error' }
     begin
       error_blueprint.build(stage)
@@ -56,50 +56,53 @@ describe Blueprints::Blueprint do
       end
     end
 
-    it "should allow passing options" do
-      (result = mock).expects(:options=).with(:option => 'value')
-      blueprint2 { result.options = options }.build(stage, :options => {:option => 'value'})
-    end
-
-    it "should include attributes for blueprint" do
-      (result = mock).expects(:attributes=).with(:option => 'value')
-      blueprint2 { result.attributes = attributes }.attributes(:option => 'value').build(stage)
-    end
-
-    it "should automatically build dependencies" do
-      blueprint
-      blueprint2.depends_on(:blueprint).build(stage)
-      blueprint.should be_built
-    end
-
-    it "should not overwrite options and attributes methods" do
-      def stage.options
-        :options
-      end
-      def stage.attributes
-        :attributes
+    describe 'options, attributes and dependencies' do
+      it "should allow passing options" do
+        (result = mock).expects(:options=).with(:option => 'value')
+        blueprint2 { result.options = options }.build(stage, :options => {:option => 'value'})
       end
 
-      blueprint2.build(stage, :options => {:option => 'value'})
-
-      stage.options.should == :options
-      stage.attributes.should == :attributes
+      it "should include attributes for blueprint" do
+        (result = mock).expects(:attributes=).with(:option => 'value')
+        blueprint2 { result.attributes = attributes }.attributes(:option => 'value').build(stage)
       end
 
-    it "should normalize options and attributes" do
-      blueprint
-      stage.instance_variable_set(:@value, 2)
-      blueprint2 { [options, attributes] }.attributes(:attr => Blueprints::Dependency.new(:blueprint))
-      options, attributes = blueprint2.build(stage, :options => {:attr2 => lambda { @value + 2 }, :attr3 => :value})
+      it "should automatically build dependencies" do
+        blueprint
+        blueprint2.depends_on(:blueprint).build(stage)
+        blueprint.should be_built
+      end
 
-      options.should == {:attr2 => 4, :attr3 => :value}
-      attributes.should == {:attr => mock1, :attr2 => 4, :attr3 => :value}
-    end
+      it "should not overwrite options and attributes methods" do
+        def stage.options
+          :options
+        end
 
-    it "should return normalized attributes" do
-      blueprint2
-      blueprint.attributes(:attr => Blueprints::Dependency.new(:blueprint2))
-      blueprint.normalized_attributes(stage, :attr2 => 1).should == {:attr => mock1, :attr2 => 1}
+        def stage.attributes
+          :attributes
+        end
+
+        blueprint2.build(stage, :options => {:option => 'value'})
+
+        stage.options.should == :options
+        stage.attributes.should == :attributes
+      end
+
+      it "should normalize options and attributes" do
+        blueprint
+        stage.instance_variable_set(:@value, 2)
+        blueprint2 { [options, attributes] }.attributes(:attr => Blueprints::Dependency.new(:blueprint))
+        options, attributes = blueprint2.build(stage, :options => {:attr2 => lambda { @value + 2 }, :attr3 => :value})
+
+        options.should == {:attr2 => 4, :attr3 => :value}
+        attributes.should == {:attr => mock1, :attr2 => 4, :attr3 => :value}
+      end
+
+      it "should return normalized attributes" do
+        blueprint2
+        blueprint.attributes(:attr => Blueprints::Dependency.new(:blueprint2))
+        blueprint.normalized_attributes(stage, :attr2 => 1).should == {:attr => mock1, :attr2 => 1}
+      end
     end
 
     describe "strategies" do
@@ -112,6 +115,21 @@ describe Blueprints::Blueprint do
       it "should return blueprint itself" do
         blueprint.blueprint(:new) { 1 }.should == blueprint
       end
+    end
+
+    it "should allow rebuilding blueprint even if building it first time raises error" do
+      blueprint do
+        unless @is_built
+          @is_built = true
+          raise 'Failure'
+        end
+        :success
+      end
+
+      expect {
+        blueprint.build(stage)
+      }.to raise_error
+      blueprint.build(stage).should == :success
     end
   end
 

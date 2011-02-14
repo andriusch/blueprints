@@ -60,8 +60,9 @@ module Blueprints
       result = build_self(eval_context, options)
       Namespace.root.executed_blueprints << self
 
-      @building = false
       result
+    ensure
+      @building = false
     end
 
     # Returns if blueprint has been built
