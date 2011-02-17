@@ -44,13 +44,14 @@ module Blueprints
 
     protected
 
-    # Builds all children and sets an instance variable named by name of namespace with the results.
+    # If has children named :default then builds it, otherwise builds all children.
+    # Sets an instance variable named by name of namespace with the results.
     # @param eval_context (see Buildable#build)
-    # @param build_once (see Buildable#build)
     # @param options (see Buildable#build)
     # @return [Array] Results of all blueprints.
     def build_self(eval_context, options)
-      result(eval_context) { @children.values.collect { |child| child.build(eval_context, options) }.uniq }
+      children = Array(@children[:default] || @children.values)
+      result(eval_context) { children.collect { |child| child.build(eval_context, options) } }
     end
 
     def update_context(options)

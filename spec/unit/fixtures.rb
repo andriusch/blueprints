@@ -10,7 +10,11 @@ def mock1
 end
 
 def mock2
-  @mock2 ||= mock('mock1')
+  @mock2 ||= mock('mock2')
+end
+
+def mock_default
+  @mock2 ||= mock('default')
 end
 
 def stage
@@ -51,6 +55,11 @@ end
 
 def namespace
   @namespace ||= context.namespace(:namespace)
+end
+
+def namespace_default_blueprint
+  result = mock_default
+  @namespace_default_blueprint ||= context2.blueprint(:default) { result }
 end
 
 def namespace_blueprint

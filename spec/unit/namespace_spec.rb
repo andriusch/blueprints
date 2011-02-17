@@ -55,6 +55,12 @@ describe Blueprints::Namespace do
       namespace_blueprint2.expects(:build).with(stage, :option => 'value')
       namespace.build(stage, :option => 'value')
     end
+
+    it "should build default blueprint if one exists" do
+      namespace_default_blueprint.expects(:build)
+      namespace_blueprint.expects(:build).never
+      namespace.build(stage)
+    end
   end
 
   describe "demolish" do
