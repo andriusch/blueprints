@@ -19,6 +19,14 @@ namespace :db do
 
     load("spec/support/active_record/schema.rb")
   end
+
+  desc "Copy all database.yml.example files to database.yml"
+  task :config do
+    Dir.glob('spec/support/*/database.yml.example').each do |example_yml|
+      database_yml = example_yml.sub(/\.example$/, '')
+      FileUtils.copy(example_yml, database_yml) unless File.exists?(database_yml)
+    end
+  end
 end
 
 desc "Convert rspec specs to test/unit tests"
@@ -57,7 +65,7 @@ task :rspec_to_test do
   File.open('test/blueprints_test.rb', 'w') { |f| f.write(data) }
 end
 
-task :default => :rspec_to_test do
+task :default => [:rspec_to_test, 'db:config', 'db:prepare'] do
   commands = [
           ["Unit specs", "rspec -c spec/unit/*_spec.rb"],
           ["Active record integration", "rspec -c spec/blueprints_spec.rb"],
