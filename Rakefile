@@ -1,4 +1,4 @@
-require  'rubygems'
+require 'rubygems'
 require 'bundler'
 Bundler::GemHelper.install_tasks
 
@@ -26,7 +26,7 @@ task :rspec_to_test do
   Dir.chdir File.dirname(__FILE__)
   data = IO.read('spec/blueprints_spec.rb')
 
-  data.gsub!("require File.dirname(__FILE__) + '/spec_helper'", "require File.dirname(__FILE__) + '/test_helper'")
+  data.gsub!("spec_helper", "test_helper")
   data.gsub!("describe Blueprints do", 'class BlueprintsTest < ActiveSupport::TestCase')
 
   # lambda {
@@ -54,5 +54,24 @@ task :rspec_to_test do
   data.gsub!(/^(\s+)before.*do/, '\1setup do')
   data.gsub!(/^(\s+)after.*do/, '\1teardown do')
 
-  File.open('test/blueprints_test.rb', 'w') {|f| f.write(data)}
+  File.open('test/blueprints_test.rb', 'w') { |f| f.write(data) }
+end
+
+task :default => :rspec_to_test do
+  commands = [
+          ["Unit specs", "rspec -c spec/unit/*_spec.rb"],
+          ["Active record integration", "rspec -c spec/blueprints_spec.rb"],
+          ["No ORM integration", "rspec -c spec/blueprints_spec.rb", 'none'],
+          ["Mongoid integration", "rspec -c spec/blueprints_spec.rb", 'mongoid'],
+          ["Mongo mapper integration", "rspec -c spec/blueprints_spec.rb", 'mongo_mapper'],
+          ["Test::Unit", "ruby test/blueprints_test.rb"],
+          ["Cucumber", "cucumber features/blueprints.feature -f progress"],
+  ]
+
+  statuses = commands.collect do |label, command, orm|
+    puts "#{label}:"
+    ENV['ORM'] = orm
+    system command
+  end
+  exit 1 unless statuses.all? { |status| status }
 end

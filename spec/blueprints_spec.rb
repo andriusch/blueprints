@@ -1,4 +1,8 @@
-require File.dirname(__FILE__) + '/spec_helper'
+if RUBY_VERSION.start_with?('1.9')
+  require_relative 'spec_helper'
+else
+  require File.dirname(__FILE__) + '/spec_helper'
+end
 
 describe Blueprints do
   it "should return result of built scenario when calling build" do

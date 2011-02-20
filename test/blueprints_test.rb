@@ -1,4 +1,8 @@
-require File.dirname(__FILE__) + '/test_helper'
+if RUBY_VERSION.start_with?('1.9')
+  require_relative 'test_helper'
+else
+  require File.dirname(__FILE__) + '/test_helper'
+end
 
 class BlueprintsTest < ActiveSupport::TestCase
   should "return result of built scenario when calling build" do
