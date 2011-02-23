@@ -28,13 +28,6 @@ module Blueprints
       attributes(options).blueprint(:default) { build parent => attributes }
     end
 
-    # Changes backtrace to include what blueprint was being built.
-    # @param [Array<String>] trace Current trace
-    # @return [Array<String>] Changed trace with included currently built blueprint name.
-    def backtrace(trace)
-      trace.collect! { |line| line.sub(/^#{@context.file}:(\d+).*/, "#{@context.file}:\\1:in blueprint '#{@name}'") }
-    end
-
     # @overload demolish(&block)
     #   Sets custom block for demolishing this blueprint.
     # @overload demolish(eval_context)
@@ -128,8 +121,8 @@ module Blueprints
     def surface_errors
       yield
     rescue StandardError => error
-      backtrace(error.backtrace)
-      raise error
+      error.backtrace.unshift("While building blueprint '#{path}'")
+      raise
     end
   end
 end

@@ -7,7 +7,7 @@ describe Blueprints::Blueprint do
     begin
       error_blueprint.build(stage)
     rescue RuntimeError => e
-      e.backtrace[0].should =~ %r{spec/unit/blueprint_spec.rb:#{__LINE__ - 4}:in blueprint 'error'}
+      e.backtrace[0].should == "While building blueprint 'error'"
     end
   end
 
