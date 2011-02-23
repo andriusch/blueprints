@@ -117,19 +117,32 @@ describe Blueprints::Blueprint do
       end
     end
 
-    it "should allow rebuilding blueprint even if building it first time raises error" do
-      blueprint do
-        unless @is_built
-          @is_built = true
-          raise 'Failure'
+    describe "on error" do
+      it "should allow rebuilding blueprint" do
+        blueprint do
+          unless @is_built
+            @is_built = true
+            raise 'Failure'
+          end
+          :success
         end
-        :success
+
+        expect {
+          blueprint.build(stage)
+        }.to raise_error
+        blueprint.build(stage).should == :success
       end
 
-      expect {
-        blueprint.build(stage)
-      }.to raise_error
-      blueprint.build(stage).should == :success
+      it "should restore overwritten methods" do
+        def stage.options
+          :options
+        end
+
+        expect {
+          blueprint { raise 'error' }.build(stage)
+        }.to raise_error
+        stage.options.should == :options
+      end
     end
   end
 

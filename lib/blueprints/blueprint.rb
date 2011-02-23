@@ -119,10 +119,10 @@ module Blueprints
 
     def with_method(eval_context, name, value)
       old_method = eval_context.method(name) if eval_context.respond_to?(name)
-      eval_context.singleton_class.class_eval do
-        define_method(name) { value }
-        yield.tap { define_method(name, &old_method) if old_method }
-      end
+      eval_context.singleton_class.class_eval { define_method(name) { value } }
+      yield
+    ensure
+      eval_context.singleton_class.class_eval { define_method(name, &old_method) } if old_method
     end
 
     def surface_errors
