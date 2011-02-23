@@ -84,7 +84,7 @@ describe Blueprints::Context do
       bp        = nil
       namespace = subject.namespace(:namespace) { bp = self.blueprint :blueprint }
       bp.namespace.should == namespace
-      namespace.children.should == {:blueprint => bp}
+      namespace.children.should == [bp]
     end
 
     it "should allow creating blueprint with inferred name" do

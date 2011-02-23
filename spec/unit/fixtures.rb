@@ -71,3 +71,7 @@ def namespace_blueprint2
   result = mock2
   @namespace_blueprint2 ||= context2.blueprint(:blueprint2) { result }
 end
+
+def namespace_regexp_blueprint(name = /^regexp_(.*)/)
+  @namespace_regexp_blueprint ||= context2.blueprint(name) { options }
+end

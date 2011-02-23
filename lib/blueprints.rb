@@ -11,7 +11,7 @@ require 'database_cleaner'
 require 'set'
 
 files = %w{
-configuration context buildable namespace root_namespace blueprint helper errors dependency extensions
+configuration context buildable namespace root_namespace blueprint helper errors dependency extensions blueprint_name_proxy
 }
 files.each { |f| require "blueprints/#{f}" }
 
@@ -123,7 +123,7 @@ module Blueprints
 
   def self.each_blueprint(from = Namespace.root)
     enumerator_class.new do |enum|
-      from.children.values.collect do |child|
+      from.children.collect do |child|
         if child.is_a?(Blueprints::Blueprint)
           enum.yield child
         else

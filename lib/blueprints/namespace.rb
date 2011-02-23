@@ -3,14 +3,18 @@ module Blueprints
   # all it's children.
   class Namespace < Buildable
     cattr_accessor :root
-    attr_reader :children
     delegate :empty?, :size, :to => :@children
 
     # Creates namespace by name. See Buildable#new.
     # @param name (see Buildable#initialize)
     # @param context (see Buildable#initialize)
     def initialize(name, context)
-      @children = {}
+      @children = Hash.new do |hash, search_key|
+        pair = hash.detect do |name,|
+          name.is_a?(Regexp) and search_key.to_s =~ name
+        end
+        hash[search_key] = BlueprintNameProxy.new(search_key, pair[1]) if pair
+      end
       super(name, context)
     end
 
@@ -19,6 +23,12 @@ module Blueprints
     def add_child(child)
       Blueprints.warn("Overwriting existing blueprint", child) if @children[child.name]
       @children[child.name] = child
+    end
+
+    # Returns all direct children blueprints and namespaces of this namespace.
+    # @return [Array<Blueprints::Buildable>] Array of direct children
+    def children
+      @children.values
     end
 
     # Finds child by relative name.
@@ -37,7 +47,7 @@ module Blueprints
     end
 
     # Demolishes all child blueprints and namespaces.
-    # @param [Blueprints::EvalContext] eval_context Eval context that this namespace was built in.
+    # @param [Object] eval_context Eval context that this namespace was built in.
     def demolish(eval_context)
       @children.each_value { |blueprint| blueprint.demolish(eval_context) }
     end

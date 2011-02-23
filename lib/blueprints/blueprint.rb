@@ -10,11 +10,10 @@ module Blueprints
     def initialize(name, context, &block)
       super(name, context)
 
-      ivname = variable_name
       @strategies = {}
       @strategies[:default] = block
-      @strategies[:demolish] = Proc.new { instance_variable_get(ivname).destroy }
-      @strategies[:update] = Proc.new { instance_variable_get(ivname).blueprint(options) }
+      @strategies[:demolish] = Proc.new { instance_variable_get(variable_name).destroy }
+      @strategies[:update] = Proc.new { instance_variable_get(variable_name).blueprint(options) }
       @uses = 0
     end
 
@@ -40,13 +39,14 @@ module Blueprints
     #   Sets custom block for demolishing this blueprint.
     # @overload demolish(eval_context)
     #   Demolishes blueprint by calling demolish block.
-    #   @param [Blueprints::EvalContext] eval_context Context where blueprint was built in.
+    #   @param [Object] eval_context Context where blueprint was built in.
+    #   @param [Symbol] current_name Current name of blueprint (used when demolishing blueprints with regexp name). When nil is passed then @name is used.
     #   @raise [Blueprints::DemolishError] If blueprint has not been built yet.
-    def demolish(eval_context = nil, &block)
+    def demolish(eval_context = nil, current_name = nil, &block)
       if block
         blueprint(:demolish, &block)
       elsif eval_context and built?
-        eval_context.instance_eval(&@strategies[:demolish])
+        eval_block(eval_context, {}, current_name, &@strategies[:demolish])
         undo!
       else
         raise DemolishError, @name
@@ -87,19 +87,22 @@ module Blueprints
       @uses += 1 unless built?
       opts = options[:options] || {}
       strategy = (options[:strategy] || :default).to_sym
+      current_name = options[:name] || @name
       surface_errors do
         if built? and not options[:rebuild]
-          eval_block(eval_context, opts, &@strategies[:update]) if opts.present?
+          eval_block(eval_context, opts, current_name, &@strategies[:update]) if opts.present?
         elsif @strategies[strategy]
-          result(eval_context) { eval_block(eval_context, opts, &@strategies[strategy]) }
+          result(eval_context, current_name) { eval_block(eval_context, opts, current_name, &@strategies[strategy]) }
         end
       end
     end
 
-    def eval_block(eval_context, options, &block)
+    def eval_block(eval_context, options, current_name, &block)
       with_method(eval_context, :options, options = normalize_hash(eval_context, options)) do
         with_method(eval_context, :attributes, normalized_attributes(eval_context, options)) do
-          eval_context.instance_eval(&block)
+          with_method(eval_context, :variable_name, variable_name(current_name)) do
+            eval_context.instance_eval(&block)
+          end
         end
       end
     end
@@ -107,7 +110,7 @@ module Blueprints
     def normalize_hash(eval_context, hash)
       hash.each_with_object({}) do |(attr, value), normalized|
         normalized[attr] = if value.respond_to?(:to_proc) and not Symbol === value
-                             eval_context.instance_exec(&value)
+          eval_context.instance_exec(&value)
                            else
                              value
                            end

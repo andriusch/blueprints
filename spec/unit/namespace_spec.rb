@@ -13,6 +13,11 @@ describe Blueprints::Namespace do
       namespace.add_child(blueprint)
     end
 
+    it "should return children" do
+      namespace_blueprint
+      namespace.children.should == [namespace_blueprint]
+    end
+
     it "should allow recursive finding of children" do
       namespace_blueprint
       Blueprints::Namespace.root['namespace.blueprint'].should == namespace_blueprint
@@ -23,6 +28,12 @@ describe Blueprints::Namespace do
       expect {
         Blueprints::Namespace.root['namespace.blueprint2']
       }.to raise_error(Blueprints::BlueprintNotFoundError)
+    end
+
+    it "should find children with regexp names" do
+      namespace_regexp_blueprint
+      namespace['regexp_bp'].instance_variable_get(:@buildable).should == namespace_regexp_blueprint
+      namespace.instance_variable_get(:@children).should have_key(:regexp_bp)
     end
   end
 

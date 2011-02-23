@@ -50,6 +50,7 @@ module Blueprints
     # @option options [Hash] :options ({}) List of options to be accessible in the body of a blueprint.
     # @option options [true, false] :rebuild (false) If true this buildable is treated as not built yet and is rebuilt even if it was built before.
     # @option options [Symbol] :strategy (:default) Strategy to use when building.
+    # @option options [Symbol] :name Name of blueprint to use when building. Is usually passed for blueprints with regexp names.
     def build(eval_context, options = {})
       return result(eval_context) if @building or (built? and not options[:rebuild] and options[:options].blank?)
       @building = true
@@ -78,9 +79,12 @@ module Blueprints
 
     # Returns full path to this buildable
     # @param [String] join_with Separator used to join names of parent namespaces and buildable itself.
+    # @param [#to_s] current_name Current name of this buildable. Used for regexp named buildables. Defaults to @name.
     # @return [String] full path to this buildable joined with separator
-    def path(join_with = '_')
-      (namespace.path(join_with) + join_with unless namespace.nil? or namespace.path.empty?).to_s + @name.to_s
+    def path(join_with = '_', current_name = nil)
+      current_name ||= @name
+      namespace_path = namespace.path(join_with) if namespace
+      [namespace_path.presence, current_name].compact.join(join_with)
     end
 
     # Returns full name for this buildable
@@ -119,8 +123,8 @@ module Blueprints
       yield(namespace) while namespace = namespace.namespace
     end
 
-    def variable_name
-      :"@#{path}"
+    def variable_name(current_name = nil)
+      :"@#{path('_', current_name || @name)}"
     end
 
     def parse_name(name)
@@ -128,6 +132,8 @@ module Blueprints
         return name.keys.first.to_sym, [name.values.first].flatten.map { |sc| parse_name(sc).first }
       elsif name.respond_to?(:to_sym)
         name = name.to_sym unless name == ''
+        return name, []
+      elsif name.is_a? Regexp
         return name, []
       else
         raise TypeError, "Pass blueprint names as strings or symbols only, cannot define blueprint #{name.inspect}"
@@ -141,7 +147,8 @@ module Blueprints
 
     private
 
-    def result(eval_context)
+    def result(eval_context, current_name = nil)
+      variable_name = self.variable_name(current_name)
       if block_given?
         yield.tap do |result|
           if @auto_variable or not eval_context.instance_variable_defined?(variable_name)
