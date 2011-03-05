@@ -10,10 +10,17 @@ require 'active_support/core_ext/enumerable'
 require 'database_cleaner'
 require 'set'
 
-files = %w{
-configuration context buildable namespace root_namespace blueprint helper errors dependency extensions blueprint_name_proxy
-}
-files.each { |f| require "blueprints/#{f}" }
+require 'blueprints/configuration'
+require 'blueprints/context'
+require 'blueprints/buildable'
+require 'blueprints/namespace'
+require 'blueprints/root_namespace'
+require 'blueprints/blueprint'
+require 'blueprints/helper'
+require 'blueprints/errors'
+require 'blueprints/dependency'
+require 'blueprints/extensions'
+require 'blueprints/blueprint_name_proxy'
 require 'blueprints/railtie' if defined?(Rails)
 
 # Main namespace of blueprints. Contains methods for Blueprints setup.
