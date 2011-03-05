@@ -14,6 +14,7 @@ files = %w{
 configuration context buildable namespace root_namespace blueprint helper errors dependency extensions blueprint_name_proxy
 }
 files.each { |f| require "blueprints/#{f}" }
+require 'blueprints/railtie' if defined?(Rails)
 
 # Main namespace of blueprints. Contains methods for Blueprints setup.
 module Blueprints
