@@ -103,7 +103,7 @@ module Blueprints
     def normalize_hash(eval_context, hash)
       hash.each_with_object({}) do |(attr, value), normalized|
         normalized[attr] = if value.respond_to?(:to_proc) and not Symbol === value
-          eval_context.instance_exec(&value)
+                             eval_context.instance_exec(&value)
                            else
                              value
                            end
@@ -111,11 +111,20 @@ module Blueprints
     end
 
     def with_method(eval_context, name, value)
-      old_method = eval_context.method(name) if eval_context.respond_to?(name)
-      eval_context.singleton_class.class_eval { define_method(name) { value } }
+      old_method = nil
+      eval_context.singleton_class.class_eval do
+        if method_defined?(name)
+          old_method = eval_context.method(name)
+          remove_method(name)
+        end
+        define_method(name) { value }
+      end
       yield
     ensure
-      eval_context.singleton_class.class_eval { define_method(name, old_method) } if old_method
+      eval_context.singleton_class.class_eval do
+        remove_method(name)
+        define_method(name, old_method) if old_method
+      end
     end
 
     def surface_errors
