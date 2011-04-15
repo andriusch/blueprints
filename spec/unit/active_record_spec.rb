@@ -14,19 +14,33 @@ describe ActiveRecord::Base do
     fruit.tree.should == subject
   end
 
-  it "should call associations specific callbacks when calling blueprint on association" do
-    class Tree
-      def fruit_after_add(fruit)
-        fruit.average_diameter = -1
+  describe "association callbacks" do
+    after do
+      class Tree
+        def fruit_after_add(fruit)
+        end
       end
     end
 
-    fruit = subject.fruits.blueprint(:species => 'fruit')
-    fruit.average_diameter.should == -1
-
-    class Tree
-      def fruit_after_add(fruit)
+    it "should call associations specific callbacks when calling blueprint on association" do
+      class Tree
+        def fruit_after_add(fruit)
+          fruit.average_diameter = -1
+        end
       end
+
+      fruit = subject.fruits.blueprint(:species => 'fruit')
+      fruit.average_diameter.should == -1
+    end
+
+    it "should have fields set in callback" do
+      Tree.class_eval do
+        define_method(:fruit_after_add) do |fruit|
+          fruit.species.should == 'fruit'
+        end
+      end
+
+      subject.fruits.blueprint(:species => 'fruit')
     end
   end
 

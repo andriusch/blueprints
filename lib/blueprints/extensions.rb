@@ -120,7 +120,9 @@ if defined?(ActiveRecord)
     include Blueprints::Extensions::Blueprintable::ClassMethods
 
     def blueprint_object(attrs)
-      build.tap { |object| object.blueprint(attrs) }
+      create! do |object|
+        object.blueprint_without_save(attrs)
+      end
     end
   end
 end
