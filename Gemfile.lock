@@ -31,7 +31,7 @@ GEM
       term-ansicolor (~> 1.0.5)
     data_objects (0.10.3)
       addressable (~> 2.1)
-    database_cleaner (0.6.3)
+    database_cleaner (0.6.6)
     diff-lcs (1.1.2)
     dm-core (1.0.2)
       addressable (~> 2.2)

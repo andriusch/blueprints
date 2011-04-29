@@ -14,6 +14,12 @@ describe ActiveRecord::Base do
     fruit.tree.should == subject
   end
 
+  it "should update object on belongs to association" do
+    subject.create_main_fruit(:species => 'fruit')
+    subject.main_fruit.blueprint(:species => 'apple')
+    subject.main_fruit.reload.species.should == 'apple'
+  end
+
   describe "association callbacks" do
     after do
       class Tree

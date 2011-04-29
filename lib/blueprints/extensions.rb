@@ -116,7 +116,7 @@ end
 
 if defined?(ActiveRecord)
   ActiveRecord::Base.send(:include, Blueprints::Extensions::Saveable)
-  class ActiveRecord::Associations::AssociationProxy
+  class ActiveRecord::Associations::AssociationCollection
     include Blueprints::Extensions::Blueprintable::ClassMethods
 
     def blueprint_object(attrs)
