@@ -9,7 +9,8 @@ describe Blueprints::Namespace do
 
     it "should warn when adding children overwrites existing one" do
       namespace_blueprint
-      Blueprints.expects(:warn).with("Overwriting existing blueprint", blueprint)
+      $stderr.expects(:puts).with("**WARNING** Overwriting existing blueprint: 'blueprint'")
+      $stderr.expects(:puts).with(regexp_matches(/namespace_spec\.rb:14$/))
       namespace.add_child(blueprint)
     end
 

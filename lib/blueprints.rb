@@ -81,7 +81,7 @@ module Blueprints
       blueprints_path = File.expand_path(File.dirname(__FILE__))
 
       bc.add_filter { |line| line.sub(root_sub, '') }
-      bc.add_silencer { |line| [blueprints_path, *Gem.path].any? { |path| File.expand_path(File.dirname(line)).starts_with?(path) } }
+      bc.add_silencer { |line| [blueprints_path, *Gem.path].any? { |path| File.expand_path(File.dirname(line)).start_with?(path) } }
     end
   end
 
@@ -108,7 +108,7 @@ module Blueprints
   # @param [Blueprints::Blueprint] blueprint Name of blueprint that this occurred in.
   def self.warn(message, blueprint)
     $stderr.puts("**WARNING** #{message}: '#{blueprint.name}'")
-    $stderr.puts(backtrace_cleaner.clean(blueprint.backtrace(caller)).first)
+    $stderr.puts(backtrace_cleaner.clean(caller).first)
   end
 
   protected
