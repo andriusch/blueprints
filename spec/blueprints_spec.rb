@@ -74,6 +74,7 @@ describe Blueprints do
   describe "build per describe" do
     unless File.dirname(__FILE__) =~ /test$/
       build_blueprint :apple
+      build :acorn => {:tree => d(:pine)}
 
       it "should have cherry" do
         @apple.should_not be_nil
@@ -81,6 +82,10 @@ describe Blueprints do
 
       it "should have correct cherry species" do
         @apple.species.should == 'apple'
+      end
+
+      it "should set tree to pine" do
+        @acorn.tree.should == @pine
       end
     end
   end
