@@ -1,5 +1,7 @@
 module Blueprints
   class Buildable
+    BUILDING_MESSAGE = 'While building blueprint'
+    
     delegate :namespace, :dependencies, :to => :@context
     attr_reader :name
 
@@ -55,10 +57,12 @@ module Blueprints
       return result(eval_context) if @building or (built? and not options[:rebuild] and options[:options].blank?)
       @building = true
 
-      each_namespace { |namespace| namespace.build_parents(eval_context) }
-      build_parents(eval_context)
-
-      result = build_self(eval_context, options)
+      result = nil
+      surface_errors do
+        each_namespace { |namespace| namespace.build_parents(eval_context) }
+        build_parents(eval_context)
+        result = build_self(eval_context, options)
+      end
       Namespace.root.executed_blueprints << self
 
       result
@@ -159,6 +163,14 @@ module Blueprints
       else
         eval_context.instance_variable_get(variable_name)
       end
+    end
+
+    def surface_errors
+      yield
+    rescue StandardError => error
+      insert_at = error.backtrace.index { |line| line !~ /^#{BUILDING_MESSAGE}/ }
+      error.backtrace.insert(insert_at, "#{BUILDING_MESSAGE} '#{path}'")
+      raise
     end
   end
 end

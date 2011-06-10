@@ -81,12 +81,11 @@ module Blueprints
       opts = options[:options] || {}
       strategy = (options[:strategy] || :default).to_sym
       current_name = options[:name] || @name
-      surface_errors do
-        if built? and not options[:rebuild]
-          eval_block(eval_context, opts, current_name, &@strategies[:update]) if opts.present?
-        elsif @strategies[strategy]
-          result(eval_context, current_name) { eval_block(eval_context, opts, current_name, &@strategies[strategy]) }
-        end
+
+      if built? and not options[:rebuild]
+        eval_block(eval_context, opts, current_name, &@strategies[:update]) if opts.present?
+      elsif @strategies[strategy]
+        result(eval_context, current_name) { eval_block(eval_context, opts, current_name, &@strategies[strategy]) }
       end
     end
 
@@ -125,13 +124,6 @@ module Blueprints
         remove_method(name)
         define_method(name, old_method) if old_method
       end
-    end
-
-    def surface_errors
-      yield
-    rescue StandardError => error
-      error.backtrace.unshift("While building blueprint '#{path}'")
-      raise
     end
   end
 end

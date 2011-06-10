@@ -1,13 +1,37 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Blueprints::Blueprint do
-  it "should rewrite trace" do
-    context = Blueprints::Context.new(:file => __FILE__)
-    error_blueprint = Blueprints::Blueprint.new(:error, context) { raise 'error' }
-    begin
-      error_blueprint.build(stage)
-    rescue RuntimeError => e
-      e.backtrace[0].should == "While building blueprint 'error'"
+  describe "backtrace" do
+    before do
+      blueprint { raise 'error' }
+    end
+
+    it "should rewrite trace" do
+      begin
+        blueprint.build(stage)
+      rescue RuntimeError => e
+        e.backtrace[0].should == "While building blueprint 'blueprint'"
+      end
+    end
+
+    it "should set correct order of trace" do
+      blueprint2.depends_on(:blueprint)
+      begin
+        blueprint2.build(stage)
+      rescue RuntimeError => e
+        e.backtrace[0].should == "While building blueprint 'blueprint'"
+        e.backtrace[1].should == "While building blueprint 'blueprint2'"
+      end
+    end
+
+    it "should set correct order of trace when building blueprint within blueprint" do
+      blueprint2 { build :blueprint }
+      begin
+        blueprint2.build(stage)
+      rescue RuntimeError => e
+        e.backtrace[0].should == "While building blueprint 'blueprint'"
+        e.backtrace[1].should == "While building blueprint 'blueprint2'"
+      end
     end
   end
 
