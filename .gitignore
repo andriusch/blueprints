@@ -7,3 +7,4 @@ debug.log
 *.rbc
 doc
 .yardoc
+Gemfile.lock
