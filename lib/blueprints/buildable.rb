@@ -47,21 +47,21 @@ module Blueprints
     end
 
     # Builds dependencies of buildable and then buildable itself.
-    # @param [Blueprints::EvalContext] eval_context Context to build buildable object in.
+    # @param [Object] environment Context to build buildable object in.
     # @param [Hash] options List of options to build this buildable with.
     # @option options [Hash] :options ({}) List of options to be accessible in the body of a blueprint.
     # @option options [true, false] :rebuild (false) If true this buildable is treated as not built yet and is rebuilt even if it was built before.
     # @option options [Symbol] :strategy (:default) Strategy to use when building.
     # @option options [Symbol] :name Name of blueprint to use when building. Is usually passed for blueprints with regexp names.
-    def build(eval_context, options = {})
-      return result(eval_context) if @building or (built? and not options[:rebuild] and options[:options].blank?)
+    def build(environment, options = {})
+      return result(environment) if @building or (built? and not options[:rebuild] and options[:options].blank?)
       @building = true
 
       result = nil
       surface_errors do
-        each_namespace { |namespace| namespace.build_parents(eval_context) }
-        build_parents(eval_context)
-        result = build_self(eval_context, options)
+        each_namespace { |namespace| namespace.build_parents(environment) }
+        build_parents(environment)
+        result = build_self(environment, options)
       end
       Namespace.root.executed_blueprints << self
 
@@ -98,9 +98,9 @@ module Blueprints
     end
 
     # Builds all dependencies. Should be called before building itself. Searches dependencies first in parent then in root namespace.
-    # @param [Blueprints::EvalContext] eval_context Context to build parents against.
+    # @param [Object] environment Context to build parents against.
     # @raise [Blueprints::BlueprintNotFoundError] If one of dependencies can't be found.
-    def build_parents(eval_context)
+    def build_parents(environment)
       @context.dependencies.each do |name|
         parent = begin
           namespace[name]
@@ -108,7 +108,7 @@ module Blueprints
           Namespace.root[name]
         end
 
-        parent.build(eval_context)
+        parent.build(environment)
       end
     end
 
@@ -151,17 +151,17 @@ module Blueprints
 
     private
 
-    def result(eval_context, current_name = nil)
+    def result(environment, current_name = nil)
       variable_name = self.variable_name(current_name)
       if block_given?
         yield.tap do |result|
-          if @auto_variable or not eval_context.instance_variable_defined?(variable_name)
-            eval_context.instance_variable_set(variable_name, result)
+          if @auto_variable or not environment.instance_variable_defined?(variable_name)
+            environment.instance_variable_set(variable_name, result)
             @auto_variable = true
           end
         end
       else
-        eval_context.instance_variable_get(variable_name)
+        environment.instance_variable_get(variable_name)
       end
     end
 

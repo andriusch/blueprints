@@ -47,21 +47,16 @@ module Blueprints
     end
 
     # Demolishes all child blueprints and namespaces.
-    # @param [Object] eval_context Eval context that this namespace was built in.
-    def demolish(eval_context)
-      @children.each_value { |blueprint| blueprint.demolish(eval_context) }
+    # @param [Object] environment Eval context that this namespace was built in.
+    def demolish(environment)
+      @children.each_value { |blueprint| blueprint.demolish(environment) }
     end
 
     protected
 
-    # If has children named :default then builds it, otherwise builds all children.
-    # Sets an instance variable named by name of namespace with the results.
-    # @param eval_context (see Buildable#build)
-    # @param options (see Buildable#build)
-    # @return [Array] Results of all blueprints.
-    def build_self(eval_context, options)
+    def build_self(environment, options)
       children = Array(@children[:default] || @children.values)
-      result(eval_context) { children.collect { |child| child.build(eval_context, options) } }
+      result(environment) { children.collect { |child| child.build(environment, options) } }
     end
 
     def update_context(options)

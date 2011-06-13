@@ -16,19 +16,19 @@ class Blueprints::BlueprintNameProxy
 
   # Allows building buildable. Merges regexp match data into options. If named regexp captures are used (Ruby 1.9 only),
   # it will merge those names with appropriate values into options, otherwise options will be named arg0..n.
-  # @param eval_context (see Buildable#build)
+  # @param environment (see Buildable#build)
   # @param options (see Buildable#build)
   # @return (see Buildable#build)
-  def build(eval_context, options = {})
+  def build(environment, options = {})
     options[:options] ||= {}
     options[:options].merge!(@options)
     options.merge!(:name => @name)
-    @buildable.build(eval_context, options)
+    @buildable.build(environment, options)
   end
 
   # Allows demolishing buildable. Uses remembered name to determine name of variable to call destroy on.
-  # @param [Object] eval_context Eval context that this buildable was built in.
-  def demolish(eval_context)
-    @buildable.demolish(eval_context, @name)
+  # @param [Object] environment Eval context that this buildable was built in.
+  def demolish(environment)
+    @buildable.demolish(environment, @name)
   end
 end

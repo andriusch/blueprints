@@ -30,16 +30,16 @@ module Blueprints
 
     # @overload demolish(&block)
     #   Sets custom block for demolishing this blueprint.
-    # @overload demolish(eval_context)
+    # @overload demolish(environment)
     #   Demolishes blueprint by calling demolish block.
-    #   @param [Object] eval_context Context where blueprint was built in.
+    #   @param [Object] environment Context where blueprint was built in.
     #   @param [Symbol] current_name Current name of blueprint (used when demolishing blueprints with regexp name). When nil is passed then @name is used.
     #   @raise [Blueprints::DemolishError] If blueprint has not been built yet.
-    def demolish(eval_context = nil, current_name = nil, &block)
+    def demolish(environment = nil, current_name = nil, &block)
       if block
         blueprint(:demolish, &block)
-      elsif eval_context and built?
-        eval_block(eval_context, {}, current_name, &@strategies[:demolish])
+      elsif environment and built?
+        eval_block(environment, {}, current_name, &@strategies[:demolish])
         undo!
       else
         raise DemolishError, @name
@@ -62,65 +62,60 @@ module Blueprints
 
     # Returns normalized attributes for this blueprint. Normalized means that all dependencies are replaced by real
     # instances and all procs evaluated.
-    # @param eval_context Context that blueprints are built against
+    # @param environment Context that blueprints are built against
     # @param [Hash] options Options hash, merged into attributes
     # @return [Hash] normalized attributes for this blueprint
-    def normalized_attributes(eval_context, options = {})
-      normalize_hash(eval_context, @context.attributes.merge(options))
+    def normalized_attributes(environment, options = {})
+      normalize_hash(environment, @context.attributes.merge(options))
     end
 
     private
 
-    # Builds blueprint and adds it to executed blueprint array. Setups instance variable with same name as blueprint if it is not defined yet.
-    # Marks blueprint as used.
-    # @param eval_context (see Buildable#build)
-    # @param options (see Buildable#build)
-    # @option :rebuild (see Buildable#build)
-    def build_self(eval_context, options)
+    def build_self(environment, options)
       @uses += 1 unless built?
       opts = options[:options] || {}
       strategy = (options[:strategy] || :default).to_sym
       current_name = options[:name] || @name
 
       if built? and not options[:rebuild]
-        eval_block(eval_context, opts, current_name, &@strategies[:update]) if opts.present?
+        eval_block(environment, opts, current_name, &@strategies[:update]) if opts.present?
       elsif @strategies[strategy]
-        result(eval_context, current_name) { eval_block(eval_context, opts, current_name, &@strategies[strategy]) }
+        result(environment, current_name) { eval_block(environment, opts, current_name, &@strategies[strategy]) }
       end
     end
 
-    def eval_block(eval_context, options, current_name, &block)
-      with_method(eval_context, :options, options = normalize_hash(eval_context, options)) do
-        with_method(eval_context, :attributes, normalized_attributes(eval_context, options)) do
-          with_method(eval_context, :variable_name, variable_name(current_name)) do
-            eval_context.instance_eval(&block)
+    def eval_block(environment, options, current_name, &block)
+      with_method(environment, :options, options = normalize_hash(environment, options)) do
+        with_method(environment, :attributes, normalized_attributes(environment, options)) do
+          with_method(environment, :variable_name, variable_name(current_name)) do
+            environment.instance_eval(&block)
           end
         end
       end
     end
 
-    def normalize_hash(eval_context, hash)
+    def normalize_hash(environment, hash)
       hash.each_with_object({}) do |(attr, value), normalized|
         normalized[attr] = if value.respond_to?(:to_proc) and not Symbol === value
-                             eval_context.instance_exec(&value)
+                             environment.instance_exec(&value)
                            else
                              value
                            end
       end
     end
 
-    def with_method(eval_context, name, value)
+    def with_method(environment, name, value)
       old_method = nil
-      eval_context.singleton_class.class_eval do
+      environment.singleton_class.class_eval do
         if method_defined?(name)
-          old_method = eval_context.method(name)
+          old_method = environment.method(name)
           remove_method(name)
         end
         define_method(name) { value }
       end
       yield
     ensure
-      eval_context.singleton_class.class_eval do
+      environment.singleton_class.class_eval do
         remove_method(name)
         define_method(name, old_method) if old_method
       end
