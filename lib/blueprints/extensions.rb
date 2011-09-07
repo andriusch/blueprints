@@ -116,7 +116,9 @@ end
 
 if defined?(ActiveRecord)
   ActiveRecord::Base.send(:include, Blueprints::Extensions::Saveable)
-  class ActiveRecord::Associations::AssociationCollection
+  # AssociationCollection for ActiveRecord 3.0, Collection::Association for ActiveRecord 3.1
+  collection_class = defined?(ActiveRecord::Associations::CollectionAssociation) ? ActiveRecord::Associations::CollectionAssociation : ActiveRecord::Associations::AssociationCollection
+  collection_class.class_eval do
     include Blueprints::Extensions::Blueprintable::ClassMethods
 
     def blueprint_object(attrs)
