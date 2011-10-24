@@ -112,6 +112,26 @@ describe Blueprints::Blueprint do
         stage.attributes.should == :attributes
       end
 
+      it "should not try to remove options and attributes methods if they're not defined by singleton class" do
+        mod = Module.new do
+          def options
+            :options
+          end
+          def attributes
+            :attributes
+          end
+        end
+
+        stage_class = Class.new do
+          include mod
+        end
+        stage = stage_class.new
+
+        blueprint2.build(stage, :options => {:option => 'value'})
+        stage.options.should == :options
+        stage.attributes.should == :attributes
+      end
+
       it "should normalize options and attributes" do
         blueprint
         stage.instance_variable_set(:@value, 2)

@@ -109,7 +109,11 @@ module Blueprints
       environment.singleton_class.class_eval do
         if method_defined?(name)
           old_method = environment.method(name)
-          remove_method(name)
+          if old_method.owner == self
+            remove_method(name)
+          else
+            old_method = nil
+          end
         end
         define_method(name) { value }
       end
