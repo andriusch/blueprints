@@ -1,4 +1,4 @@
-db_config = YAML::load(Root.join("spec/support/active_record/database.yml").read)
+db_config = YAML::load_file(File.expand_path("../database.yml", __FILE__))
 ActiveRecord::Base.establish_connection(db_config)
 ActiveRecord::Base.logger = @logger
 

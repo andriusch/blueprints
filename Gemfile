@@ -1,3 +1,16 @@
-source :gemcutter
+source 'http://rubygems.org'
 
 gemspec
+gem 'rspec', '~> 2.0'
+gem 'mysql2', '>= 0.2.0'
+gem 'activerecord', '>= 3.0.0'
+gem 'bson_ext', '>= 1.1.4'
+gem 'mongoid', '>= 2.0.0'
+gem 'mongo_mapper', '>= 0.9.0'
+gem 'dm-migrations', '>= 1.0.0'
+gem 'dm-transactions', '>= 1.0.0'
+gem 'dm-mysql-adapter', '>= 1.0.0'
+gem 'mocha'
+gem 'shoulda'
+gem 'cucumber'
+gem 'bundler', '>= 1.0.0'

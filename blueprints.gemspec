@@ -20,20 +20,7 @@ Gem::Specification.new do |s|
   s.files = `git ls-files`.split("\n")
   s.require_path = "lib"
 
-  s.add_runtime_dependency("activesupport", [">= 2.3.0"])
-  s.add_runtime_dependency(%q<database_cleaner>, ["~> 0.6.1"])
-  s.add_development_dependency(%q<rspec>, ["~> 2.0"])
-  s.add_development_dependency(%q<mysql2>, [">= 0.2.0"])
-  s.add_development_dependency(%q<activerecord>, [">= 2.3.0"])
-  s.add_development_dependency(%q<bson_ext>, [">= 1.1.4"])
-  s.add_development_dependency(%q<mongoid>, [">= 2.0.0.beta"])
-  s.add_development_dependency(%q<mongo_mapper>, [">= 0.8.0"])
-  s.add_development_dependency(%q<dm-migrations>, [">= 1.0.0"])
-  s.add_development_dependency(%q<dm-transactions>, [">= 1.0.0"])
-  s.add_development_dependency(%q<dm-mysql-adapter>, [">= 1.0.0"])
-  s.add_development_dependency(%q<mocha>, [">= 0.9.8"])
-  s.add_development_dependency(%q<shoulda>, [">= 2.10.0"])
-  s.add_development_dependency(%q<cucumber>, [">= 0.7.0"])
-  s.add_development_dependency(%q<bundler>, [">= 1.0.0"])
+  s.add_runtime_dependency("activesupport", ">= 2.3.0")
+  s.add_runtime_dependency("database_cleaner", "~> 0.6.1")
 end
 

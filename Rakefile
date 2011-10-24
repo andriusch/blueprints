@@ -1,17 +1,13 @@
 require 'rubygems'
-require 'bundler'
+require 'bundler/setup'
 Bundler::GemHelper.install_tasks
 
 namespace :db do
   desc "Create database structure"
   task :prepare do
-    require 'rubygems'
     require 'active_record'
-
-    Root = Pathname.new(__FILE__).dirname
-    require Root.join("spec/support/active_record/initializer").to_s
-
-    load("spec/support/active_record/schema.rb")
+    require File.expand_path("../spec/support/active_record/initializer", __FILE__)
+    require File.expand_path("../spec/support/active_record/schema", __FILE__)
   end
 
   desc "Copy all database.yml.example files to database.yml"
