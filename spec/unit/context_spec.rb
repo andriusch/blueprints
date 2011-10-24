@@ -46,6 +46,7 @@ describe Blueprints::Context do
         Blueprints::Context.current.dependencies.should == [:within_dep]
       end
       Blueprints::Context.current.should == context
+      Blueprints::Context.send(:class_variable_get, :@@chain).pop
     end
   end
 

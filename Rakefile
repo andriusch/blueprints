@@ -15,7 +15,7 @@ namespace :db do
     require 'active_record'
 
     Root = Pathname.new(__FILE__).dirname
-    require Root.join("spec/support/active_record/initializer")
+    require Root.join("spec/support/active_record/initializer").to_s
 
     load("spec/support/active_record/schema.rb")
   end

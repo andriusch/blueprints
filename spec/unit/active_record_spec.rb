@@ -1,6 +1,4 @@
-require 'active_record'
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
-require File.dirname(__FILE__) + '/../support/active_record/initializer'
 
 describe ActiveRecord::Base do
   subject do
