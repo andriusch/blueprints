@@ -129,5 +129,5 @@ if defined?(ActiveRecord)
   end
 end
 Mongoid::Document.send(:include, Blueprints::Extensions::DynamicSaveable) if defined?(Mongoid)
-MongoMapper::Document.send(:append_inclusions, Blueprints::Extensions::DynamicSaveable) if defined?(MongoMapper)
+MongoMapper::Document.send(:plugin, Blueprints::Extensions::DynamicSaveable) if defined?(MongoMapper)
 DataMapper::Model.send(:append_inclusions, Blueprints::Extensions::SoftSaveable) if defined?(DataMapper)
