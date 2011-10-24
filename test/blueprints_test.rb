@@ -74,6 +74,7 @@ class BlueprintsTest < ActiveSupport::TestCase
   context "build per describe" do
     unless File.dirname(__FILE__) =~ /test$/
       build_blueprint :apple
+      build :acorn => {:tree => d(:pine)}
 
       should "have cherry" do
         assert(!(@apple.nil?))
@@ -81,6 +82,10 @@ class BlueprintsTest < ActiveSupport::TestCase
 
       should "have correct cherry species" do
         assert(@apple.species == 'apple')
+      end
+
+      should "set tree to pine" do
+        assert(@acorn.tree == @pine)
       end
     end
   end

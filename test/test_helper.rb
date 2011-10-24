@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'pathname'
 require 'logger'
 require 'active_record'
 require 'test/unit'
