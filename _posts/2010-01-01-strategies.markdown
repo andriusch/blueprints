@@ -32,7 +32,7 @@ it "should define attributes" do
 end
 {% endhighlight %}
 
-# DSL and strategies
+## DSL and strategies
 
 All blueprints DSL methods actually just build some strategy. Here's a list of methods with what strategies they use:
 
