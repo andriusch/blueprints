@@ -5,6 +5,17 @@ title: Changelog
 
 Most notable changes will per minor/major version will be listed here.
 
+## Version 1.0.x
+- Dropped support for Rails/ActiveRecord 2.x.
+- Blueprints are now evaluated in same context as spec/test is run in. This means you can access local/instance variables and call methods of that spec/test.
+- Added ability to [infer name of blueprint](/blueprints/inferring).
+- Added ability to [use different strategies in same blueprint](/blueprints/strategies).
+- Added ability to [set default blueprint for namespace](/blueprints/namespaces#default_blueprint).
+- Added ability to [define blueprint with regexp name](/blueprints/blueprint).
+- Showing trace of built blueprints when error happens while building one of them.
+- Building blueprints that have no block but have dependencies will set build result to array of dependencies build results.
+- Various bugfixes and cleanup.
+
 ## Version 0.9.x
 - Added ability to get most used blueprints.
 - More powerful attributes and dependencies using contexts.

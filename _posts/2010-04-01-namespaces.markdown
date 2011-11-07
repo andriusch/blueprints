@@ -57,3 +57,22 @@ end
 build 'red.apple'
 @red_apple.color.should == 'red'
 {% endhighlight %}
+
+<h2 id="default_blueprint">Default blueprint</h2>
+
+If you don't like default strategy when building namespace, you can always override it with default blueprint. Default
+blueprint looks the same as any other blueprint, except it is named `:default`.
+defined like this:
+
+{% highlight ruby %}
+# In blueprints file
+namespace :fruits do
+  blueprint :default do
+    Fruit.all
+  end
+end
+
+# In test case
+build :fruits
+@fruits.should == Fruit.all
+{% endhighlight %}
