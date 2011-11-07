@@ -46,6 +46,10 @@ module Fixtures
     @blueprint2 ||= context.blueprint(:blueprint2, &block)
   end
 
+  def blueprint3(&block)
+    @blueprint3 ||= context.blueprint(:blueprint3, &block)
+  end
+
   def options_blueprint
     result, value = mock1, mock2
     @options_blueprint ||= Blueprints::Blueprint.new(:options_blueprint, context) do

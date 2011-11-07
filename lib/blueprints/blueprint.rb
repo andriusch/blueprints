@@ -11,7 +11,7 @@ module Blueprints
       super(name, context)
 
       @strategies = {}
-      @strategies[:default] = block
+      @strategies[:default] = block || Proc.new { dependencies.collect { |dep| instance_variable_get(:"@#{dep}") } }
       @strategies[:demolish] = Proc.new { instance_variable_get(variable_name).destroy }
       @strategies[:update] = Proc.new { instance_variable_get(variable_name).blueprint(options) }
       @uses = 0
@@ -88,7 +88,9 @@ module Blueprints
       with_method(environment, :options, options = normalize_hash(environment, options)) do
         with_method(environment, :attributes, normalized_attributes(environment, options)) do
           with_method(environment, :variable_name, variable_name(current_name)) do
-            environment.instance_eval(&block)
+            with_method(environment, :dependencies, dependencies) do
+              environment.instance_eval(&block)
+            end
           end
         end
       end
@@ -97,10 +99,10 @@ module Blueprints
     def normalize_hash(environment, hash)
       hash.each_with_object({}) do |(attr, value), normalized|
         normalized[attr] = if value.respond_to?(:to_proc) and not Symbol === value
-                             environment.instance_exec(&value)
-                           else
-                             value
-                           end
+          environment.instance_exec(&value)
+        else
+          value
+        end
       end
     end
 

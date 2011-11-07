@@ -80,7 +80,24 @@ describe Blueprints::Blueprint do
       end
     end
 
-    describe 'options, attributes and dependencies' do
+    describe "dependencies" do
+      before do
+        blueprint
+        blueprint2
+      end
+
+      it "should automatically build dependencies" do
+        blueprint3.depends_on(:blueprint).build(stage)
+        blueprint.should be_built
+      end
+
+      it "should set return value to array of all dependent blueprints" do
+        blueprint3.depends_on(:blueprint, :blueprint2).build(stage)
+        stage.instance_variable_get(:@blueprint3).should == [mock1, mock1]
+      end
+    end
+
+    describe 'options and attributes' do
       it "should allow passing options" do
         (result = mock).expects(:options=).with(:option => 'value')
         blueprint2 { result.options = options }.build(stage, :options => {:option => 'value'})
@@ -89,12 +106,6 @@ describe Blueprints::Blueprint do
       it "should include attributes for blueprint" do
         (result = mock).expects(:attributes=).with(:option => 'value')
         blueprint2 { result.attributes = attributes }.attributes(:option => 'value').build(stage)
-      end
-
-      it "should automatically build dependencies" do
-        blueprint
-        blueprint2.depends_on(:blueprint).build(stage)
-        blueprint.should be_built
       end
 
       it "should not overwrite options and attributes methods" do
