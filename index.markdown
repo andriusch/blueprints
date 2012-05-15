@@ -2,7 +2,7 @@
 layout: application
 title: Home
 ---
-
+ 
 In spec/spec_helper.rb or test/test_helper.rb:
 
 {% highlight ruby %}
