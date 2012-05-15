@@ -2,16 +2,16 @@
 
 Awesome replacement for factories and fixtures that focuses on being DRY and making developers type as little as possible.
 Blueprints allows you to create and manage data for tests in simple but poweful ways. For documentation please see
-http://sinsiliux.github.com/blueprints.
+http://andriusch.github.com/blueprints.
 
 == Links
 
-* Homepage: http://sinsiliux.github.com/blueprints
+* Homepage: http://andriusch.github.com/blueprints
 * Official google group: http://groups.google.com/group/ruby-blueprints
 
 == Credits
 
-Andrius Chamentauskas <sinsiliux@gmail.com>
+Andrius Chamentauskas <andrius.chamentauskas@gmail.com@gmail.com>
 
 The code is based on hornsby scenario plugin by Lachie Cox, which is based on Err's code found in this post: http://errtheblog.com/post/7708
 
