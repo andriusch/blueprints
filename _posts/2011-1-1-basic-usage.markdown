@@ -131,7 +131,7 @@ SomeModel.blueprint(:something, :association => d(:some_blueprint, :some_instanc
 SomeModel.blueprint(:something, :association => d(:some_blueprint, :option => 'value'))
 {% endhighlight %}
 
-You can learn more about blueprint method in http://wiki.github.com/sinsiliux/blueprints/method-blueprint
+You can learn more about blueprint method in http://wiki.github.com/andriusch/blueprints/method-blueprint
 
 ### Advanced Usage
 
@@ -145,4 +145,4 @@ Its just ruby, right? So go nuts:
 end
 {% endhighlight %}
 
-You can also read more about advanced usages in http://wiki.github.com/sinsiliux/blueprints/advanced-usages
+You can also read more about advanced usages in http://wiki.github.com/andriusch/blueprints/advanced-usages
