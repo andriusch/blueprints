@@ -38,11 +38,11 @@ describe Blueprints::Context do
     end
 
     it "should instance eval with current context set" do
-      Blueprints::Context.any_instance.expects(:method).with(1)
+      Blueprints::Context.any_instance.expects(:custom_method).with(1)
       Blueprints::Context.send(:class_variable_get, :@@chain) << context
 
       Blueprints::Context.eval_within_context(:dependencies => [:within_dep]) do
-        method(1)
+        custom_method(1)
         Blueprints::Context.current.dependencies.should == [:within_dep]
       end
       Blueprints::Context.current.should == context
