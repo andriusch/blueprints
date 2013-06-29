@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gemspec
+gem 'rake'
 gem 'rspec', '~> 2.0'
 gem 'mysql2', '>= 0.2.0'
 gem 'activerecord', '>= 3.0.0'
